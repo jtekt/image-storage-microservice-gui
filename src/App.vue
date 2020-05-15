@@ -4,7 +4,8 @@
     <nav>
       <router-link to="/">Home</router-link>
       <router-link :to="{ name: 'List', query: {collection: 'outer'} }">Outer</router-link>
-      <router-link :to="{ name: 'LiveResults'}">Live results</router-link>
+      <router-link :to="{ name: 'List', query: {collection: 'inner'} }">Inner</router-link>
+      <!--<router-link :to="{ name: 'LiveResults'}">Live results</router-link>-->
     </nav>
     <main>
       <router-view/>
@@ -27,6 +28,7 @@ body {
 nav {
   display: flex;
   background-color: #444444;
+
 }
 
 nav a {
@@ -34,15 +36,15 @@ nav a {
   text-decoration: none;
   padding: 0.5em;
   color: white;
+  border-top: 0.25em solid transparent;
+  border-bottom: 0.25em solid transparent;
 }
 
-nav a:not(:last-child) {
-  border-right: 1px solid #aaaaaa;
+nav a:hover {
+  border-bottom-color: #dddddd;
 }
-
-
 nav a.router-link-exact-active {
-  color: #c00000;
+  border-bottom-color: #c00000;
 }
 
 main {

@@ -1,14 +1,20 @@
 <template>
   <div class="home">
     <h1>{{$route.query.collection}}</h1>
-    <table>
+
+    <table v-if="collection.length > 0">
 
       <tr>
         <th>Image</th>
+        <th>Time</th>
         <th>Name</th>
-        <th>prediction</th>
-        <th>version</th>
-        <th>Inference time [s]</th>
+
+        <template v-if="collection.find(doc => {return !!doc.AI})">
+          <th>prediction</th>
+          <th>version</th>
+          <th>Inference time [s]</th>
+        </template>
+
       </tr>
 
       <tr
@@ -19,12 +25,14 @@
 
 
         <td><img :src="`${api_url}/${doc.image}`"></td>
+        <td>{{doc.time}}</td>
         <td>{{doc.image_id}}</td>
 
-
-        <td>{{Math.round(doc.AI.prediction*1000)/1000}}</td>
-        <td>{{doc.AI.version}}</td>
-        <td>{{Math.round(doc.AI.inference_time*1000)/1000}}</td>
+        <template v-if="doc.AI">
+          <td>{{Math.round(doc.AI.prediction*1000)/1000}}</td>
+          <td>{{doc.AI.version}}</td>
+          <td>{{Math.round(doc.AI.inference_time*1000)/1000}}</td>
+        </template>
 
 
       </tr>
@@ -48,12 +56,17 @@ export default {
     }
   },
   mounted(){
-    this.get_list()
+    this.get_list(this.$route.query.collection)
   },
+  beforeRouteUpdate (to, from, next) {
+    this.get_list(to.query.collection)
+    next()
+  },
+
   methods: {
-    get_list(){
+    get_list(collection){
       this.axios.get(`${process.env.VUE_APP_TOKUSHIMA_STORAGE_API_URL}/all`, {
-        params: {collection: this.$route.query.collection}
+        params: {collection: collection}
       })
       .then(response => {
         this.collection = []
@@ -78,7 +91,9 @@ export default {
 </script>
 
 <style scoped>
-
+h1 {
+  text-transform: capitalize;
+}
 table {
   border-collapse: collapse;
   width: 100%;

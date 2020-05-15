@@ -13,17 +13,24 @@
           <td>{{entry._id}}</td>
         </tr>
         <tr>
-          <td>AI prediction</td>
-          <td>{{entry.AI.prediction}}</td>
+          <td>Date</td>
+          <td>{{entry.time}}</td>
         </tr>
-        <tr>
-          <td>AI inference time</td>
-          <td>{{entry.AI.inference_time}}</td>
-        </tr>
-        <tr>
-          <td>AI model version</td>
-          <td>{{entry.AI.version}}</td>
-        </tr>
+        <template v-if="entry.AI">
+          <tr>
+            <td>AI prediction</td>
+            <td>{{entry.AI.prediction}}</td>
+          </tr>
+          <tr>
+            <td>AI inference time</td>
+            <td>{{entry.AI.inference_time}}</td>
+          </tr>
+          <tr>
+            <td>AI model version</td>
+            <td>{{entry.AI.version}}</td>
+          </tr>
+        </template>
+
       </table>
     </template>
 
@@ -58,7 +65,6 @@ export default {
         }
       })
       .then(response => {
-        console.log(response.data)
         this.entry = response.data
 
       })
