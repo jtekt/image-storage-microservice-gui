@@ -6,7 +6,6 @@ variables:
   APPLICATION_NAME: tokushima-bearings-storage-front
   KUBERNETES_NAMESPACE: tokushima-bearings
 
-
 containerization:
   stage: containerization
   script:
@@ -20,6 +19,6 @@ deployment:
     - envsubst < deployment.yml | kubectl apply -f -
     - kubectl rollout restart deployment/${APPLICATION_NAME}
   environment:
-    name: staging
+    name: production
     kubernetes:
-      namespace: ${KUBERNETES_NAMESPACE} # Obtained from GitLab
+      namespace: ${KUBERNETES_NAMESPACE}
