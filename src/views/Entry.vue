@@ -2,7 +2,15 @@
   <div class="home">
     <h1>Entry</h1>
 
-    <template  v-if="entry">
+    <div class="" v-if="error">
+      Error loading document
+    </div>
+
+    <div class="loader_container" v-else-if="loading">
+      <Loader />
+    </div>
+
+    <template  v-else-if="entry">
       <div class="image_wrapper">
         <img :src="`${api_url}/${entry.image}`">
       </div>
@@ -64,15 +72,19 @@
 
 <script>
 // @ is an alias to /src
+import Loader from '@moreillon/vue_loader'
 
 export default {
   name: 'List',
   components: {
-
+    Loader
   },
   data(){
     return {
       entry: null,
+      loading: false,
+      error: false,
+      api_url: 'http://172.16.98.151:31616',
     }
   },
   mounted(){
@@ -80,6 +92,7 @@ export default {
   },
   methods: {
     get_entry(){
+      this.loading = true
       this.axios.get(`${process.env.VUE_APP_TOKUSHIMA_STORAGE_API_URL}/document`, {
         params: {
           collection: this.$route.query.collection,
@@ -91,9 +104,11 @@ export default {
 
       })
       .catch(error =>{
+        this.error = true
         if(error.response) console.log(error.response.data)
         else console.log(error)
       })
+      .finally(() => this.loading = false)
     },
     delete_entry(){
 
@@ -116,12 +131,6 @@ export default {
 
     }
   },
-  computed: {
-    api_url(){
-      //return process.env.VUE_APP_TOKUSHIMA_STORAGE_API_URL
-      return 'http://172.16.98.151:31616'
-    }
-  }
 }
 </script>
 
@@ -148,6 +157,11 @@ tr:not(:last-child){
 }
 .doc img {
   width: 5em;
+}
+
+.loader_container {
+  text-align: center;
+  font-size: 200%;
 }
 
 </style>

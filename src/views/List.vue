@@ -2,8 +2,15 @@
   <div class="home">
     <h1>{{$route.query.collection}}</h1>
 
-    <table v-if="collection.length > 0">
+    <div class="" v-if="collection.error">
+      Error loading collection
+    </div>
 
+    <div class="loader_container" v-else-if="collection.loading">
+      <Loader />
+    </div>
+
+    <table v-else-if="collection.length > 0">
       <tr>
         <th>Image</th>
         <th>Time</th>
@@ -36,23 +43,28 @@
 
 
       </tr>
-
     </table>
+
+    <div class="" v-else-if="collection.length === 0">
+      Collection is empty
+    </div>
 
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
+import Loader from '@moreillon/vue_loader'
 
 export default {
   name: 'List',
   components: {
-
+    Loader
   },
   data(){
     return {
       collection: [],
+      api_url: 'http://172.16.98.151:31616'
     }
   },
   mounted(){
@@ -65,6 +77,7 @@ export default {
 
   methods: {
     get_list(collection){
+      this.$set(this.collection,'loading',true)
       this.axios.get(`${process.env.VUE_APP_TOKUSHIMA_STORAGE_API_URL}/all`, {
         params: {collection: collection}
       })
@@ -73,20 +86,15 @@ export default {
         response.data.forEach((doc) => {
           this.collection.push(doc)
         });
-
       })
       .catch(error =>{
+        this.$set(this.collection,'error',true)
         if(error.response) console.log(error.response.data)
         else console.log(error)
       })
+      .finally(()=>{this.$set(this.collection,'loading',false)})
     }
   },
-  computed: {
-    api_url(){
-      //return process.env.VUE_APP_TOKUSHIMA_STORAGE_API_URL
-      return 'http://172.16.98.151:31616'
-    }
-  }
 }
 </script>
 
@@ -115,6 +123,11 @@ tr:not(:first-child):hover {
 
 .doc img {
   width: 5em;
+}
+
+.loader_container {
+  text-align: center;
+  font-size: 200%;
 }
 
 </style>
