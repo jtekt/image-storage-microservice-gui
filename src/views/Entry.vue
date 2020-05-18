@@ -9,6 +9,9 @@
 
       <table>
         <tr>
+          <th colspan="2">Image metadata</th>
+        </tr>
+        <tr>
           <td>ID</td>
           <td>{{entry._id}}</td>
         </tr>
@@ -16,20 +19,39 @@
           <td>Date</td>
           <td>{{entry.time}}</td>
         </tr>
+        <tr>
+          <td>Original file name</td>
+          <td>{{entry.image_id}}</td>
+        </tr>
+
+        <!-- AI results -->
         <template v-if="entry.AI">
           <tr>
-            <td>AI prediction</td>
+            <td colspan="2">AI results</td>
+          </tr>
+          <tr>
+            <td>Prediction</td>
             <td>{{entry.AI.prediction}}</td>
           </tr>
           <tr>
-            <td>AI inference time</td>
+            <td>Pnference time</td>
             <td>{{entry.AI.inference_time}}</td>
           </tr>
           <tr>
-            <td>AI model version</td>
+            <td>Podel version</td>
             <td>{{entry.AI.version}}</td>
           </tr>
         </template>
+
+        <tr>
+          <th colspan="2">Tools</th>
+        </tr>
+        <tr>
+          <td>Delete</td>
+          <td>
+            <button type="button" @click="delete_entry()">Delete</button>
+          </td>
+        </tr>
 
       </table>
     </template>
@@ -72,6 +94,26 @@ export default {
         if(error.response) console.log(error.response.data)
         else console.log(error)
       })
+    },
+    delete_entry(){
+
+      if(confirm('ホンマに？')) {
+        this.axios.delete(`${process.env.VUE_APP_TOKUSHIMA_STORAGE_API_URL}/document`, {
+          params: {
+            collection: this.$route.query.collection,
+            id: this.$route.query.id,
+          }
+        })
+        .then( () => {
+          this.$router.push({name: 'List', query: {collection: this.$route.query.collection,} })
+        })
+        .catch(error =>{
+          if(error.response) console.log(error.response.data)
+          else console.log(error)
+        })
+      }
+
+
     }
   },
   computed: {
