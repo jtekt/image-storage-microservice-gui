@@ -20,7 +20,7 @@
           <td>{{entry.time}}</td>
         </tr>
         <tr>
-          <td>Original file name</td>
+          <td>Name</td>
           <td>{{entry.image_id}}</td>
         </tr>
 
@@ -34,11 +34,11 @@
             <td>{{entry.AI.prediction}}</td>
           </tr>
           <tr>
-            <td>Pnference time</td>
+            <td>Inference time</td>
             <td>{{entry.AI.inference_time}}</td>
           </tr>
           <tr>
-            <td>Podel version</td>
+            <td>Model version</td>
             <td>{{entry.AI.version}}</td>
           </tr>
         </template>
