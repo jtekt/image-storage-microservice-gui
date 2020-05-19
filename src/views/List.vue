@@ -17,9 +17,9 @@
         <th>Name</th>
 
         <template v-if="collection.find(doc => {return !!doc.AI})">
-          <th>prediction</th>
-          <th>version</th>
-          <th>Inference time [s]</th>
+          <th>AI prediction (NG probability)</th>
+          <th>AI version</th>
+          <th>AI inference time [s]</th>
         </template>
 
       </tr>
