@@ -1,5 +1,7 @@
 # tokushima_storage_microservice_front
 
+Currently deployed at http://172.16.98.151:31617/
+
 ## Project setup
 ```
 npm install
