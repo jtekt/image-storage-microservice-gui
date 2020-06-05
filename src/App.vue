@@ -5,7 +5,6 @@
       <router-link to="/">Home</router-link>
       <router-link :to="{ name: 'List', query: {collection: 'outer'} }">Outer</router-link>
       <router-link :to="{ name: 'List', query: {collection: 'inner'} }">Inner</router-link>
-      <router-link :to="{ name: 'LiveResults'}">Live results</router-link>
     </nav>
     <main>
       <router-view/>

@@ -16,11 +16,6 @@ Vue.use(VueRouter)
     component: () => import('../views/About.vue')
   },
   {
-    path: '/live_results',
-    name: 'LiveResults',
-    component: () => import('../views/LiveResults.vue')
-  },
-  {
     path: '/list',
     name: 'List',
     component: () => import('../views/List.vue')

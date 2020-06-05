@@ -25,7 +25,7 @@
         </tr>
         <tr>
           <td>Date</td>
-          <td>{{entry.time}}</td>
+          <td>{{format_date(entry.time)}}</td>
         </tr>
         <tr>
           <td>Name</td>
@@ -127,9 +127,21 @@ export default {
           else console.log(error)
         })
       }
+    },
+    format_date(date){
 
+      let options = {
+        hour12: false,
+        year:'numeric',
+        month:'2-digit',
+        day: '2-digit',
+        hour:'2-digit',
+        minute:'2-digit',
+        second: '2-digit'
+      }
+      return new Date(date).toLocaleString('ja-JP', options)
 
-    }
+    },
   },
 }
 </script>

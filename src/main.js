@@ -4,12 +4,7 @@ import router from './router'
 import store from './store'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
-import VueSocketIOExt from 'vue-socket.io-extended';
-import io from 'socket.io-client';
 
-const socket = io(`${process.env.VUE_APP_TOKUSHIMA_STORAGE_API_URL}`);
-
-Vue.use(VueSocketIOExt, socket);
 Vue.use(VueAxios, axios)
 
 Vue.config.productionTip = false

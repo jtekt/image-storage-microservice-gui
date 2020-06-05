@@ -32,7 +32,7 @@
 
 
         <td><img :src="`${api_url}/${doc.image}`"></td>
-        <td>{{doc.time}}</td>
+        <td>{{format_date(doc.time)}}</td>
         <td>{{doc.image_id}}</td>
 
         <template v-if="doc.AI">
@@ -93,6 +93,20 @@ export default {
         else console.log(error)
       })
       .finally(()=>{this.$set(this.collection,'loading',false)})
+    },
+    format_date(date){
+
+      let options = {
+        hour12: false,
+        year:'numeric',
+        month:'2-digit',
+        day: '2-digit',
+        hour:'2-digit',
+        minute:'2-digit',
+        second: '2-digit'
+      }
+      return new Date(date).toLocaleString('ja-JP', options)
+
     }
   },
 }
