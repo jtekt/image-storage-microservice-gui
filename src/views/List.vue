@@ -22,6 +22,8 @@
           <th>AI inference time [s]</th>
         </template>
 
+        <th>Mode</th>
+
       </tr>
 
       <tr
@@ -40,6 +42,8 @@
           <td>{{doc.AI.version}}</td>
           <td>{{Math.round(doc.AI.inference_time*1000)/1000}}</td>
         </template>
+
+        <td>{{doc.demo}}</td>
 
 
       </tr>
