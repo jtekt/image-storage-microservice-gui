@@ -2,6 +2,12 @@
   <div id="app">
 
     <nav>
+      <div class="signature">
+        <img src="@/assets/logo.png" alt="">
+        <span>Storage microservice, Maxime MOREILLON</span>
+      </div>
+
+      <div class="spacer"/>
       <router-link to="/">Home</router-link>
       <router-link :to="{ name: 'List', query: {collection: 'outer'} }">Outer</router-link>
       <router-link :to="{ name: 'List', query: {collection: 'inner'} }">Inner</router-link>
@@ -27,14 +33,15 @@ body {
 nav {
   display: flex;
   background-color: #444444;
-
+  color: white;
+  align-items: stretch;
 }
 
 nav a {
   font-weight: bold;
   text-decoration: none;
   padding: 0.5em;
-  color: white;
+  color: currentColor;
   border-top: 0.25em solid transparent;
   border-bottom: 0.25em solid transparent;
 }
@@ -48,5 +55,21 @@ nav a.router-link-exact-active {
 
 main {
   margin: 0 1em;
+}
+
+.spacer {
+  flex-grow: 1;
+}
+
+.signature {
+  display: flex;
+  align-items: center;
+  font-size: 120%;
+}
+
+.signature img {
+  width: 1.5em;
+  height: 1.5em;
+  margin: 0.5em;
 }
 </style>
