@@ -3,7 +3,7 @@ stages:
   - deployment
 
 variables:
-  APPLICATION_NAME: storage-front
+  APPLICATION_NAME: seikaibu-storage-front
 
 containerization:
   stage: containerization
