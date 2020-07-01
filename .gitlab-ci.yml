@@ -3,8 +3,7 @@ stages:
   - deployment
 
 variables:
-  APPLICATION_NAME: tokushima-bearings-storage-front
-  KUBERNETES_NAMESPACE: tokushima-bearings
+  APPLICATION_NAME: storage-front
 
 containerization:
   stage: containerization
