@@ -14,7 +14,10 @@
       <tr>
         <th>Image</th>
         <th>Time</th>
-        <th>Name</th>
+
+        <template v-if="collection.find(doc => {return !!doc.image_info})">
+          <th>Image info</th>
+        </template>
 
         <template v-if="collection.find(doc => {return !!doc.AI})">
           <th>AI prediction (NG probability)</th>
@@ -33,7 +36,10 @@
 
         <td><img :src="`${api_url}/${doc.image}`"></td>
         <td>{{format_date(doc.time)}}</td>
-        <td>{{doc.image_id}}</td>
+
+        <template v-if="doc.image_info">
+          <td>{{doc.image_info}}</td>
+        </template>
 
         <template v-if="doc.AI">
           <td>{{Math.round(doc.AI.prediction*1000)/1000}}</td>
@@ -64,11 +70,11 @@ export default {
   data(){
     return {
       collection: [],
-      api_url: 'http://172.16.98.151:31616'
+      api_url: process.env.VUE_APP_TOKUSHIMA_STORAGE_API_URL
     }
   },
   mounted(){
-    this.get_list(this.$route.query.collection)
+    this.get_list()
   },
   beforeRouteUpdate (to, from, next) {
     this.get_list(to.query.collection)
@@ -76,11 +82,9 @@ export default {
   },
 
   methods: {
-    get_list(collection){
+    get_list(){
       this.$set(this.collection,'loading',true)
-      this.axios.get(`${process.env.VUE_APP_TOKUSHIMA_STORAGE_API_URL}/all`, {
-        params: {collection: collection}
-      })
+      this.axios.get(`${this.api_url}/images`)
       .then(response => {
         this.collection = []
         response.data.forEach((doc) => {

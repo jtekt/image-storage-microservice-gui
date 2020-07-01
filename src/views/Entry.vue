@@ -28,8 +28,8 @@
           <td>{{format_date(entry.time)}}</td>
         </tr>
         <tr>
-          <td>Name</td>
-          <td>{{entry.image_id}}</td>
+          <td>Image info</td>
+          <td>{{entry.image_info}}</td>
         </tr>
 
         <!-- AI results -->
@@ -52,7 +52,7 @@
         </template>
 
         <tr>
-          <th colspan="2">Tools</th>
+          <th colspan="2">Actions</th>
         </tr>
         <tr>
           <td>Delete</td>
@@ -84,7 +84,7 @@ export default {
       entry: null,
       loading: false,
       error: false,
-      api_url: 'http://172.16.98.151:31616',
+      api_url: process.env.VUE_APP_TOKUSHIMA_STORAGE_API_URL
     }
   },
   mounted(){
@@ -93,12 +93,8 @@ export default {
   methods: {
     get_entry(){
       this.loading = true
-      this.axios.get(`${process.env.VUE_APP_TOKUSHIMA_STORAGE_API_URL}/document`, {
-        params: {
-          collection: this.$route.query.collection,
-          id: this.$route.query.id,
-        }
-      })
+      let url = `${this.api_url}/images/${this.$route.query.id}`
+      this.axios.get(url)
       .then(response => {
         this.entry = response.data
 
@@ -113,14 +109,11 @@ export default {
     delete_entry(){
 
       if(confirm('ホンマに？')) {
-        this.axios.delete(`${process.env.VUE_APP_TOKUSHIMA_STORAGE_API_URL}/document`, {
-          params: {
-            collection: this.$route.query.collection,
-            id: this.$route.query.id,
-          }
-        })
+        let url = `${this.api_url}/images/${this.$route.query.id}`
+
+        this.axios.delete(url)
         .then( () => {
-          this.$router.push({name: 'List', query: {collection: this.$route.query.collection,} })
+          this.$router.push({name: 'List'})
         })
         .catch(error =>{
           if(error.response) console.log(error.response.data)
@@ -167,8 +160,8 @@ td:first-child {
 tr:not(:last-child){
   border-bottom: 1px solid #dddddd;
 }
-.doc img {
-  width: 5em;
+img {
+  width: 30em;
 }
 
 .loader_container {

@@ -2,15 +2,7 @@
   <div id="app">
 
     <nav>
-      <div class="signature">
-        <img src="@/assets/logo.png" alt="">
-        <span>Storage microservice, Maxime MOREILLON</span>
-      </div>
-
-      <div class="spacer"/>
-      <router-link to="/">Home</router-link>
-      <router-link :to="{ name: 'List', query: {collection: 'outer'} }">Outer</router-link>
-      <router-link :to="{ name: 'List', query: {collection: 'inner'} }">Inner</router-link>
+      <router-link :to="{ name: 'List'}">List</router-link>
     </nav>
     <main>
       <router-view/>
