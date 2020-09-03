@@ -1,16 +1,18 @@
 <template>
   <div class="home">
-    <h1>Entry</h1>
+    <h1>{{$route.params.entry_id}}</h1>
 
     <div class="" v-if="error">
       Error loading document
     </div>
 
-    <div class="loader_container" v-else-if="loading">
+    <div
+      class="loader_container"
+      v-else-if="loading">
       <Loader />
     </div>
 
-    <template  v-else-if="entry">
+    <template v-else-if="entry">
       <div class="image_wrapper">
         <img :src="`${api_url}/${entry.image}`">
       </div>
@@ -93,7 +95,9 @@ export default {
   methods: {
     get_entry(){
       this.loading = true
-      let url = `${this.api_url}/images/${this.$route.query.id}`
+      let collection = this.$route.params.collection
+      let entry_id = this.$route.params.entry_id
+      let url = `${this.api_url}/${collection}/${entry_id}`
       this.axios.get(url)
       .then(response => {
         this.entry = response.data

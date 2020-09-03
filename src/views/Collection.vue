@@ -1,6 +1,8 @@
 <template>
   <div class="home">
-    <h1>{{$route.query.collection}}</h1>
+    
+
+    <h1>{{$route.params.collection}}</h1>
 
     <div class="" v-if="collection.error">
       Error loading collection
@@ -31,7 +33,7 @@
         class="doc"
         v-for="doc in collection"
         :key="doc._id"
-        @click="$router.push({name: 'Entry', query: {id: doc._id, collection: $route.query.collection}})">
+        @click="$router.push({path: `/${$route.params.collection}/${doc._id}`})">
 
 
         <td><img :src="`${api_url}/${doc.image}`"></td>
@@ -84,7 +86,7 @@ export default {
   methods: {
     get_list(){
       this.$set(this.collection,'loading',true)
-      this.axios.get(`${this.api_url}/images`)
+      this.axios.get(`${this.api_url}/${this.$route.params.collection}`)
       .then(response => {
         this.collection = []
         response.data.forEach((doc) => {
@@ -117,9 +119,7 @@ export default {
 </script>
 
 <style scoped>
-h1 {
-  text-transform: capitalize;
-}
+
 table {
   border-collapse: collapse;
   width: 100%;

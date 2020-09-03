@@ -8,12 +8,18 @@ Vue.use(VueRouter)
 
   {
     path: '/',
-    name: 'List',
-    component: () => import('../views/List.vue')
+    name: 'home',
+    component: () => import('../views/Home.vue')
   },
   {
-    path: '/entry',
-    name: 'Entry',
+    path: '/:collection',
+    name: 'collection',
+    component: () => import('../views/Collection.vue')
+  },
+  
+  {
+    path: '/:collection/:entry_id',
+    name: 'entry',
     component: () => import('../views/Entry.vue')
   }
 ]

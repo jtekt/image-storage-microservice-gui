@@ -1,8 +1,24 @@
 <template>
   <div id="app">
-
     <nav>
-      <router-link :to="{ name: 'List'}">List</router-link>
+      <router-link :to="{ name: 'home', params: {} }">
+        Home
+      </router-link>
+
+      <template v-if="$route.params.collection">
+        <span>></span>
+        <router-link :to="{ name: 'collection', params: {collection: $route.params.collection} }">
+          {{$route.params.collection}}
+        </router-link>
+      </template>
+
+      <template v-if="$route.params.entry_id">
+        <span>></span>
+        <span>
+          {{$route.params.entry_id}}
+        </span>
+      </template>
+
     </nav>
     <main>
       <router-view/>
@@ -10,6 +26,23 @@
 
   </div>
 </template>
+
+<script>
+// @ is an alias to /src
+//import HelloWorld from '@/components/HelloWorld.vue'
+
+export default {
+  name: 'App',
+  data(){
+    return { }
+  },
+  mounted(){
+  },
+  methods: {
+
+  }
+}
+</script>
 
 <style>
 #app {
@@ -23,27 +56,26 @@ body {
 }
 
 nav {
-  display: flex;
   background-color: #444444;
   color: white;
-  align-items: stretch;
-}
-
-nav a {
+  padding: 1em 1em;
   font-weight: bold;
-  text-decoration: none;
-  padding: 0.5em;
+}
+nav a {
   color: currentColor;
-  border-top: 0.25em solid transparent;
-  border-bottom: 0.25em solid transparent;
+  text-decoration: none;
+
+
 }
 
-nav a:hover {
-  border-bottom-color: #dddddd;
+nav a :hover {
+  text-decoration: underline;
 }
-nav a.router-link-exact-active {
-  border-bottom-color: #c00000;
+
+nav > * {
+  margin-right: 0.5em;
 }
+
 
 main {
   margin: 0 1em;
@@ -53,15 +85,5 @@ main {
   flex-grow: 1;
 }
 
-.signature {
-  display: flex;
-  align-items: center;
-  font-size: 120%;
-}
 
-.signature img {
-  width: 1.5em;
-  height: 1.5em;
-  margin: 0.5em;
-}
 </style>
