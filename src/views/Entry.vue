@@ -16,14 +16,14 @@
 
     <template v-else-if="entry">
       <div class="image_wrapper">
-        <img :src="`${api_url}/${$route.params.collection}/${entry.image}`">
+        <img :src="image_src">
       </div>
 
       <h2>Image metadata</h2>
       <table>
         <tr>
           <td>URL</td>
-          <td>{{`${api_url}/${$route.params.collection}/${entry.image}`}}</td>
+          <td>{{image_src}}</td>
         </tr>
         <tr
           v-for="(value, key) in entry"
@@ -117,6 +117,11 @@ export default {
 
     },
   },
+  computed: {
+    image_src(){
+      return `${this.api_url}/images/${this.$route.params.collection}/${this.entry.image}`
+    }
+  }
 }
 </script>
 

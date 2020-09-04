@@ -1,10 +1,11 @@
 <template>
   <div class="home">
 
-
     <h1>{{$route.params.collection}}</h1>
 
-    <div class="error" v-if="collection.error">
+    <div
+      class="error"
+      v-if="collection.error">
       Error loading collection
     </div>
 
@@ -14,55 +15,58 @@
       <Loader />
     </div>
 
-    <!-- TODO: Display all info from DB -->
-    <table v-else-if="collection.length > 0">
-      <tr>
-        <th>Image</th>
-        <th>Time</th>
+    <template v-else>
+      <button type="button" @click="drop_collection()">Delete collection</button>
+      <table v-if="collection.length > 0">
+        <tr>
+          <th>Image</th>
+          <th>Time</th>
+          <th>File name</th>
 
-        <!-- display image info if exists (header) -->
-        <template v-if="collection.find(doc => {return !!doc.image_info})">
-          <th>Image info</th>
-        </template>
+          <!--
+          <template v-if="collection.find(doc => {return !!doc.AI})">
+            <th>AI prediction (NG probability)</th>
+            <th>AI version</th>
+            <th>AI inference time [s]</th>
+          </template>
+          -->
 
-        <!-- Display AI resuts -->
-        <template v-if="collection.find(doc => {return !!doc.AI})">
-          <th>AI prediction (NG probability)</th>
-          <th>AI version</th>
-          <th>AI inference time [s]</th>
-        </template>
+        </tr>
 
-      </tr>
-
-      <tr
-        class="doc"
-        v-for="doc in collection"
-        :key="doc._id"
-        @click="$router.push({path: `/${$route.params.collection}/${doc._id}`})">
+        <tr
+          class="doc"
+          v-for="doc in collection"
+          :key="doc._id"
+          @click="$router.push({path: `/${$route.params.collection}/${doc._id}`})">
 
 
-        <td><img :src="`${api_url}/${$route.params.collection}/${doc.image}`"></td>
-        <td>{{format_date(doc.time)}}</td>
-
-        <!-- display image info if exists -->
-        <template v-if="doc.image_info">
-          <td>{{doc.image_info}}</td>
-        </template>
-
-        <!-- Display AI resuts -->
-        <template v-if="doc.AI">
-          <td>{{Math.round(doc.AI.prediction*1000)/1000}}</td>
-          <td>{{doc.AI.version}}</td>
-          <td>{{Math.round(doc.AI.inference_time*1000)/1000}}</td>
-        </template>
+          <td>
+            <img :src="`${api_url}/images/${$route.params.collection}/${doc.image}`">
+          </td>
+          <td>{{format_date(doc.time)}}</td>
+          <td>{{doc.image}}</td>
 
 
-      </tr>
-    </table>
+          <!--
+          <template v-if="doc.AI">
+            <td>{{Math.round(doc.AI.prediction*1000)/1000}}</td>
+            <td>{{doc.AI.version}}</td>
+            <td>{{Math.round(doc.AI.inference_time*1000)/1000}}</td>
+          </template>
+          -->
 
-    <div class="" v-else-if="collection.length === 0">
-      Collection is empty
-    </div>
+
+        </tr>
+      </table>
+
+      <p class="" v-else>
+        Collection is empty
+      </p>
+    </template>
+
+
+
+
 
   </div>
 </template>
@@ -107,6 +111,16 @@ export default {
       })
       .finally(()=>{this.$set(this.collection,'loading',false)})
     },
+    drop_collection(){
+      if(!confirm('ホンマに？')) return
+      this.axios.delete(`${this.api_url}/collections/${this.$route.params.collection}`)
+      .then(() => {
+        this.$router.push({name: 'home'})
+      })
+      .catch(error =>{
+        alert(error)
+      })
+    },
     format_date(date){
 
       let options = {
@@ -128,6 +142,7 @@ export default {
 <style scoped>
 
 table {
+  margin-top: 1em;
   border-collapse: collapse;
   width: 100%;
   text-align: center;
