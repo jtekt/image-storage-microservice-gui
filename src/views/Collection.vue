@@ -16,7 +16,13 @@
     </div>
 
     <template v-else>
-      <button type="button" @click="drop_collection()">Delete collection</button>
+
+      <div class="buttons_wrapper">
+        <button type="button" @click="drop_collection()">Delete collection</button>
+        <button type="button" @click="export_collection()">Export as .xlsx</button>
+      </div>
+
+
       <table v-if="collection.length > 0">
         <tr>
           <th>Image</th>
@@ -59,9 +65,9 @@
         </tr>
       </table>
 
-      <p class="" v-else>
+      <div class="" v-else>
         Collection is empty
-      </p>
+      </div>
     </template>
 
 
@@ -74,6 +80,7 @@
 <script>
 // @ is an alias to /src
 import Loader from '@moreillon/vue_loader'
+import XLSX from 'xlsx'
 
 export default {
   name: 'List',
@@ -111,6 +118,12 @@ export default {
       })
       .finally(()=>{this.$set(this.collection,'loading',false)})
     },
+    export_collection(){
+      var workbook = XLSX.utils.book_new()
+      var ws1 = XLSX.utils.json_to_sheet(this.collection)
+      XLSX.utils.book_append_sheet(workbook, ws1, "Sheet1")
+      XLSX.writeFile(workbook, 'export.xlsx')
+    },
     drop_collection(){
       if(!confirm('ホンマに？')) return
       this.axios.delete(`${this.api_url}/collections/${this.$route.params.collection}`)
@@ -142,7 +155,6 @@ export default {
 <style scoped>
 
 table {
-  margin-top: 1em;
   border-collapse: collapse;
   width: 100%;
   text-align: center;
@@ -165,6 +177,12 @@ tr:not(:first-child):hover {
   width: 5em;
 }
 
+.buttons_wrapper {
+  margin: 1em 0;
+}
 
+.buttons_wrapper button:not(:last-child) {
+  margin-right: 1em;
+}
 
 </style>
