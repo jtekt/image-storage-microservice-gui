@@ -1,26 +1,31 @@
 <template>
   <div class="home">
-    
+
 
     <h1>{{$route.params.collection}}</h1>
 
-    <div class="" v-if="collection.error">
+    <div class="error" v-if="collection.error">
       Error loading collection
     </div>
 
-    <div class="loader_container" v-else-if="collection.loading">
+    <div
+      class="loader_container"
+      v-else-if="collection.loading">
       <Loader />
     </div>
 
+    <!-- TODO: Display all info from DB -->
     <table v-else-if="collection.length > 0">
       <tr>
         <th>Image</th>
         <th>Time</th>
 
+        <!-- display image info if exists (header) -->
         <template v-if="collection.find(doc => {return !!doc.image_info})">
           <th>Image info</th>
         </template>
 
+        <!-- Display AI resuts -->
         <template v-if="collection.find(doc => {return !!doc.AI})">
           <th>AI prediction (NG probability)</th>
           <th>AI version</th>
@@ -36,13 +41,15 @@
         @click="$router.push({path: `/${$route.params.collection}/${doc._id}`})">
 
 
-        <td><img :src="`${api_url}/${doc.image}`"></td>
+        <td><img :src="`${api_url}/${$route.params.collection}/${doc.image}`"></td>
         <td>{{format_date(doc.time)}}</td>
 
+        <!-- display image info if exists -->
         <template v-if="doc.image_info">
           <td>{{doc.image_info}}</td>
         </template>
 
+        <!-- Display AI resuts -->
         <template v-if="doc.AI">
           <td>{{Math.round(doc.AI.prediction*1000)/1000}}</td>
           <td>{{doc.AI.version}}</td>
@@ -86,7 +93,7 @@ export default {
   methods: {
     get_list(){
       this.$set(this.collection,'loading',true)
-      this.axios.get(`${this.api_url}/${this.$route.params.collection}`)
+      this.axios.get(`${this.api_url}/collections/${this.$route.params.collection}`)
       .then(response => {
         this.collection = []
         response.data.forEach((doc) => {
@@ -143,9 +150,6 @@ tr:not(:first-child):hover {
   width: 5em;
 }
 
-.loader_container {
-  text-align: center;
-  font-size: 200%;
-}
+
 
 </style>

@@ -2,6 +2,8 @@
   <div class="home">
     <h1>{{$route.params.entry_id}}</h1>
 
+
+
     <div class="" v-if="error">
       Error loading document
     </div>
@@ -14,56 +16,29 @@
 
     <template v-else-if="entry">
       <div class="image_wrapper">
-        <img :src="`${api_url}/${entry.image}`">
+        <img :src="`${api_url}/${$route.params.collection}/${entry.image}`">
       </div>
 
+      <h2>Image metadata</h2>
       <table>
         <tr>
-          <th colspan="2">Image metadata</th>
+          <td>URL</td>
+          <td>{{`${api_url}/${$route.params.collection}/${entry.image}`}}</td>
         </tr>
-        <tr>
-          <td>ID</td>
-          <td>{{entry._id}}</td>
+        <tr
+          v-for="(value, key) in entry"
+          v-bind:key="key">
+          <td>{{key}}</td>
+          <td>{{value}}</td>
         </tr>
-        <tr>
-          <td>Date</td>
-          <td>{{format_date(entry.time)}}</td>
-        </tr>
-        <tr>
-          <td>Image info</td>
-          <td>{{entry.image_info}}</td>
-        </tr>
-
-        <!-- AI results -->
-        <template v-if="entry.AI">
-          <tr>
-            <td colspan="2">AI results</td>
-          </tr>
-          <tr>
-            <td>Prediction</td>
-            <td>{{entry.AI.prediction}}</td>
-          </tr>
-          <tr>
-            <td>Inference time</td>
-            <td>{{entry.AI.inference_time}}</td>
-          </tr>
-          <tr>
-            <td>Model version</td>
-            <td>{{entry.AI.version}}</td>
-          </tr>
-        </template>
-
-        <tr>
-          <th colspan="2">Actions</th>
-        </tr>
-        <tr>
-          <td>Delete</td>
-          <td>
-            <button type="button" @click="delete_entry()">Delete</button>
-          </td>
-        </tr>
-
       </table>
+
+      <h2>Tools</h2>
+      <button
+        type="button"
+        @click="delete_entry()">
+        Delete entry
+      </button>
     </template>
 
 
@@ -97,7 +72,7 @@ export default {
       this.loading = true
       let collection = this.$route.params.collection
       let entry_id = this.$route.params.entry_id
-      let url = `${this.api_url}/${collection}/${entry_id}`
+      let url = `${this.api_url}/collections/${collection}/${entry_id}`
       this.axios.get(url)
       .then(response => {
         this.entry = response.data
@@ -113,11 +88,13 @@ export default {
     delete_entry(){
 
       if(confirm('ホンマに？')) {
-        let url = `${this.api_url}/images/${this.$route.query.id}`
+        let collection = this.$route.params.collection
+        let entry_id = this.$route.params.entry_id
+        let url = `${this.api_url}/collections/${collection}/${entry_id}`
 
         this.axios.delete(url)
         .then( () => {
-          this.$router.push({name: 'List'})
+          this.$router.push({name: 'collection', params: {collection: collection}})
         })
         .catch(error =>{
           if(error.response) console.log(error.response.data)
@@ -168,9 +145,5 @@ img {
   width: 30em;
 }
 
-.loader_container {
-  text-align: center;
-  font-size: 200%;
-}
 
 </style>

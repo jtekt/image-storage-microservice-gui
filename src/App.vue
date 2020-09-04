@@ -2,7 +2,7 @@
   <div id="app">
     <nav>
       <router-link :to="{ name: 'home', params: {} }">
-        Home
+        Collections
       </router-link>
 
       <template v-if="$route.params.collection">
@@ -19,6 +19,12 @@
         </span>
       </template>
 
+      <div class="spacer"/>
+
+      <router-link :to="{ name: 'about'}" class="about">
+        <InformationOutlineIcon />
+      </router-link>
+
     </nav>
     <main>
       <router-view/>
@@ -30,16 +36,13 @@
 <script>
 // @ is an alias to /src
 //import HelloWorld from '@/components/HelloWorld.vue'
+import 'vue-material-design-icons/styles.css';
+import InformationOutlineIcon from 'vue-material-design-icons/InformationOutline.vue';
 
 export default {
   name: 'App',
-  data(){
-    return { }
-  },
-  mounted(){
-  },
-  methods: {
-
+  components: {
+    InformationOutlineIcon,
   }
 }
 </script>
@@ -60,6 +63,8 @@ nav {
   color: white;
   padding: 1em 1em;
   font-weight: bold;
+  display: flex;
+  align-items: center;
 }
 nav a {
   color: currentColor;
@@ -68,8 +73,8 @@ nav a {
 
 }
 
-nav a :hover {
-  text-decoration: underline;
+nav a:hover {
+  color: #dddddd;
 }
 
 nav > * {
@@ -85,5 +90,12 @@ main {
   flex-grow: 1;
 }
 
+.loader_container {
+  text-align: center;
+  font-size: 200%;
+}
 
+.about {
+  font-size: 120%;
+}
 </style>

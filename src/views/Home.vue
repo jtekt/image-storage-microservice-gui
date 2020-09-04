@@ -1,9 +1,18 @@
 <template>
   <div class="home">
-    <h1>Storage microservice GUI</h1>
-    <h2>Available collections</h2>
+    <h1>Collections</h1>
 
-    <ul>
+    <div class="error" v-if="collections.error">
+      Error loading collections
+    </div>
+
+    <div
+      class="loader_container"
+      v-else-if="collections.loading">
+      <Loader />
+    </div>
+
+    <ul v-else-if="collections.length > 0">
       <li
         v-for="collection in collections"
         :key="collection.name">
@@ -16,18 +25,22 @@
       </li>
     </ul>
 
+    <div class="" v-else-if="collections.length < 1">
+      No collections available
+    </div>
+
 
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-//import HelloWorld from '@/components/HelloWorld.vue'
+import Loader from '@moreillon/vue_loader'
 
 export default {
   name: 'Home',
   components: {
-
+    Loader
   },
   data(){
     return {

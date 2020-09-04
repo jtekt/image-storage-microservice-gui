@@ -12,11 +12,16 @@ Vue.use(VueRouter)
     component: () => import('../views/Home.vue')
   },
   {
+    path: '/about',
+    name: 'about',
+    component: () => import('../views/About.vue')
+  },
+  {
     path: '/:collection',
     name: 'collection',
     component: () => import('../views/Collection.vue')
   },
-  
+
   {
     path: '/:collection/:entry_id',
     name: 'entry',
