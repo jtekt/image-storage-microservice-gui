@@ -1,5 +1,11 @@
 <template>
   <div id="app">
+    <header>
+      <div class="application_title">
+        {{application_name}}
+      </div>
+    </header>
+
     <nav>
       <router-link :to="{ name: 'home', params: {} }">
         Collections
@@ -21,47 +27,73 @@
 
       <div class="spacer"/>
 
-      <router-link :to="{ name: 'about'}" class="about">
-        <InformationOutlineIcon />
-      </router-link>
 
     </nav>
+
     <main>
       <router-view/>
     </main>
 
+    <footer>
+      <img src="@/assets/logo.png" alt="">
+      <div class="">
+        <div class="">
+          {{application_name}}
+        </div>
+        <div class="">
+          Maxime MOREILLON
+        </div>
+
+      </div>
+
+    </footer>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-//import HelloWorld from '@/components/HelloWorld.vue'
-import 'vue-material-design-icons/styles.css';
-import InformationOutlineIcon from 'vue-material-design-icons/InformationOutline.vue';
 
 export default {
   name: 'App',
-  components: {
-    InformationOutlineIcon,
+  data() {
+    return {
+      application_name: 'Image storage'
+    }
   }
+
 }
 </script>
 
 <style>
+body {
+  margin: 0;
+  box-sizing: border-box;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
 }
 
-body {
-  margin: 0;
-}
 
-nav {
+
+
+header {
+  font-size: 150%;
   background-color: #444444;
   color: white;
-  padding: 1em 1em;
+  padding: 15px;
+}
+
+
+nav {
+  padding: 15px;
   font-weight: bold;
   display: flex;
   align-items: center;
@@ -69,21 +101,37 @@ nav {
 nav a {
   color: currentColor;
   text-decoration: none;
-
-
 }
 
 nav a:hover {
-  color: #dddddd;
+  color: #c00000;
 }
 
 nav > * {
-  margin-right: 0.5em;
+  margin-right: 15px;
 }
 
 
 main {
-  margin: 0 1em;
+  flex-grow: 1;
+  margin: 0 15px;
+}
+
+footer {
+  margin-top: 1em;
+  margin-left: 1em;
+  margin-right: 1em;
+  border-top: 1px solid #dddddd;
+  padding: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+footer img {
+  width: 2em;
+  height: 2em;
 }
 
 .spacer {
@@ -95,7 +143,17 @@ main {
   font-size: 200%;
 }
 
-.about {
-  font-size: 120%;
+
+.error {
+  color: #c00000;
+}
+
+
+footer > div {
+  margin-left: 0.5em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
 }
 </style>

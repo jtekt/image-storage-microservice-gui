@@ -15,6 +15,15 @@
     </div>
 
     <template v-else-if="entry">
+
+      <div class="buttons_wrapper">
+        <button
+          type="button"
+          @click="delete_entry()">
+          Delete entry
+        </button>
+      </div>
+
       <div class="image_wrapper">
         <img :src="image_src">
       </div>
@@ -29,16 +38,13 @@
           v-for="(value, key) in entry"
           v-bind:key="key">
           <td>{{key}}</td>
-          <td>{{value}}</td>
+          <td v-if="key === 'time'">
+            {{format_date(value)}}
+          </td>
+          <td v-else>{{value}}</td>
         </tr>
       </table>
 
-      <h2>Tools</h2>
-      <button
-        type="button"
-        @click="delete_entry()">
-        Delete entry
-      </button>
     </template>
 
 

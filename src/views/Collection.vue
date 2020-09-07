@@ -28,15 +28,6 @@
           <th>Image</th>
           <th>Time</th>
           <th>File name</th>
-
-          <!--
-          <template v-if="collection.find(doc => {return !!doc.AI})">
-            <th>AI prediction (NG probability)</th>
-            <th>AI version</th>
-            <th>AI inference time [s]</th>
-          </template>
-          -->
-
         </tr>
 
         <tr
@@ -51,15 +42,6 @@
           </td>
           <td>{{format_date(doc.time)}}</td>
           <td>{{doc.image}}</td>
-
-
-          <!--
-          <template v-if="doc.AI">
-            <td>{{Math.round(doc.AI.prediction*1000)/1000}}</td>
-            <td>{{doc.AI.version}}</td>
-            <td>{{Math.round(doc.AI.inference_time*1000)/1000}}</td>
-          </template>
-          -->
 
 
         </tr>
