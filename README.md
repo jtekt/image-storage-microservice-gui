@@ -1,9 +1,8 @@
 # storage_microservice_front
 
-
+Front end for the image storage microservice
 
 ## Environment variables
-
 
 | Variable | Description |
 | --- | --- |
