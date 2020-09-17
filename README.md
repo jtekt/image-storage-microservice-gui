@@ -1,4 +1,4 @@
-# Storaqge microservice GUI
+# Storage microservice GUI
 
 Front end for the image storage microservice
 
