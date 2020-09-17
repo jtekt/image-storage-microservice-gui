@@ -18,8 +18,14 @@
     <template v-else>
 
       <div class="buttons_wrapper">
-        <button type="button" @click="drop_collection()">Delete collection</button>
-        <button type="button" @click="export_collection()">Export as .xlsx</button>
+        <button type="button" @click="drop_collection()">
+          <DeleteIcon />
+          <span>Delete collection</span>
+        </button>
+        <button type="button" @click="export_collection()">
+          <DatabaseExportIcon />
+          <span>Export as .xlsx</span>
+        </button>
       </div>
 
 
@@ -64,10 +70,16 @@
 import Loader from '@moreillon/vue_loader'
 import XLSX from 'xlsx'
 
+import DeleteIcon from 'vue-material-design-icons/Delete.vue';
+import DatabaseExportIcon from 'vue-material-design-icons/DatabaseExport.vue';
+
+
 export default {
   name: 'List',
   components: {
-    Loader
+    Loader,
+    DeleteIcon,
+    DatabaseExportIcon
   },
   data(){
     return {

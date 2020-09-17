@@ -27,7 +27,7 @@
         </router-link>
 
         <template v-if="$route.params.entry_id">
-          <span>></span>
+          <ChevronRightIcon />
           <span>
             {{$route.params.entry_id}}
           </span>
@@ -159,7 +159,7 @@ nav a:hover:not(.router-link-exact-active) {
 }
 
 nav a.router-link-exact-active {
-  color: #c00000;
+  //color: #c00000;
 }
 
 nav a.router-link-exact-active:hover {
@@ -229,12 +229,18 @@ footer > div {
 }
 
 button {
+  display: inline-flex;
+  align-items: center;
   border: 1px solid #444444;
   background-color: white;
   border-radius: 0.25em;
   padding: 0.5em;
   cursor: pointer;
   transition: 0.25s;
+}
+
+button > *:not(:last-child) {
+  margin-right: 0.25em;
 }
 
 button:hover {
