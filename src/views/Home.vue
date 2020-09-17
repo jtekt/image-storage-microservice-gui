@@ -12,18 +12,17 @@
       <Loader />
     </div>
 
-    <ul v-else-if="collections.length > 0">
-      <li
-        v-for="collection in collections"
-        :key="collection.name">
+    <template v-else-if="collections.length > 0">
+
         <router-link
           class="collection"
-
-          :to="{ name: 'collection', params: {collection: collection.name} }">
+          :to="{ name: 'collection', params: {collection: collection.name} }"
+          v-for="collection in collections"
+          :key="collection.name">
           {{collection.name}}
         </router-link>
-      </li>
-    </ul>
+
+    </template>
 
     <div class="" v-else-if="collections.length < 1">
       No collections available
@@ -75,12 +74,18 @@ export default {
 
 .collection {
   display: flex;
-  padding: 0.25em 0;
-  color: #c00000;
+  padding: 0.5em;
+  margin: 0.5em 0;
+  color: currentcolor;
   text-decoration: none;
   font-weight: bold;
-
+  border: 1px solid #dddddd;
+  transition: 0.25s;
 }
 
+.collection:hover {
+  color: #c00000;
+  border-color: #c00000;
+}
 
 </style>
