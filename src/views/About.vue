@@ -1,32 +1,22 @@
 <template>
-  <div class="home">
-    <h1>About</h1>
-    <p>Storage microservice, Maxime MOREILLON</p>
-    <h2>Usage</h2>
-    <p>POST {{api_url}}/collections/{YOUR COLLECTION}</p>
-    <p>Content-Type: multipart/form-data with image as file called "image"</p>
+  <div class="about">
+    <h1>Annotation tool</h1>
+    <p>Developed by Maxime MOREILLON</p>
+    <p>Version {{version}}</p>
+    <p>Storage service URL: {{api_url || 'Undefined'}}</p>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-
+import pjson from '@/../package.json'
 export default {
   name: 'About',
-  components: {
-
-  },
-  data(){
+  data () {
     return {
-      api_url: process.env.VUE_APP_STORAGE_SERVICVE_API_URL
+      version: pjson.version,
+      shinsei_manager: process.env.VUE_APP_SHINSEI_MANAGER_URL,
+      api_url: process.env.VUE_APP_STORAGE_SERVICE_API_URL
     }
   },
-
 }
 </script>
-
-<style scoped>
-
-
-
-</style>

@@ -17,7 +17,7 @@ spec:
         image: ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
         imagePullPolicy: Always
         env:
-        - name: VUE_APP_STORAGE_SERVICVE_API_URL
+        - name: VUE_APP_STORAGE_SERVICE_API_URL
           value: "http://172.16.98.151:31221"
         - name: VUE_APP_HOMEPAGE_URL
           value: "http://172.16.98.151:31226"

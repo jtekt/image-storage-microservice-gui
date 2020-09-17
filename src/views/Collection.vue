@@ -72,7 +72,7 @@ export default {
   data(){
     return {
       collection: [],
-      api_url: process.env.VUE_APP_STORAGE_SERVICVE_API_URL
+      api_url: process.env.VUE_APP_STORAGE_SERVICE_API_URL
     }
   },
   mounted(){
