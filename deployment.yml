@@ -16,8 +16,14 @@ spec:
       - name: ${APPLICATION_NAME}
         image: ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
         imagePullPolicy: Always
+        env:
+        - name: VUE_APP_STORAGE_SERVICVE_API_URL
+          value: "http://172.16.98.151:31221"
+        - name: VUE_APP_HOMEPAGE_URL
+          value: "http://172.16.98.151:31226/banana"
         ports:
         - containerPort: 80
+
 ---
 apiVersion: v1
 kind: Service
