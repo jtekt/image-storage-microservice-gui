@@ -1,9 +1,14 @@
 <template>
   <div id="app">
+    
     <header>
       <div class="application_title">
         {{application_name}}
       </div>
+      <div class="spacer"/>
+      <a :href="homepage_url">
+        <AppsIcon />
+      </a>
     </header>
 
     <nav>
@@ -51,11 +56,18 @@
 </template>
 
 <script>
+import 'vue-material-design-icons/styles.css';
+
+import AppsIcon from 'vue-material-design-icons/Apps.vue';
 
 export default {
   name: 'App',
+  components: {
+    AppsIcon,
+  },
   data() {
     return {
+      homepage_url: process.env.VUE_APP_HOMEPAGE_URL,
       application_name: 'Image storage'
     }
   }
@@ -89,6 +101,16 @@ header {
   background-color: #444444;
   color: white;
   padding: 15px;
+  display: flex;
+}
+
+header a {
+  color: currentcolor;
+  transition: 0.25s;
+}
+
+header a:hover {
+  color: #c00000;
 }
 
 
