@@ -1,12 +1,14 @@
 <template>
   <div id="app">
-    
+
     <header>
       <div class="application_title">
         {{application_name}}
       </div>
       <div class="spacer"/>
-      <a :href="homepage_url">
+      <a
+        v-if="homepage_url"
+        :href="homepage_url">
         <AppsIcon />
       </a>
     </header>
@@ -57,7 +59,6 @@
 
 <script>
 import 'vue-material-design-icons/styles.css';
-
 import AppsIcon from 'vue-material-design-icons/Apps.vue';
 
 export default {
@@ -102,6 +103,8 @@ header {
   color: white;
   padding: 15px;
   display: flex;
+  align-items: center;
+
 }
 
 header a {

@@ -1,25 +1,11 @@
 # storage_microservice_front
 
 
-## Project setup
-```
-npm install
-```
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## Environment variables
 
-### Compiles and minifies for production
-```
-npm run build
-```
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+| Variable | Description |
+| --- | --- |
+| VUE_APP_STORAGE_SERVICVE_API_URL | The URL of the storage service |
+| VUE_APP_HOMEPAGE_URL | (OPTIONAL) URL of the application homepage |

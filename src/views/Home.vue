@@ -53,7 +53,7 @@ export default {
   methods: {
     get_collections() {
       this.$set(this.collections,'loading',true)
-      this.axios.get(`${process.env.VUE_APP_TOKUSHIMA_STORAGE_API_URL}/collections`)
+      this.axios.get(`${process.env.VUE_APP_STORAGE_SERVICVE_API_URL}/collections`)
       .then(response => {
         this.collections = []
         response.data.forEach((doc) => {

@@ -18,7 +18,7 @@ export default {
   },
   data(){
     return {
-      api_url: process.env.VUE_APP_TOKUSHIMA_STORAGE_API_URL
+      api_url: process.env.VUE_APP_STORAGE_SERVICVE_API_URL
     }
   },
 
