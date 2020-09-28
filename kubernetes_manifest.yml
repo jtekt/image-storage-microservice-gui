@@ -1,20 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ${APPLICATION_NAME}
+  name: image-storage-front
+  namespace: edge-ai
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ${APPLICATION_NAME}
+      app: image-storage-front
   template:
     metadata:
       labels:
-        app: ${APPLICATION_NAME}
+        app: image-storage-front
     spec:
       containers:
-      - name: ${APPLICATION_NAME}
-        image: ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
+      - name: image-storage-front
+        image: 172.16.98.151:5000/image-storage-front
         imagePullPolicy: Always
         env:
         - name: VUE_APP_STORAGE_SERVICE_API_URL
@@ -28,11 +29,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: ${APPLICATION_NAME}
+  name: image-storage-front
+  namespace: edge-ai
 spec:
   ports:
   - port: 80
     nodePort: 31222
   selector:
-    app: ${APPLICATION_NAME}
+    app: image-storage-front
   type: NodePort
