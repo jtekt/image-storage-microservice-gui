@@ -19,8 +19,11 @@
       <div class="buttons_wrapper">
         <button
           type="button"
+          class="dangerous"
           @click="delete_entry()">
-          Delete entry
+          <DeleteIcon />
+          <span>Delete</span>
+
         </button>
       </div>
 
@@ -57,10 +60,13 @@
 // @ is an alias to /src
 import Loader from '@moreillon/vue_loader'
 
+import DeleteIcon from 'vue-material-design-icons/Delete.vue'
+
 export default {
   name: 'List',
   components: {
-    Loader
+    Loader,
+    DeleteIcon
   },
   data(){
     return {

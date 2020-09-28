@@ -13,14 +13,20 @@
     </div>
 
     <template v-else-if="collections.length > 0">
-
-        <router-link
-          class="collection"
-          :to="{ name: 'collection', params: {collection: collection.name} }"
+      <ul>
+        <li
           v-for="collection in collections"
           :key="collection.name">
-          {{collection.name}}
-        </router-link>
+
+          <router-link
+            class="collection"
+            :to="{ name: 'collection', params: {collection: collection.name} }">
+            {{collection.name}}
+          </router-link>
+
+        </li>
+      </ul>
+
 
     </template>
 
@@ -72,20 +78,19 @@ export default {
 
 <style scoped>
 
+li {
+  margin: 1em 0;
+}
 .collection {
-  display: flex;
-  padding: 0.5em;
-  margin: 0.5em 0;
+
   color: currentcolor;
   text-decoration: none;
   font-weight: bold;
-  border: 1px solid #dddddd;
   transition: 0.25s;
 }
 
 .collection:hover {
   color: #c00000;
-  border-color: #c00000;
 }
 
 </style>

@@ -18,9 +18,12 @@
     <template v-else>
 
       <div class="buttons_wrapper">
-        <button type="button" @click="drop_collection()">
+        <button
+          class="dangerous"
+          type="button"
+          @click="drop_collection()">
           <DeleteIcon />
-          <span>Delete collection</span>
+          <span>Delete</span>
         </button>
         <button type="button" @click="export_collection()">
           <DatabaseExportIcon />

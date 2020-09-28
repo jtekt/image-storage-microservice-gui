@@ -1,23 +1,38 @@
 stages:
-  - containerization
+  - containerization-x86
+  - containerization-aarch64
   - deployment
 
 variables:
-  APPLICATION_NAME: seikaibu-storage-front
+  APPLICATION_NAME: image-storage-front
 
-containerization:
-  stage: containerization
+containerization-x86:
+  stage: containerization-x86
+  tags:
+    - "x86"
   script:
     - docker build -t ${CONTAINER_REGISTRY}/${APPLICATION_NAME} .
     - docker push ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
-    - docker image rm ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
+
+containerization-aarch64:
+  stage: containerization-aarch64
+  tags:
+    - "aarch64"
+  script:
+    - >
+      docker build
+      --build-arg HTTP_PROXY=http://172.16.98.151:8118
+      --build-arg HTTPS_PROXY=http://172.16.98.151:8118
+      -t ${CONTAINER_REGISTRY}/${APPLICATION_NAME}-aarch64 .
+    - docker push ${CONTAINER_REGISTRY}/${APPLICATION_NAME}-aarch64
 
 deployment:
   stage: deployment
   script:
-    - envsubst < deployment.yml | kubectl apply -f -
+    - envsubst < kubernetes_manifest.yml | kubectl apply -f -
     - kubectl rollout restart deployment/${APPLICATION_NAME}
   environment:
-    name: production
+    name: staging
     kubernetes:
+      # namespace Obtained from GitLab
       namespace: ${KUBERNETES_NAMESPACE}

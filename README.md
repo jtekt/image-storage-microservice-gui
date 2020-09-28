@@ -15,5 +15,5 @@ Front end for the image storage microservice
 ### Docker
 
 ```
-docker run -e VUE_APP_STORAGE_SERVICVE_API_URL=http://your-db-url 172.16.98.151:5000/seikaibu-storage-front
+docker run -e VUE_APP_STORAGE_SERVICVE_API_URL=http://storage-ms-url 172.16.98.151:5000/seikaibu-storage-front
 ```

@@ -248,4 +248,14 @@ button:hover {
   border-color: #c00000;
 }
 
+button.dangerous {
+  color: #c00000;
+  border-color: #c00000;
+}
+
+button.dangerous:hover {
+  background-color: #c00000;
+  color: white;
+}
+
 </style>
