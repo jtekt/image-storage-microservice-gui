@@ -5,15 +5,11 @@
 
     <div
       class="error"
-      v-if="collection.error">
+      v-if="error">
       Error loading collection
     </div>
 
-    <div
-      class="loader_container"
-      v-else-if="collection.loading">
-      <Loader />
-    </div>
+
 
     <template v-else>
 
@@ -31,31 +27,43 @@
         </button>
       </div>
 
+      <template v-if="collection.length > 0">
+        <table >
+          <tr>
+            <th>Image</th>
+            <th>Time</th>
+            <th>File name</th>
+          </tr>
 
-      <table v-if="collection.length > 0">
-        <tr>
-          <th>Image</th>
-          <th>Time</th>
-          <th>File name</th>
-        </tr>
-
-        <tr
-          class="doc"
-          v-for="doc in collection"
-          :key="doc._id"
-          @click="$router.push({path: `/${$route.params.collection}/${doc._id}`})">
-
-
-          <td>
-            <img :src="`${api_url}/images/${$route.params.collection}/${doc.image}`">
-          </td>
-          <td>{{format_date(doc.time)}}</td>
-          <td>{{doc.image}}</td>
+          <tr
+            class="doc"
+            v-for="doc in collection"
+            :key="doc._id"
+            @click="$router.push({path: `/${$route.params.collection}/${doc._id}`})">
 
 
-        </tr>
-      </table>
+            <td>
+              <img :src="`${api_url}/images/${$route.params.collection}/${doc.image}`">
+            </td>
+            <td>{{format_date(doc.time)}}</td>
+            <td>{{doc.image}}</td>
 
+
+          </tr>
+
+        </table>
+
+        <div
+          class="loader_container"
+          v-if="loading">
+          <Loader />
+        </div>
+
+        <div v-else-if="!all_loaded" class="loader_container">
+          <button type="button" @click="get_list()">Load more</button>
+        </div>
+
+      </template>
       <div class="" v-else>
         Collection is empty
       </div>
@@ -86,34 +94,51 @@ export default {
   },
   data(){
     return {
+      loading: false,
+      error: null,
       collection: [],
-      api_url: process.env.VUE_APP_STORAGE_SERVICE_API_URL
+      api_url: process.env.VUE_APP_STORAGE_SERVICE_API_URL,
+      batch_size: 100,
+      all_loaded: false,
     }
   },
   mounted(){
+    this.clear_list()
     this.get_list()
   },
   beforeRouteUpdate (to, from, next) {
-    this.get_list(to.query.collection)
+    this.clear_list()
+    this.get_list()
     next()
   },
 
   methods: {
+    clear_list(){
+      this.collection.splice(0,this.collection.length)
+      this.all_loaded = false
+    },
     get_list(){
-      this.$set(this.collection,'loading',true)
-      this.axios.get(`${this.api_url}/collections/${this.$route.params.collection}`)
+      this.loading = true
+      const url = `${this.api_url}/collections/${this.$route.params.collection}`
+      const params = {
+        start_index: this.collection.length,
+        batch_size: this.batch_size,
+      }
+      this.axios.get(url, {params})
       .then(response => {
-        this.collection = []
+
         response.data.forEach((doc) => {
           this.collection.push(doc)
-        });
+        })
+
+        if(response.data.length < this.batch_size) this.all_loaded = true
       })
       .catch(error =>{
-        this.$set(this.collection,'error',true)
+        this.error = true
         if(error.response) console.log(error.response.data)
         else console.log(error)
       })
-      .finally(()=>{this.$set(this.collection,'loading',false)})
+      .finally(()=>{this.loading = false})
     },
     export_collection(){
       var workbook = XLSX.utils.book_new()
