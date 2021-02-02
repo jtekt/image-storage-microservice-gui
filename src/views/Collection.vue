@@ -12,6 +12,9 @@
 
 
     <template v-else>
+      <p v-if="true">
+        {{count}} Item(s)
+      </p>
 
       <div class="buttons_wrapper">
         <button
@@ -23,7 +26,7 @@
         </button>
         <button type="button" @click="export_collection()">
           <DatabaseExportIcon />
-          <span>Export as .xlsx</span>
+          <span>Export</span>
         </button>
       </div>
 
@@ -79,7 +82,7 @@
 <script>
 // @ is an alias to /src
 import Loader from '@moreillon/vue_loader'
-import XLSX from 'xlsx'
+//import XLSX from 'xlsx'
 
 import DeleteIcon from 'vue-material-design-icons/Delete.vue';
 import DatabaseExportIcon from 'vue-material-design-icons/DatabaseExport.vue';
@@ -100,13 +103,16 @@ export default {
       api_url: process.env.VUE_APP_STORAGE_SERVICE_API_URL,
       batch_size: 100,
       all_loaded: false,
+      count: 0,
     }
   },
   mounted(){
+    this.get_db_document_count()
     this.clear_list()
     this.get_list()
   },
   beforeRouteUpdate (to, from, next) {
+    this.get_db_document_count()
     this.clear_list()
     this.get_list()
     next()
@@ -116,6 +122,17 @@ export default {
     clear_list(){
       this.collection.splice(0,this.collection.length)
       this.all_loaded = false
+    },
+    get_db_document_count(){
+      const url = `${this.api_url}/collections/${this.$route.params.collection}/count`
+      this.axios.get(url)
+      .then(response => {
+        this.count = response.data.documents
+      })
+      .catch(error =>{
+        if(error.response) console.log(error.response.data)
+        else console.log(error)
+      })
     },
     get_list(){
       this.loading = true
@@ -141,10 +158,13 @@ export default {
       .finally(()=>{this.loading = false})
     },
     export_collection(){
+      /*
       var workbook = XLSX.utils.book_new()
       var ws1 = XLSX.utils.json_to_sheet(this.collection)
       XLSX.utils.book_append_sheet(workbook, ws1, "Sheet1")
       XLSX.writeFile(workbook, 'export.xlsx')
+      */
+      window.location.href=`${this.api_url}/collections/${this.$route.params.collection}/export`
     },
     drop_collection(){
       if(!confirm('ホンマに？')) return
