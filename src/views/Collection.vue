@@ -31,30 +31,50 @@
       </div>
 
       <template v-if="collection.length > 0">
-        <table >
-          <tr>
-            <th>Image</th>
-            <th>Time</th>
-            <th>File name</th>
-          </tr>
+        <div class="table_wrapper" >
+          <table >
+            <tr>
+              <th>Image</th>
+              <th>Time</th>
+              <th>File name</th>
+              <th v-for="header in table_headers" :key="`header_${header}`">{{header}}</th>
+            </tr>
 
-          <tr
-            class="doc"
-            v-for="doc in collection"
-            :key="doc._id"
-            @click="$router.push({path: `/${$route.params.collection}/${doc._id}`})">
-
-
-            <td>
-              <img :src="`${api_url}/images/${$route.params.collection}/${doc.image}`">
-            </td>
-            <td>{{format_date(doc.time)}}</td>
-            <td>{{doc.image}}</td>
+            <tr
+              class="doc"
+              v-for="doc in collection"
+              :key="doc._id"
+              @click="$router.push({path: `/${$route.params.collection}/${doc._id}`})">
 
 
-          </tr>
+              <td>
+                <img :src="`${api_url}/images/${$route.params.collection}/${doc.image}`">
+              </td>
+              <td>
+                <div class="nowrap">
+                  {{format_date(doc.time)}}
+                </div>
+              </td>
+              <td>
+                <div class="nowrap">
+                  {{doc.image}}
+                </div>
+              </td>
 
-        </table>
+              <td
+                v-for="key in table_headers"
+                :key="`${doc._id}_${key}`">
+                {{doc[key]}}
+              </td>
+
+
+            </tr>
+
+          </table>
+
+
+
+        </div>
 
         <div
           class="loader_container"
@@ -65,7 +85,7 @@
         <div v-else-if="!all_loaded" class="loader_container">
           <button type="button" @click="get_list()">Load more</button>
         </div>
-
+        
       </template>
       <div class="" v-else>
         Collection is empty
@@ -104,6 +124,7 @@ export default {
       batch_size: 100,
       all_loaded: false,
       count: 0,
+      table_headers: [],
     }
   },
   mounted(){
@@ -146,6 +167,13 @@ export default {
 
         response.data.forEach((doc) => {
           this.collection.push(doc)
+
+          const ignored_headers = ['_id', 'time', 'image']
+          for (var key in doc) {
+            if(!this.table_headers.includes(key) && !ignored_headers.includes(key)) {
+              this.table_headers.push(key)
+            }
+          }
         })
 
         if(response.data.length < this.batch_size) this.all_loaded = true
@@ -191,18 +219,25 @@ export default {
 
     }
   },
+  computed: {
+
+  }
 }
 </script>
 
 <style scoped>
 
+.table_wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
 table {
   border-collapse: collapse;
   width: 100%;
   text-align: center;
 }
 td, th {
-  padding: 0.25em;
+  padding: 0.25em 0.5em;
 }
 tr:not(:last-child){
   border-bottom: 1px solid #dddddd;
@@ -225,6 +260,10 @@ tr:not(:first-child):hover {
 
 .buttons_wrapper button:not(:last-child) {
   margin-right: 1em;
+}
+
+.nowrap {
+  white-space: nowrap;
 }
 
 </style>
