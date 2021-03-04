@@ -33,10 +33,12 @@
 
       <h2>Image metadata</h2>
       <table>
+        <!--
         <tr>
           <td>URL</td>
           <td>{{image_src}}</td>
         </tr>
+        -->
         <tr
           v-for="(value, key) in entry"
           v-bind:key="key">
@@ -82,9 +84,7 @@ export default {
   methods: {
     get_entry(){
       this.loading = true
-      let collection = this.$route.params.collection
-      let entry_id = this.$route.params.entry_id
-      let url = `${this.api_url}/collections/${collection}/${entry_id}`
+      const url = `${this.api_url}/collections/${this.collection_name}/images/${this.entry_id}`
       this.axios.get(url)
       .then(response => {
         this.entry = response.data
@@ -99,20 +99,18 @@ export default {
     },
     delete_entry(){
 
-      if(confirm('ホンマに？')) {
-        let collection = this.$route.params.collection
-        let entry_id = this.$route.params.entry_id
-        let url = `${this.api_url}/collections/${collection}/${entry_id}`
+      if(!confirm('ホンマに？')) return
+      const url = `${this.api_url}/collections/${this.collection_name}/images/${this.entry_id}`
 
-        this.axios.delete(url)
-        .then( () => {
-          this.$router.push({name: 'collection', params: {collection: collection}})
-        })
-        .catch(error =>{
-          if(error.response) console.log(error.response.data)
-          else console.log(error)
-        })
-      }
+      this.axios.delete(url)
+      .then( () => {
+        this.$router.push({name: 'collection', params: {collection: this.collection}})
+      })
+      .catch(error =>{
+        if(error.response) console.log(error.response.data)
+        else console.log(error)
+        alert(`Failed to delete entry`)
+      })
     },
     format_date(date){
 
@@ -130,9 +128,16 @@ export default {
     },
   },
   computed: {
+    collection_name(){
+      return this.$route.params.collection
+    },
+    entry_id(){
+      return this.$route.params.entry_id
+    },
     image_src(){
-      return `${this.api_url}/images/${this.$route.params.collection}/${this.entry.image}`
-    }
+      return `${this.api_url}/collections/${this.collection_name}/images/${this.entry_id}/image`
+    },
+
   }
 }
 </script>

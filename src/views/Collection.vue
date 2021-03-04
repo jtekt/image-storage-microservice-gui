@@ -1,7 +1,7 @@
 <template>
   <div class="home">
 
-    <h1>{{$route.params.collection}}</h1>
+    <h1>{{collection_name}}</h1>
 
     <div
       class="error"
@@ -13,7 +13,7 @@
 
     <template v-else>
       <p v-if="true">
-        {{count}} Item(s)
+        Collection {{collection_name}} contains {{count}} item(s)
       </p>
 
       <div class="buttons_wrapper">
@@ -28,7 +28,20 @@
           <DatabaseExportIcon />
           <span>Export</span>
         </button>
+
+        <div class="spacer"/>
+
+        <input type="text" v-model="search_query" placeholder="JSON">
+        <button
+          type="button"
+          @click="search()"
+          :disabled="!search_valid">
+          <MagnifyIcon />
+          <span>Search</span>
+        </button>
       </div>
+
+
 
       <template v-if="collection.length > 0">
         <div class="table_wrapper" >
@@ -44,11 +57,11 @@
               class="doc"
               v-for="doc in collection"
               :key="doc._id"
-              @click="$router.push({path: `/${$route.params.collection}/${doc._id}`})">
+              @click="$router.push({path: `/${collection_name}/${doc._id}`})">
 
 
               <td>
-                <img :src="`${api_url}/images/${$route.params.collection}/${doc.image}`">
+                <img :src="`${api_url}/images/${collection_name}/${doc.image}`">
               </td>
               <td>
                 <div class="nowrap">
@@ -85,10 +98,10 @@
         <div v-else-if="!all_loaded" class="loader_container">
           <button type="button" @click="get_list()">Load more</button>
         </div>
-        
+
       </template>
       <div class="" v-else>
-        Collection is empty
+        No data
       </div>
     </template>
 
@@ -106,6 +119,7 @@ import Loader from '@moreillon/vue_loader'
 
 import DeleteIcon from 'vue-material-design-icons/Delete.vue';
 import DatabaseExportIcon from 'vue-material-design-icons/DatabaseExport.vue';
+import MagnifyIcon from 'vue-material-design-icons/Magnify.vue';
 
 
 export default {
@@ -113,10 +127,12 @@ export default {
   components: {
     Loader,
     DeleteIcon,
-    DatabaseExportIcon
+    DatabaseExportIcon,
+    MagnifyIcon,
   },
   data(){
     return {
+      search_query: null,
       loading: false,
       error: null,
       collection: [],
@@ -145,7 +161,7 @@ export default {
       this.all_loaded = false
     },
     get_db_document_count(){
-      const url = `${this.api_url}/collections/${this.$route.params.collection}/count`
+      const url = `${this.api_url}/collections/${this.collection_name}`
       this.axios.get(url)
       .then(response => {
         this.count = response.data.documents
@@ -157,18 +173,22 @@ export default {
     },
     get_list(){
       this.loading = true
-      const url = `${this.api_url}/collections/${this.$route.params.collection}`
-      const params = {
+      const url = `${this.api_url}/collections/${this.collection_name}/images`
+
+      let params = {
         start_index: this.collection.length,
         batch_size: this.batch_size,
       }
+
+      if(this.search_query) params.filter = this.search_query
+
       this.axios.get(url, {params})
       .then(response => {
 
         response.data.forEach((doc) => {
           this.collection.push(doc)
 
-          const ignored_headers = ['_id', 'time', 'image']
+          const ignored_headers = ['_id', 'time', 'image', 'image_url']
           for (var key in doc) {
             if(!this.table_headers.includes(key) && !ignored_headers.includes(key)) {
               this.table_headers.push(key)
@@ -185,18 +205,16 @@ export default {
       })
       .finally(()=>{this.loading = false})
     },
+    search(){
+      this.clear_list()
+      this.get_list()
+    },
     export_collection(){
-      /*
-      var workbook = XLSX.utils.book_new()
-      var ws1 = XLSX.utils.json_to_sheet(this.collection)
-      XLSX.utils.book_append_sheet(workbook, ws1, "Sheet1")
-      XLSX.writeFile(workbook, 'export.xlsx')
-      */
-      window.location.href=`${this.api_url}/collections/${this.$route.params.collection}/export`
+      window.location.href=`${this.api_url}/collections/${this.collection_name}/export`
     },
     drop_collection(){
       if(!confirm('ホンマに？')) return
-      this.axios.delete(`${this.api_url}/collections/${this.$route.params.collection}`)
+      this.axios.delete(`${this.api_url}/collections/${this.collection_name}`)
       .then(() => {
         this.$router.push({name: 'home'})
       })
@@ -220,7 +238,19 @@ export default {
     }
   },
   computed: {
+    collection_name(){
+      return this.$route.params.collection
+    },
+    search_valid(){
+      if(!this.search_query) return true
+      try {
+        JSON.parse(this.search_query)
+      } catch (e) {
+        return false
+      }
 
+      return true
+    }
   }
 }
 </script>
@@ -256,10 +286,21 @@ tr:not(:first-child):hover {
 
 .buttons_wrapper {
   margin: 1em 0;
+  display: flex;
+  align-items: center;
 }
 
-.buttons_wrapper button:not(:last-child) {
+.spacer {
+  flex-grow: 1;
+}
+
+.buttons_wrapper > *:not(:last-child) {
   margin-right: 1em;
+}
+
+.buttons_wrapper input[type="text"] {
+  padding: 0.25em;
+  flex-grow: 1;
 }
 
 .nowrap {

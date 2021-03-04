@@ -16,12 +16,12 @@
       <ul>
         <li
           v-for="collection in collections"
-          :key="collection.name">
+          :key="collection">
 
           <router-link
             class="collection"
-            :to="{ name: 'collection', params: {collection: collection.name} }">
-            {{collection.name}}
+            :to="{ name: 'collection', params: {collection} }">
+            {{collection}}
           </router-link>
 
         </li>

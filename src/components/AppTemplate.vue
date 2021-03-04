@@ -258,4 +258,10 @@ button.dangerous:hover {
   color: white;
 }
 
+button:disabled {
+  color: #dddddd;
+  border-color: #dddddd;
+  cursor: not-allowed;
+}
+
 </style>
