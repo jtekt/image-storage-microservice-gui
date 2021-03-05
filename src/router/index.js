@@ -17,6 +17,11 @@ Vue.use(VueRouter)
     component: () => import('../views/About.vue')
   },
   {
+    path: '/import',
+    name: 'import',
+    component: () => import('../views/Import.vue')
+  },
+  {
     path: '/:collection',
     name: 'collection',
     component: () => import('../views/Collection.vue')

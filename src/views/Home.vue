@@ -2,6 +2,10 @@
   <div class="home">
     <h1>Collections</h1>
 
+    <p>
+      <router-link :to="{ name: 'import' }">Import a collection</router-link>
+    </p>
+
     <div class="error" v-if="collections.error">
       Error loading collections
     </div>

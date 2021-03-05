@@ -3,6 +3,7 @@
 
     <h1>{{collection_name}}</h1>
 
+
     <div
       class="error"
       v-if="error">
