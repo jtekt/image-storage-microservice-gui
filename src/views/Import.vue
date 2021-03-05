@@ -3,23 +3,42 @@
     <h1>Import</h1>
 
     <form class="" @submit.prevent="get_origin_collections()">
-      <label for="">Origin</label>
-      <input type="text" v-model="origin">
-      <input type="submit" value="Query collections">
+      <p>
+        <label for="">Origin</label>
+        <input type="text" v-model="origin">
+        <input type="submit" value="Query collections">
+      </p>
+
     </form>
 
     <template v-if="origin_collections.length > 0">
       <form class=""
         @submit.prevent="collection_import()">
-        <label for="">Collection</label>
-        <select class="" v-model="collection">
-          <option
-            v-for="corigin_ollection in origin_collections"
-            :key="corigin_ollection">
-            {{corigin_ollection}}
-          </option>
-        </select>
-        <input type="submit" value="import">
+        <p class="">
+          <label for="">Remote collection</label>
+          <select class="" v-model="remote_collection" @change="local_collection = remote_collection">
+            <option
+              v-for="corigin_ollection in origin_collections"
+              :key="corigin_ollection">
+              {{corigin_ollection}}
+            </option>
+          </select>
+        </p>
+
+        <template v-if="remote_collection">
+          <p class="" v-if="remote_collection">
+            <label for="">Local collection</label>
+            <input type="text" v-model="local_collection">
+
+          </p>
+
+          <p class="">
+            <input type="submit" value="import">
+          </p>
+        </template>
+
+
+
 
       </form>
     </template>
@@ -49,7 +68,8 @@ export default {
   data(){
     return {
       origin_collections: [],
-      collection: null,
+      remote_collection: '',
+      local_collection: '',
       origin: 'http://172.16.99.115:31221',
       progress: 0,
     }
@@ -87,7 +107,8 @@ export default {
       const options = {
         params: {
           origin: this.origin,
-          collection: this.collection,
+          remote_collection: this.remote_collection,
+          local_collection: this.local_collection,
         }
       }
       this.axios.get(url, options)
@@ -106,10 +127,7 @@ export default {
 
 <style scoped>
 
-form {
-  margin: 1em 0;
-}
-form > *:not(:last-child) {
+form p > *:not(:last-child) {
   margin-right: 0.5em;
 }
 
