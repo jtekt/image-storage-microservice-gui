@@ -126,7 +126,7 @@ export default {
 
 .collections_wrapper {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(10em,1fr));
+  grid-template-columns: repeat(5, 1fr);
   grid-gap: 1em;
 }
 
