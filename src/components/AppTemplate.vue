@@ -1,5 +1,6 @@
 <template>
   <div class="application_template">
+
     <header>
       <div class="application_title">
         {{application_name}}
@@ -175,7 +176,16 @@ main {
   margin: 0 15px;
 }
 
+main a {
+  text-decoration: none;
+  color: #c00000;
+  font-weight: bold;
+  transition: 0.25s;
+}
 
+main a:hover {
+  color: #666666;
+}
 
 footer {
   margin-top: 1em;
@@ -228,7 +238,11 @@ footer > div {
   flex-grow: 1;
 }
 
-button {
+button,
+.button {
+  font-size: 0.9em;
+  color: currentcolor;
+  font-weight: normal;
   display: inline-flex;
   align-items: center;
   border: 1px solid #444444;
@@ -239,26 +253,31 @@ button {
   transition: 0.25s;
 }
 
-button > *:not(:last-child) {
+button > *:not(:last-child),
+.button > *:not(:last-child) {
   margin-right: 0.25em;
 }
 
-button:hover {
+button:hover,
+.button:hover  {
   color: #c00000;
   border-color: #c00000;
 }
 
-button.dangerous {
+button.dangerous,
+.button.dangerous {
   color: #c00000;
   border-color: #c00000;
 }
 
-button.dangerous:hover {
+button.dangerous:hover,
+.button.dangerous:hover {
   background-color: #c00000;
   color: white;
 }
 
-button:disabled {
+button:disabled,
+.button:disabled {
   color: #dddddd;
   border-color: #dddddd;
   cursor: not-allowed;

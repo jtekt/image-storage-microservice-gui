@@ -6,14 +6,15 @@
 
     <div
       class="error"
-      v-if="error">
+      v-if="error && !loading">
       Error loading collection
     </div>
 
 
 
-    <template v-else>
-      <p v-if="true">
+    <template v-if="!error">
+
+      <p>
         Collection {{collection_name}} contains {{count}} item(s)
       </p>
 
@@ -80,28 +81,29 @@
                 :key="`${doc._id}_${key}`">
                 {{doc[key]}}
               </td>
-
-
             </tr>
-
           </table>
 
-
-
         </div>
+
+
 
         <div
-          class="loader_container"
-          v-if="loading">
-          <Loader />
-        </div>
-
-        <div v-else-if="!all_loaded" class="loader_container">
+          v-if="!all_loaded && !loading"
+          class="load_more_container">
           <button type="button" @click="get_list()">Load more</button>
         </div>
 
       </template>
-      <div class="" v-else>
+
+      <div
+        class="loader_container"
+        v-if="loading">
+        <Loader />
+      </div>
+
+
+      <div class="" v-if="!loading && !error && collection.length === 0">
         No data
       </div>
     </template>
@@ -118,9 +120,9 @@
 import Loader from '@moreillon/vue_loader'
 //import XLSX from 'xlsx'
 
-import DeleteIcon from 'vue-material-design-icons/Delete.vue';
-import DatabaseExportIcon from 'vue-material-design-icons/DatabaseExport.vue';
-import MagnifyIcon from 'vue-material-design-icons/Magnify.vue';
+import DeleteIcon from 'vue-material-design-icons/Delete.vue'
+import DatabaseExportIcon from 'vue-material-design-icons/DatabaseExport.vue'
+import MagnifyIcon from 'vue-material-design-icons/Magnify.vue'
 
 
 export default {
@@ -308,4 +310,8 @@ tr:not(:first-child):hover {
   white-space: nowrap;
 }
 
+.load_more_container{
+  margin-top: 1em;
+  text-align: center;
+}
 </style>

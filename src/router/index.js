@@ -9,7 +9,7 @@ Vue.use(VueRouter)
   {
     path: '/',
     name: 'home',
-    component: () => import('../views/Home.vue')
+    component: () => import('../views/CollectionList.vue')
   },
   {
     path: '/about',
