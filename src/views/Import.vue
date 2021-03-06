@@ -2,55 +2,71 @@
   <div class="home">
     <h1>Import</h1>
 
-    <form class="" @submit.prevent="get_origin_collections()">
-      <p>
-        <label for="">Origin</label>
-        <input type="text" v-model="origin">
-        <input type="submit" value="Query collections">
-      </p>
+    <div class="import_wrapper">
+      <div class="service origin">
+        <h2>Origin</h2>
+        <div class="input_wrapper">
+          <label for="">URL</label>
+          <input type="text" v-model="origin">
+        </div>
 
-    </form>
 
-    <template v-if="origin_collections.length > 0">
-      <form class=""
-        @submit.prevent="collection_import()">
-        <p class="">
-          <label for="">Remote collection</label>
-          <select class="" v-model="remote_collection" @change="local_collection = remote_collection">
-            <option
-              v-for="corigin_ollection in origin_collections"
-              :key="corigin_ollection">
-              {{corigin_ollection}}
-            </option>
-          </select>
-        </p>
 
-        <template v-if="remote_collection">
-          <p class="" v-if="remote_collection">
-            <label for="">Local collection</label>
-            <input type="text" v-model="local_collection">
+        <button type="button" @click="get_origin_collections()">Get collections</button>
 
-          </p>
-
-          <p class="">
-            <input type="submit" value="import">
-          </p>
+        <template v-if="origin_collections.length > 0">
+          <div class="">
+            <label for="">Remote collection</label>
+            <select class=""
+              v-model="remote_collection"
+              @change="local_collection = remote_collection">
+              <option
+                v-for="corigin_ollection in origin_collections"
+                :key="corigin_ollection">
+                {{corigin_ollection}}
+              </option>
+            </select>
+          </div>
         </template>
 
-
-
-
-      </form>
-    </template>
-
-    <template v-if="progress > 0">
-      <progress max="100" :value="progress"></progress>
-    </template>
-    <template v-if="progress === 100">
-      <div class="">
-        Import successful
       </div>
-    </template>
+
+      <div class="transfer">
+        <div class="">
+          <button
+            type="button"
+            @click="collection_import()"
+            :disabled="!remote_collection">
+            <DatabaseImportIcon />
+            <span>Transfer</span>
+          </button>
+        </div>
+        <template v-if="progress > 0">
+          <progress max="100" :value="progress"></progress>
+        </template>
+        <template v-if="progress === 100">
+          <div class="success">
+            Import successful
+          </div>
+        </template>
+      </div>
+
+      <div class="service destination">
+        <h2>Destination</h2>
+        <div class="input_wrapper">
+          <label for="">Local collection</label>
+          <input type="text" v-model="local_collection" placeholder="Collection name">
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
 
 
 
@@ -59,11 +75,12 @@
 
 <script>
 // @ is an alias to /src
+import DatabaseImportIcon from 'vue-material-design-icons/DatabaseImport.vue'
 
 export default {
   name: 'Home',
   components: {
-
+    DatabaseImportIcon,
   },
   data(){
     return {
@@ -127,8 +144,52 @@ export default {
 
 <style scoped>
 
-form p > *:not(:last-child) {
+.import_wrapper{
+  display: flex;
+  align-items: center;
+}
+
+.service_icon {
+  font-size: 200%;
+}
+
+.import_wrapper > :is(.service, .transfer) {
+  flex-grow: 1;
+  flex-basis: 0;
+
+  display: flex;
+  //justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.service {
+  border: 1px solid #dddddd;
+  border-radius: 0.5em;
+  padding: 0.5em 1em;
+  height: 12em;
+}
+
+.import_wrapper > * > * {
+  margin: 0.5em;
+}
+
+label {
   margin-right: 0.5em;
+}
+
+.success {
+  color: #00c000;
+  font-weight: bold;
+}
+
+.input_wrapper {
+  width: 100%;
+  display: flex;
+}
+
+.input_wrapper input {
+  flex-grow: 1;
 }
 
 </style>
