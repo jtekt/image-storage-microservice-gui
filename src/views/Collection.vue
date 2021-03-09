@@ -52,7 +52,14 @@
               <th>Image</th>
               <th>Time</th>
               <th>File name</th>
-              <th v-for="header in table_headers" :key="`header_${header}`">{{header}}</th>
+              <th
+                v-for="header in table_headers"
+                :key="`header_${header}`">
+                <div class="nonstandard_proprety">
+                  {{header}}
+                </div>
+
+              </th>
             </tr>
 
             <tr
@@ -79,7 +86,10 @@
               <td
                 v-for="key in table_headers"
                 :key="`${doc._id}_${key}`">
-                {{doc[key]}}
+                <div class="nonstandard_proprety">
+                  {{property_formatting(doc[key])}}
+                </div>
+
               </td>
             </tr>
           </table>
@@ -238,6 +248,10 @@ export default {
       }
       return new Date(date).toLocaleString('ja-JP', options)
 
+    },
+    property_formatting(property){
+      if(['string', 'number', 'boolean'].includes(typeof(property))) return property
+      else return typeof(property)
     }
   },
   computed: {
@@ -283,6 +297,10 @@ tr:not(:first-child):hover {
   background-color: #eeeeee;
 }
 
+td {
+  white-space: nowrap;
+}
+
 .doc img {
   width: 5em;
 }
@@ -306,7 +324,10 @@ tr:not(:first-child):hover {
   flex-grow: 1;
 }
 
-.nowrap {
+.nonstandard_proprety {
+  max-width: 8em;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
