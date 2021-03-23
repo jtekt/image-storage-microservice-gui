@@ -87,7 +87,7 @@ export default {
       origin_collections: [],
       remote_collection: '',
       local_collection: '',
-      origin: 'http://172.16.99.115:31221',
+      origin: 'http://10.34.99.193:31221',
       progress: 0,
     }
   },
@@ -100,12 +100,22 @@ export default {
     }
   },
   methods: {
-    get_current_collections(){
-
+    parse_orign_url(){
+      let origin
+      try {
+        origin = new URL(this.origin).origin
+      } catch (e) {
+        console.error(e)
+        return false
+      }
+      return origin
     },
     get_origin_collections(){
+      const origin = this.parse_orign_url()
+      if(!origin) return alert('Invalid URL')
+
       this.origin_collections = []
-      const url = `${this.origin}/collections`
+      const url = `${origin}/collections`
       this.axios.get(url)
       .then(response => {
         response.data.forEach((collection) => {
@@ -120,10 +130,13 @@ export default {
       })
     },
     collection_import() {
+      const origin = this.parse_orign_url()
+      if(!origin) return alert('Invalid URL')
+
       const url = `${process.env.VUE_APP_STORAGE_SERVICE_API_URL}/collections/import`
       const options = {
         params: {
-          origin: this.origin,
+          origin,
           remote_collection: this.remote_collection,
           local_collection: this.local_collection,
         }
@@ -161,6 +174,11 @@ export default {
   //justify-content: center;
   align-items: center;
   flex-direction: column;
+}
+
+.transfer {
+  margin-top: 2em;
+  align-self: flex-start;
 }
 
 .service {
