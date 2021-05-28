@@ -33,12 +33,10 @@
 
       <h2>Image metadata</h2>
       <table>
-        <!--
         <tr>
-          <td>URL</td>
+          <td>Image URL</td>
           <td>{{image_src}}</td>
         </tr>
-        -->
         <tr
           v-for="(value, key) in entry"
           v-bind:key="key">
@@ -86,14 +84,11 @@ export default {
       this.loading = true
       const url = `${this.api_url}/collections/${this.collection_name}/images/${this.entry_id}`
       this.axios.get(url)
-      .then(response => {
-        this.entry = response.data
-
-      })
+      .then(response => { this.entry = response.data })
       .catch(error =>{
         this.error = true
-        if(error.response) console.log(error.response.data)
-        else console.log(error)
+        if(error.response) console.error(error.response.data)
+        else console.error(error)
       })
       .finally(() => this.loading = false)
     },
@@ -103,18 +98,16 @@ export default {
       const url = `${this.api_url}/collections/${this.collection_name}/images/${this.entry_id}`
 
       this.axios.delete(url)
-      .then( () => {
-        this.$router.push({name: 'collection', params: {collection: this.collection}})
-      })
+      .then( () => { this.$router.push({name: 'collection', params: {collection: this.collection_name}}) })
       .catch(error =>{
-        if(error.response) console.log(error.response.data)
-        else console.log(error)
+        if(error.response) console.error(error.response.data)
+        else console.error(error)
         alert(`Failed to delete entry`)
       })
     },
     format_date(date){
 
-      let options = {
+      const options = {
         hour12: false,
         year:'numeric',
         month:'2-digit',

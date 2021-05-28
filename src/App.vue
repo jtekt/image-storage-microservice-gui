@@ -1,12 +1,9 @@
 <template>
-  <div id="app">
-    <AppTemplate application_name="Image storage" />
-  </div>
+  <AppTemplate application_name="Image storage" />
 </template>
 
 <script>
 import AppTemplate from '@/components/AppTemplate.vue'
-
 
 export default {
   name: 'App',
@@ -15,7 +12,7 @@ export default {
   },
   data() {
     return {
-      application_name: 'Annotation tool'
+
     }
   }
 

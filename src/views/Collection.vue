@@ -70,7 +70,7 @@
 
 
               <td>
-                <img :src="`${api_url}/images/${collection_name}/${doc.image}`">
+                <img :src="`${api_url}/collections/${collection_name}/images/${doc._id}/image`">
               </td>
               <td>
                 <div class="nowrap">

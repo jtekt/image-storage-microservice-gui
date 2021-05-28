@@ -13,8 +13,8 @@
       </a>
     </header>
 
+    <!-- Navigation is breadcrumbs -->
     <nav>
-
       <router-link :to="{ name: 'home' }">
         Collections
       </router-link>
@@ -42,9 +42,6 @@
         <InformationOutlineIcon />
         <span>Info</span>
       </router-link>
-
-
-
     </nav>
 
     <main>
@@ -68,10 +65,10 @@
 </template>
 
 <script>
-import 'vue-material-design-icons/styles.css';
-import AppsIcon from 'vue-material-design-icons/Apps.vue';
-import ChevronRightIcon from 'vue-material-design-icons/ChevronRight.vue';
-import InformationOutlineIcon from 'vue-material-design-icons/InformationOutline.vue';
+import 'vue-material-design-icons/styles.css'
+import AppsIcon from 'vue-material-design-icons/Apps.vue'
+import ChevronRightIcon from 'vue-material-design-icons/ChevronRight.vue'
+import InformationOutlineIcon from 'vue-material-design-icons/InformationOutline.vue'
 
 export default {
   name: 'AppTemplate',
@@ -100,7 +97,6 @@ body {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
 }
 
 .material-design-icon > * {
