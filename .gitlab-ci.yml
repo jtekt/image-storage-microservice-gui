@@ -1,3 +1,8 @@
+stages:
+  - containerization-x86
+  - containerization-aarch64
+  - deployment
+
 variables:
   APPLICATION_NAME: image-storage-front-vuetify
   SERVICE_PORT: 31228
