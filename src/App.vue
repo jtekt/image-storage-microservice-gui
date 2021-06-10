@@ -4,7 +4,7 @@
       app
       color="primary"
       dark >
-      <v-app-bar-title>Image storage service GUI</v-app-bar-title>
+      <v-app-bar-title>Image storage service GUI (Vuetify version prototype)</v-app-bar-title>
 
     </v-app-bar>
 
