@@ -1,6 +1,10 @@
 <template>
   <v-card>
-    <v-card-title>{{item_id}}</v-card-title>
+
+    <BreadCrumbs />
+
+    <!--<v-card-title>{{item_id}}</v-card-title>-->
+
 
     <v-card-text>
       <v-img
@@ -27,6 +31,7 @@
 </template>
 
 <script>
+import BreadCrumbs from '@/components/BreadCrumbs.vue'
 export default {
   name: 'Item',
   data(){
@@ -38,7 +43,7 @@ export default {
   },
 
   components: {
-
+    BreadCrumbs,
   },
   mounted(){
     this.get_item()

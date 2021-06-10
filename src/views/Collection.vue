@@ -1,8 +1,10 @@
 <template>
   <v-card>
-    <v-card-title>
-      {{collection_name || "Unnamed Collection"}}
-    </v-card-title>
+    <BreadCrumbs />
+
+    <!-- <v-card-title> {{collection_name}} </v-card-title> -->
+
+
     <v-card-text>
       <v-data-table
         :loading="loading"
@@ -28,11 +30,13 @@
 </template>
 
 <script>
+import BreadCrumbs from '@/components/BreadCrumbs.vue'
+
 export default {
   name: 'Collection',
 
   components: {
-
+    BreadCrumbs
   },
   data(){
     return {

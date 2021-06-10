@@ -1,6 +1,8 @@
 <template>
   <v-card>
-    <v-card-title>Collections</v-card-title>
+    <BreadCrumbs />
+
+    <!--<v-card-title>Collections</v-card-title>-->
     <v-card-text>
       <v-list>
         <v-list-item
@@ -20,11 +22,13 @@
 </template>
 
 <script>
+import BreadCrumbs from '@/components/BreadCrumbs.vue'
+
 export default {
   name: 'Collections',
 
   components: {
-
+    BreadCrumbs
   },
   data(){
     return {
