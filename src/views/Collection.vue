@@ -44,7 +44,7 @@ export default {
         {text: 'Image', value: "image"},
         {text: 'Time', value: "time"},
       ],
-      api_url: process.env.VUE_APP_IMAGE_STORAGE_API_URL,
+      api_url: process.env.VUE_APP_STORAGE_SERVICE_API_URL,
     }
   },
   mounted(){

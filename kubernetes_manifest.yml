@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-storage-front
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: image-storage-front
+  template:
+    metadata:
+      labels:
+        app: image-storage-front
+    spec:
+      containers:
+      - name: image-storage-front
+        image: 172.16.98.151:5000/image-storage-front
+        imagePullPolicy: Always
+        env:
+        - name: VUE_APP_STORAGE_SERVICE_API_URL
+          value: "http://172.16.98.151:31221"
+        - name: VUE_APP_HOMEPAGE_URL
+          value: "http://172.16.98.151:31226"
+        ports:
+        - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: image-storage-front
+spec:
+  ports:
+  - port: 80
+    nodePort: 31222
+  selector:
+    app: image-storage-front
+  type: NodePort

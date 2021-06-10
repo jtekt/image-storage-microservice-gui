@@ -33,7 +33,7 @@ export default {
     return {
       item: null,
       loading: false,
-      api_url: process.env.VUE_APP_IMAGE_STORAGE_API_URL,
+      api_url: process.env.VUE_APP_STORAGE_SERVICE_API_URL,
     }
   },
 

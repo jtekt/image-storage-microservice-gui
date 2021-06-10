@@ -38,7 +38,7 @@ export default {
   methods: {
     get_collections(){
       this.loading = true
-      const url = `${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/collections`
+      const url = `${process.env.VUE_APP_STORAGE_SERVICE_API_URL}/collections`
       this.axios.get(url)
       .then(({data}) => {this.collections = data})
       .catch((error) => {console.error(error)})
