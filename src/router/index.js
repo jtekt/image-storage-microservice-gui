@@ -8,7 +8,7 @@ Vue.use(VueRouter)
 
   {
     path: '/',
-    name: 'home',
+    name: 'collections',
     component: () => import('../views/CollectionList.vue')
   },
   {

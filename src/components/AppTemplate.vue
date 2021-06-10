@@ -15,7 +15,7 @@
 
     <!-- Navigation is breadcrumbs -->
     <nav>
-      <router-link :to="{ name: 'home' }">
+      <router-link :to="{ name: 'collections' }">
         Collections
       </router-link>
 

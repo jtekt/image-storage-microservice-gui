@@ -150,7 +150,7 @@ export default {
       error: null,
       collection: [],
       api_url: process.env.VUE_APP_STORAGE_SERVICE_API_URL,
-      batch_size: 100,
+      batch_size: 50,
       all_loaded: false,
       count: 0,
       table_headers: [],
