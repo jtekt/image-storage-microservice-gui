@@ -173,9 +173,9 @@ export default {
     },
     clear_dates(){
       this.dates = []
-      this.menu = false
+      //this.menu = false
       this.get_items()
-      //this.$refs.menu.save(this.dateRangeText)
+      this.$refs.menu.save(this.dates)
     },
     select_dates(){
       //this.menu = false
