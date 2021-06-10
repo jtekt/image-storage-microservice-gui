@@ -10,7 +10,6 @@
           <v-list-item-content>
             <v-list-item-title>{{collection}}</v-list-item-title>
           </v-list-item-content>
-
         </v-list-item>
       </v-list>
     </v-card-text>
