@@ -5,6 +5,8 @@
     <!-- <v-card-title> {{collection_name}} </v-card-title> -->
 
 
+
+
     <v-card-text>
       <v-data-table
         :loading="loading"
@@ -13,6 +15,50 @@
         :options.sync="options"
         :server-items-length="item_count"
         @click:row="$router.push({name: 'item', params: {item_id: $event._id}})">
+
+        <template v-slot:top>
+          <v-toolbar flat>
+            <v-menu
+              ref="menu"
+              v-model="menu"
+              :close-on-content-click="false"
+              :return-value.sync="dates"
+              transition="scale-transition"
+              offset-y
+              min-width="auto" >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="dateRangeText"
+                  label="Date range"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"/>
+              </template>
+              <v-date-picker
+                v-model="dates"
+                range
+                no-title
+                scrollable   >
+                <v-spacer />
+                <v-btn
+                  text
+                  color="primary"
+                  @click="clear_dates()">
+                  Clear
+                </v-btn>
+                <v-btn
+                  text
+                  color="primary"
+                  @click="select_dates()">
+                  OK
+                </v-btn>
+              </v-date-picker>
+            </v-menu>
+            <v-spacer />
+
+          </v-toolbar>
+        </template>
 
         <!-- Thumbnails -->
         <template v-slot:item.image="{ item }">
@@ -25,7 +71,11 @@
         </template>
 
       </v-data-table>
+
     </v-card-text>
+
+
+
   </v-card>
 </template>
 
@@ -49,6 +99,8 @@ export default {
         {text: 'Time', value: "time"},
       ],
       api_url: process.env.VUE_APP_STORAGE_SERVICE_API_URL,
+      dates: [],
+      menu: false,
     }
   },
   mounted(){
@@ -81,7 +133,15 @@ export default {
         start_index: (page-1) * itemsPerPage,
         limit: itemsPerPage === -1 ? 0 : itemsPerPage,
         sort,
+        filter: {}
       }
+
+      if(this.dates.length > 0) {
+        params.filter.time = {}
+        if(this.dates[0]) params.filter.time['$gte'] = this.dates[0]
+        if(this.dates[1]) params.filter.time['$lt'] = this.dates[1]
+      }
+
 
 
       this.axios.get(url, {params})
@@ -110,12 +170,26 @@ export default {
           if(!header_exists) this.headers.push({text: key, value: key})
         }
       })
-    }
+    },
+    clear_dates(){
+      this.dates = []
+      this.menu = false
+      this.get_items()
+      //this.$refs.menu.save(this.dateRangeText)
+    },
+    select_dates(){
+      //this.menu = false
+      this.get_items()
+      this.$refs.menu.save(this.dates)
+    },
   },
   computed: {
     collection_name(){
       return this.$route.params.collection_name
-    }
+    },
+    dateRangeText () {
+      return this.dates.join(' ~ ')
+    },
   }
 
 }
