@@ -14,12 +14,12 @@ spec:
     spec:
       containers:
       - name: ${APPLICATION_NAME}
-        image: ${DOCKER_IMAGE}
+        image: ${CONTAINER_IMAGE}
         # Ensures that k8s pulls a new image on restart
         imagePullPolicy: Always
         ports:
         - containerPort: 80
-        
+
 ---
 apiVersion: v1
 kind: Service

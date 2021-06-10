@@ -4,6 +4,7 @@ stages:
 
 variables:
   APPLICATION_NAME: image-storage-front-vuetify
+  CONTAINER_IMAGE: ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
   SERVICE_PORT: 31228
 
 containerization:
@@ -11,8 +12,8 @@ containerization:
   tags:
     - "x86"
   script:
-    - docker build -t ${CONTAINER_REGISTRY}/${APPLICATION_NAME} .
-    - docker push ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
+    - docker build -t ${CONTAINER_IMAGE} .
+    - docker push ${CONTAINER_IMAGE}
 
 deployment:
   stage: deployment
