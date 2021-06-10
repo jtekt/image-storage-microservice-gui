@@ -2,7 +2,7 @@
   <v-app>
     <v-app-bar
       app
-      color="primary"
+      color="#444444"
       dark >
       <v-app-bar-title>Image storage service GUI (Vuetify version prototype)</v-app-bar-title>
 

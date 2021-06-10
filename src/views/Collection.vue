@@ -4,10 +4,79 @@
 
     <!-- <v-card-title> {{collection_name}} </v-card-title> -->
 
-
-
-
     <v-card-text>
+      <v-form @submit.prevent="get_items()">
+        <v-container fluid>
+          <v-row align="center">
+            <v-col>
+              <v-select
+                label="key"
+                v-model="filter_key"
+                :items="headers.map(h => h.value)">
+              </v-select>
+            </v-col>
+            <v-col>
+              <v-text-field
+                label="value"
+                v-model="filter_property" />
+            </v-col>
+
+            <v-spacer />
+
+
+            <v-col>
+              <v-menu
+                ref="menu"
+                v-model="menu"
+                :close-on-content-click="false"
+                :return-value.sync="dates"
+                transition="scale-transition"
+                offset-y
+                min-width="auto" >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-model="dateRangeText"
+                    label="Date range"
+                    prepend-icon="mdi-calendar"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"/>
+                </template>
+                <v-date-picker
+                  v-model="dates"
+                  range
+                  no-title
+                  scrollable   >
+                  <v-spacer />
+                  <v-btn
+                    text
+                    color="primary"
+                    @click="clear_dates()">
+                    Clear
+                  </v-btn>
+                  <v-btn
+                    text
+                    color="primary"
+                    @click="select_dates()">
+                    OK
+                  </v-btn>
+                </v-date-picker>
+              </v-menu>
+            </v-col>
+
+            <v-col class="text-right">
+              <v-btn
+                type="submit">
+                <v-icon>mdi-magnify</v-icon>
+              </v-btn>
+            </v-col>
+
+
+          </v-row>
+        </v-container>
+
+      </v-form>
+
       <v-data-table
         :loading="loading"
         :headers="headers"
@@ -16,49 +85,6 @@
         :server-items-length="item_count"
         @click:row="$router.push({name: 'item', params: {item_id: $event._id}})">
 
-        <template v-slot:top>
-          <v-toolbar flat>
-            <v-menu
-              ref="menu"
-              v-model="menu"
-              :close-on-content-click="false"
-              :return-value.sync="dates"
-              transition="scale-transition"
-              offset-y
-              min-width="auto" >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  v-model="dateRangeText"
-                  label="Date range"
-                  prepend-icon="mdi-calendar"
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"/>
-              </template>
-              <v-date-picker
-                v-model="dates"
-                range
-                no-title
-                scrollable   >
-                <v-spacer />
-                <v-btn
-                  text
-                  color="primary"
-                  @click="clear_dates()">
-                  Clear
-                </v-btn>
-                <v-btn
-                  text
-                  color="primary"
-                  @click="select_dates()">
-                  OK
-                </v-btn>
-              </v-date-picker>
-            </v-menu>
-            <v-spacer />
-
-          </v-toolbar>
-        </template>
 
         <!-- Thumbnails -->
         <template v-slot:item.image="{ item }">
@@ -101,6 +127,8 @@ export default {
       api_url: process.env.VUE_APP_STORAGE_SERVICE_API_URL,
       dates: [],
       menu: false,
+      filter_key: null,
+      filter_property: null,
     }
   },
   mounted(){
@@ -140,6 +168,10 @@ export default {
         params.filter.time = {}
         if(this.dates[0]) params.filter.time['$gte'] = this.dates[0]
         if(this.dates[1]) params.filter.time['$lt'] = this.dates[1]
+      }
+
+      if(this.filter_property && this.filter_key) {
+        params.filter[this.filter_key] = this.filter_property
       }
 
 
