@@ -19,6 +19,11 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 80
+        env:
+        - name: VUE_APP_STORAGE_SERVICE_API_URL
+          value: http://172.16.116.51:31221
+        - name: VUE_APP_WS_SERVER_URL
+          value: http://172.16.116.51:31221
 
 ---
 apiVersion: v1
