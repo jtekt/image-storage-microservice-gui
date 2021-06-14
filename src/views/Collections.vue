@@ -2,6 +2,12 @@
   <v-card>
     <BreadCrumbs />
 
+    <v-card-text>
+      <v-btn :to="{name: 'import'}">
+        <v-icon>mdi-database-import</v-icon>
+        <span>Import collection</span>
+      </v-btn>
+    </v-card-text>
     <!--<v-card-title>Collections</v-card-title>-->
     <v-card-text>
       <v-list>

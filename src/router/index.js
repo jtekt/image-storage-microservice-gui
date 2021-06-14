@@ -11,6 +11,11 @@ const routes = [
     component: () => import('../views/Collections.vue')
   },
   {
+    path: '/import',
+    name: 'import',
+    component: () => import('../views/Import.vue')
+  },
+  {
     path: '/collections/:collection_name',
     name: 'collection',
     component: () => import('../views/Collection.vue')
