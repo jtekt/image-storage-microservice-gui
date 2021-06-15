@@ -1,13 +1,15 @@
 <template>
   <v-card>
-    <BreadCrumbs />
-
-    <v-card-text>
-      <v-btn :to="{name: 'import'}">
+    <v-toolbar flat>
+      <v-toolbar-title>Collections</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn
+        text
+        :to="{name: 'import'}">
         <v-icon>mdi-database-import</v-icon>
-        <span>Import collection</span>
+        <span>Import</span>
       </v-btn>
-    </v-card-text>
+    </v-toolbar>
     <!--<v-card-title>Collections</v-card-title>-->
     <v-card-text>
       <v-list>
@@ -28,13 +30,13 @@
 </template>
 
 <script>
-import BreadCrumbs from '@/components/BreadCrumbs.vue'
+//import BreadCrumbs from '@/components/BreadCrumbs.vue'
 
 export default {
   name: 'Collections',
 
   components: {
-    BreadCrumbs
+    //BreadCrumbs
   },
   data(){
     return {
