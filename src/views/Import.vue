@@ -1,78 +1,109 @@
 <template>
-  <v-container>
+  <v-card>
 
-    <v-row>
-      <v-col>
-        <v-card>
-          <v-card-title>Origin</v-card-title>
-          <v-card-text>
-            <v-textField
-              label="Origin URL"
-              type="text" v-model="origin"/>
+    <v-toolbar
+      flat>
 
+      <v-btn
+        icon
+        :to="{name: 'collections'}">
+        <v-icon>mdi-arrow-left</v-icon>
+      </v-btn>
 
+      <v-toolbar-title>Collection import</v-toolbar-title>
+    </v-toolbar>
 
-
-          </v-card-text>
-          <v-card-text>
-            <v-btn type="button" @click="get_origin_collections()">Get collections</v-btn>
-          </v-card-text>
-          <v-card-text>
-            <v-select
-              v-model="remote_collection"
-              v-if="origin_collections.length > 0"
-              :items="origin_collections"
-              label="Collection" />
-          </v-card-text>
-
-
-        </v-card>
-      </v-col>
-      <v-col>
-        <v-card>
-
-
-          <v-card-text>
-            <v-btn
-              @click="collection_import()">
-              <v-icon>mdi-database-import</v-icon>
-              <span>Transfer</span>
-            </v-btn>
-          </v-card-text>
-
-          <v-card-text>
-            <v-progress-linear
-              v-if="progress > 0"
-              :value="progress"/>
-          </v-card-text>
+    <v-card-text>
+      <v-container fluid>
+        <v-row align="stretch">
+          <v-col>
+            <v-card>
+              <v-card-title>Origin</v-card-title>
+              <v-card-text>
+                <v-textField
+                  label="Origin URL"
+                  type="text" v-model="origin"/>
 
 
 
 
-
-        </v-card>
-
-
-
-      </v-col>
-      <v-col>
-        <v-card>
-          <v-card-title>Destination</v-card-title>
-          <v-card-text>
-            <v-textField
-              label="Local collection name"
-              type="text" v-model="local_collection"/>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+              </v-card-text>
+              <v-card-text>
+                <v-btn type="button" @click="get_origin_collections()">Get collections</v-btn>
+              </v-card-text>
+              <v-card-text>
+                <v-select
+                  v-model="remote_collection"
+                  v-if="origin_collections.length > 0"
+                  @change="local_collection = remote_collection"
+                  :items="origin_collections"
+                  label="Collection" />
+              </v-card-text>
 
 
+            </v-card>
+          </v-col>
+          <v-col>
+            <v-card
+              flat
+              class="text-center">
+
+
+              <v-card-text>
+                <v-btn
+                  @click="collection_import()">
+                  <v-icon>mdi-database-import</v-icon>
+                  <span>Transfer</span>
+                </v-btn>
+              </v-card-text>
+
+              <v-card-text>
+                <v-progress-linear
+                  v-if="progress > 0"
+                  :value="progress"/>
+              </v-card-text>
+
+              <v-card-text
+                v-if="progress === 100"
+                class="green--text">
+                Import successful
+              </v-card-text>
 
 
 
 
-  </v-container>
+
+            </v-card>
+
+
+
+          </v-col>
+          <v-col>
+            <v-card height="100%">
+              <v-card-title>
+                Destination
+              </v-card-title>
+              <v-card-text>
+                <v-textField
+                  label="Local collection name"
+                  type="text" v-model="local_collection"/>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-card-text>
+
+
+
+
+
+
+
+
+
+
+  </v-card>
 </template>
 
 <script>
