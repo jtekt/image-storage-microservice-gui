@@ -1,7 +1,9 @@
 <template>
   <v-card>
     <v-toolbar flat>
+
       <v-toolbar-title>Collections</v-toolbar-title>
+
       <v-spacer></v-spacer>
       <v-btn
         text
@@ -30,14 +32,10 @@
 </template>
 
 <script>
-//import BreadCrumbs from '@/components/BreadCrumbs.vue'
 
 export default {
   name: 'Collections',
-
-  components: {
-    //BreadCrumbs
-  },
+  components: {},
   data(){
     return {
       collections: [],

@@ -1,7 +1,24 @@
 <template>
   <v-card>
 
-    <BreadCrumbs />
+    <v-toolbar flat>
+      <BreadCrumbs />
+      <!-- <v-toolbar-title>{{this.item_id}}</v-toolbar-title> -->
+      <v-spacer/>
+      <v-btn
+        text
+        color="#c00000"
+        @click="delete_item()">
+        <v-icon>mdi-delete</v-icon>
+        <span>Delete</span>
+      </v-btn>
+      <!-- <template v-slot:extension>
+        <BreadCrumbs />
+      </template> -->
+    </v-toolbar>
+    <!-- <v-divider></v-divider> -->
+
+
 
     <!--<v-card-title>{{item_id}}</v-card-title>-->
 
@@ -26,6 +43,11 @@
         </v-list-item>
       </v-list>
     </v-card-text>
+
+    <v-card-actions>
+      <v-spacer/>
+      <v-btn text>HELLO</v-btn>
+    </v-card-actions>
 
   </v-card>
 </template>
@@ -58,6 +80,20 @@ export default {
         else console.log(error)
       })
     },
+    delete_item(){
+
+      if(!confirm('ホンマに？')) return
+      const url = `${this.api_url}/collections/${this.collection_name}/images/${this.item_id}`
+
+      this.axios.delete(url)
+      .then( () => { this.$router.push({name: 'collection', params: {collection: this.collection_name}}) })
+      .catch(error =>{
+        if(error.response) console.error(error.response.data)
+        else console.error(error)
+        alert(`Failed to delete entry`)
+      })
+    },
+
   },
   computed: {
     collection_name(){

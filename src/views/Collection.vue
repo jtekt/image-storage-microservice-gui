@@ -1,28 +1,35 @@
 <template>
   <v-card>
-    <BreadCrumbs />
+
+    <v-toolbar flat>
+      <BreadCrumbs />
+      <!-- <v-toolbar-title>{{this.collection_name}}</v-toolbar-title> -->
+      <v-spacer/>
+      <v-spacer></v-spacer>
+      <v-btn
+        text
+        @click="export_collection()">
+        <v-icon>mdi-download</v-icon>
+        <span>Export</span>
+      </v-btn>
+      <v-btn
+        text
+        color="#c00000"
+        @click="drop_collection()">
+        <v-icon>mdi-delete</v-icon>
+        <span>Delete</span>
+      </v-btn>
+      <!-- <template v-slot:extension>
+        <BreadCrumbs />
+      </template> -->
+    </v-toolbar>
+    <!-- <v-divider></v-divider> -->
+
 
     <v-card-text>
 
       <v-form @submit.prevent="get_items()">
         <v-row align="center">
-          <v-col>
-            <v-btn
-              @click="export_collection()">
-              <v-icon>mdi-download</v-icon>
-              <span>Export</span>
-            </v-btn>
-          </v-col>
-
-          <v-col>
-            <v-btn
-              dark
-              color="#c00000"
-              @click="drop_collection()">
-              <v-icon>mdi-delete</v-icon>
-              <span>Delete</span>
-            </v-btn>
-          </v-col>
 
           <v-spacer/>
 
