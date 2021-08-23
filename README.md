@@ -1,24 +1,9 @@
-# image_storage_service_front_vuetify
+# Image storage service GUI
+Vuetify version
 
-## Project setup
-```
-npm install
-```
+## Environment variables
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+| variable | Description
+| --- | --- |
+| PROXY_STORAGE | URL of the storage service |
+| PROXY_WS | URL of the storage service's websocket server |

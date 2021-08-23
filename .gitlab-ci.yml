@@ -1,5 +1,6 @@
 stages:
   - containerization
+  - containerization-aarch64
   - deployment
 
 variables:
@@ -15,6 +16,19 @@ containerization:
     - docker build -t ${CONTAINER_IMAGE} .
     - docker push ${CONTAINER_IMAGE}
 
+containerization-aarch64:
+  stage: containerization-aarch64
+  tags:
+    - "aarch64"
+  script:
+    - >
+      docker build
+      --build-arg HTTP_PROXY=http://172.16.98.151:8118
+      --build-arg HTTPS_PROXY=http://172.16.98.151:8118
+      -t ${CONTAINER_REGISTRY}/${APPLICATION_NAME}-aarch64 .
+    - docker push ${CONTAINER_REGISTRY}/${APPLICATION_NAME}-aarch64
+
+# Deployment to seikai's DB server
 deployment:
   stage: deployment
   tags:
