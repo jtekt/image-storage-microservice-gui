@@ -4,7 +4,17 @@
       app
       color="#444444"
       dark >
-      <v-app-bar-title>Image storage service GUI</v-app-bar-title>
+      <v-toolbar-title>Image storage service GUI</v-toolbar-title>
+      
+      <v-spacer></v-spacer>
+
+      <v-btn
+        text
+        dark
+        :to="{name:'about'}">
+        <v-icon>mdi-information-outline</v-icon>
+        <span class="ml-1">About</span>
+      </v-btn>
 
     </v-app-bar>
 

@@ -13,6 +13,11 @@ containerization:
   tags:
     - "x86"
   script:
+    - >
+     if [ -z ${DOCKER_HUB_USERNAME} ];
+     then echo "${DOCKER_HUB_PASSWORD}" | docker login --username ${DOCKER_HUB_USERNAME} --password-stdin ;
+     else echo "No Docker login" -;
+     fi
     - docker build -t ${CONTAINER_IMAGE} .
     - docker push ${CONTAINER_IMAGE}
 
