@@ -20,6 +20,8 @@ containerization:
      fi
     - docker build -t ${CONTAINER_IMAGE} .
     - docker push ${CONTAINER_IMAGE}
+    # Cleanup
+    - docker image rm ${CONTAINER_IMAGE}
 
 containerization-aarch64:
   stage: containerization-aarch64

@@ -124,6 +124,15 @@
             alt="item"/>
         </template>
 
+        <!-- Date -->
+        <template v-slot:item.time="{ item }">
+
+          <span>{{format_date(item.time)}}</span>
+
+        </template>
+
+
+
       </v-data-table>
 
     </v-card-text>
@@ -213,6 +222,12 @@ export default {
       })
       .catch((error) => {console.error(error)})
       .finally(() => {this.loading = false})
+    },
+
+    format_date(raw_date){
+      const date = new Date(raw_date)
+      const date_formatted =  date.toLocaleString('ja-JP')
+      return date_formatted
     },
 
     export_collection(){
