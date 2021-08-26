@@ -235,7 +235,10 @@ export default {
     },
 
     drop_collection(){
-      if(!confirm(`Drop collection ${this.collection_name}?`)) return
+
+      const confirm_message = `Delete collection ${this.collection_name}?\nすべてのデータが消えます．よろしいですか？\n個々のデータを消す場合には，個々のデータを選択してOKして下さい．`
+
+      if(!confirm(confirm_message)) return
       this.axios.delete(`${this.api_url}/collections/${this.collection_name}`)
       .then(() => { this.$router.push({name: 'collections'}) })
       .catch(error =>{
