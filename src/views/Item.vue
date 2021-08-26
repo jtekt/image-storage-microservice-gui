@@ -44,11 +44,6 @@
       </v-list>
     </v-card-text>
 
-    <v-card-actions>
-      <v-spacer/>
-      <v-btn text>HELLO</v-btn>
-    </v-card-actions>
-
   </v-card>
 </template>
 
