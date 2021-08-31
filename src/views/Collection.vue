@@ -155,7 +155,10 @@ export default {
     return {
       items: [],
       item_count: 0,
-      options: {},
+      options: {
+        sortBy: ['time'],
+        sortDesc: [false]
+      },
       loading: false,
       headers: [
         {text: 'Image', value: "image"},
@@ -186,7 +189,7 @@ export default {
       const url = `${this.api_url}/collections/${this.collection_name}/images`
       const { page, itemsPerPage, sortBy, sortDesc } = this.options
 
-      //console.log(sortBy, sortDesc)
+      console.log(sortBy, sortDesc)
 
       const sort = sortBy.reduce((acc, item, index) => {
         acc[item] = sortDesc[index] ? 1 : -1
