@@ -118,7 +118,7 @@ export default {
       origin_collections: [],
       remote_collection: '',
       local_collection: '',
-      origin: 'http://10.34.99.193:31221',
+      origin: process.env.VUE_APP_STORAGE_SERVICE_API_URL,
       progress: 0,
     }
   },
