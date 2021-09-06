@@ -24,10 +24,18 @@
 
 
     <v-card-text>
-      <v-img
+      <div class="image_container">
+        <img
+          :src="`${api_url}/collections/${collection_name}/images/${item_id}/image`">
+      </div>
+
+
+
+      <!-- <v-img
         height="400"
         contain
-        :src="`${api_url}/collections/${collection_name}/images/${item_id}/image`"/>
+        :src="`${api_url}/collections/${collection_name}/images/${item_id}/image`"/> -->
+
     </v-card-text>
 
 
@@ -100,3 +108,13 @@ export default {
   }
 }
 </script>
+
+<style>
+.image_container {
+  text-align: center;
+}
+
+.image_container img {
+  height: 400px;
+}
+</style>
