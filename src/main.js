@@ -7,7 +7,7 @@ import VueAxios from 'vue-axios'
 import VueSocketIOExt from 'vue-socket.io-extended'
 import io from 'socket.io-client'
 
-const socket = io(process.env.VUE_APP_WS_SERVER_URL)
+const socket = io('http://socketserver.com:1923')
 
 Vue.use(VueSocketIOExt, socket);
 Vue.use(VueAxios, axios)
