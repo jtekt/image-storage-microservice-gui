@@ -1,9 +1,8 @@
 <template>
-  <v-card>
+  <v-card max-width="500px" class="mt-5 mx-auto">
     <v-toolbar flat>
 
       <v-toolbar-title>Collections</v-toolbar-title>
-
       <v-spacer></v-spacer>
       <v-btn
         text
@@ -12,7 +11,8 @@
         <span>Import</span>
       </v-btn>
     </v-toolbar>
-    <!--<v-card-title>Collections</v-card-title>-->
+    <v-divider></v-divider>
+
     <v-card-text>
       <v-list>
         <v-list-item
