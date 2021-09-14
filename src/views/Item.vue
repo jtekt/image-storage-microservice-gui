@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card max-width="800px" class="mt-5 mx-auto">
 
     <v-toolbar flat>
       <BreadCrumbs />
@@ -46,7 +46,8 @@
           :key="key">
           <v-list-item-content>
             <v-list-item-subtitle>{{key}}</v-list-item-subtitle>
-            <v-list-item-title>{{value}}</v-list-item-title>
+            <v-list-item-title v-if="key==='time'">{{format_date(value)}}</v-list-item-title>
+            <v-list-item-title v-else>{{value}}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -95,6 +96,11 @@ export default {
         else console.error(error)
         alert(`Failed to delete entry`)
       })
+    },
+    format_date(raw_date){
+      const date = new Date(raw_date)
+      const date_formatted =  date.toLocaleString('ja-JP')
+      return date_formatted
     },
 
   },
