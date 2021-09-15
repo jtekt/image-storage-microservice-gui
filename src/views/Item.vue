@@ -1,6 +1,8 @@
 <template>
   <v-card max-width="800px" class="mt-5 mx-auto">
 
+
+
     <v-toolbar flat>
       <BreadCrumbs />
       <!-- <v-toolbar-title>{{this.item_id}}</v-toolbar-title> -->
@@ -16,42 +18,56 @@
         <BreadCrumbs />
       </template> -->
     </v-toolbar>
-    <!-- <v-divider></v-divider> -->
+    <v-divider></v-divider>
+
+    <template v-if="!loading && item">
+      <!-- Not using v-img because can"t right click -->
+      <v-card-text>
+        <div class="image_container">
+          <img :src="`${api_url}/collections/${collection_name}/images/${item_id}/image`">
+        </div>
+      </v-card-text>
 
 
+      <v-card-text>
+        <v-list>
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-subtitle>ID</v-list-item-subtitle>
+              <v-list-item-title>{{item._id}}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-subtitle>Time</v-list-item-subtitle>
+              <v-list-item-title >{{format_date(item.time)}}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-subtitle>Image</v-list-item-subtitle>
+              <v-list-item-title>{{item.image}}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+        <v-list>
+          <v-list-item
+            v-for="(value, key) in properties_classified.free"
+            :key="key">
+            <v-list-item-content>
+              <v-list-item-subtitle>{{key}}</v-list-item-subtitle>
+              <v-list-item-title>{{value}}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-card-text>
+    </template>
 
-    <!--<v-card-title>{{item_id}}</v-card-title>-->
-
-
-    <v-card-text>
-      <div class="image_container">
-        <img
-          :src="`${api_url}/collections/${collection_name}/images/${item_id}/image`">
-      </div>
-
-
-
-      <!-- <v-img
-        height="400"
-        contain
-        :src="`${api_url}/collections/${collection_name}/images/${item_id}/image`"/> -->
-
+    <v-card-text v-if="loading" class="text-center py-10">
+      <v-progress-circular indeterminate></v-progress-circular>
     </v-card-text>
 
 
-    <v-card-text>
-      <v-list>
-        <v-list-item
-          v-for="(value, key) in item"
-          :key="key">
-          <v-list-item-content>
-            <v-list-item-subtitle>{{key}}</v-list-item-subtitle>
-            <v-list-item-title v-if="key==='time'">{{format_date(value)}}</v-list-item-title>
-            <v-list-item-title v-else>{{value}}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-card-text>
 
   </v-card>
 </template>
@@ -110,6 +126,10 @@ export default {
     },
     item_id() {
       return this.$route.params.item_id
+    },
+    properties_classified(){
+      const {_id, time, image, ...properties} = this.item
+      return {mandatory: {_id, time, image}, free: properties}
     }
   }
 }

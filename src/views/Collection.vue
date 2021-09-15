@@ -1,7 +1,10 @@
 <template>
   <v-card>
 
-    <v-toolbar flat>
+    <v-toolbar
+      flat
+      extended
+      extension-height="64">
       <BreadCrumbs />
       <!-- <v-toolbar-title>{{this.collection_name}}</v-toolbar-title> -->
       <v-spacer/>
@@ -19,91 +22,85 @@
         <v-icon>mdi-delete</v-icon>
         <span>Delete</span>
       </v-btn>
-      <!-- <template v-slot:extension>
-        <BreadCrumbs />
-      </template> -->
+
+      <template v-slot:extension>
+        <v-form @submit.prevent="get_items()" style="width:100%;">
+
+          <v-container fluid>
+            <v-row align="baseline">
+              <v-col>
+                <v-select
+                  label="key"
+                  v-model="filter_key"
+                  :items="headers.map(h => h.value)">
+                </v-select>
+              </v-col>
+              <v-col>
+                <v-text-field
+                  label="value"
+                  v-model="filter_property" />
+              </v-col>
+
+
+              <v-col>
+                <v-menu
+                  ref="menu"
+                  v-model="menu"
+                  :close-on-content-click="false"
+                  :return-value.sync="dates"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto" >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="dateRangeText"
+                      label="Date range"
+                      prepend-icon="mdi-calendar"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"/>
+                  </template>
+                  <v-date-picker
+                    v-model="dates"
+                    range
+                    no-title
+                    scrollable >
+                    <v-spacer />
+                    <v-btn
+                      text
+                      color="primary"
+                      @click="clear_dates()">
+                      Clear
+                    </v-btn>
+                    <v-btn
+                      text
+                      color="primary"
+                      @click="select_dates()">
+                      OK
+                    </v-btn>
+                  </v-date-picker>
+                </v-menu>
+              </v-col>
+
+              <v-col cols="auto">
+                <v-btn
+                  type="submit">
+                  <v-icon>mdi-magnify</v-icon>
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-form>
+      </template>
+
+
     </v-toolbar>
-    <!-- <v-divider></v-divider> -->
+    <v-divider></v-divider>
 
 
     <v-card-text>
 
-      <v-form @submit.prevent="get_items()">
-        <v-row align="center">
 
-          <v-spacer/>
-
-          <v-col>
-            <v-select
-              label="key"
-              v-model="filter_key"
-              :items="headers.map(h => h.value)">
-            </v-select>
-          </v-col>
-          <v-col>
-            <v-text-field
-              label="value"
-              v-model="filter_property" />
-          </v-col>
-
-
-          <v-col cols="3">
-            <v-menu
-              ref="menu"
-              v-model="menu"
-              :close-on-content-click="false"
-              :return-value.sync="dates"
-              transition="scale-transition"
-              offset-y
-              min-width="auto" >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  v-model="dateRangeText"
-                  label="Date range"
-                  prepend-icon="mdi-calendar"
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"/>
-              </template>
-              <v-date-picker
-                v-model="dates"
-                range
-                no-title
-                scrollable   >
-                <v-spacer />
-                <v-btn
-                  text
-                  color="primary"
-                  @click="clear_dates()">
-                  Clear
-                </v-btn>
-                <v-btn
-                  text
-                  color="primary"
-                  @click="select_dates()">
-                  OK
-                </v-btn>
-              </v-date-picker>
-            </v-menu>
-          </v-col>
-
-          <v-col cols="1">
-            <v-btn
-              type="submit">
-              <v-icon>mdi-magnify</v-icon>
-            </v-btn>
-          </v-col>
-
-
-
-
-
-
-
-
-        </v-row>
-
-      </v-form>
 
       <v-data-table
         :loading="loading"
@@ -188,8 +185,6 @@ export default {
       this.loading = true
       const url = `${this.api_url}/collections/${this.collection_name}/images`
       const { page, itemsPerPage, sortBy, sortDesc } = this.options
-
-      console.log(sortBy, sortDesc)
 
       const sort = sortBy.reduce((acc, item, index) => {
         acc[item] = sortDesc[index] ? 1 : -1
