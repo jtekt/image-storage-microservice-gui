@@ -64,9 +64,25 @@
               </v-card-text>
 
               <v-card-text
-                v-if="progress === 100"
+                v-if="progress === 100 && !import_errors.length"
                 class="green--text">
                 Import successful
+              </v-card-text>
+
+              <v-card-text
+                v-if="progress === 100 && import_errors.length"
+                class="red--text">
+                Import finished with the following errors
+              </v-card-text>
+
+              <v-card-text
+                v-if="import_errors.length"
+                class="red--text">
+                <div class=""
+                  v-for="(error, i) in import_errors"
+                  :key="`Error ${i}`">
+                  {{error}}
+                </div>
               </v-card-text>
 
 
@@ -79,7 +95,7 @@
 
           </v-col>
           <v-col>
-            <v-card height="100%">
+            <v-card>
               <v-card-title>
                 Destination
               </v-card-title>
@@ -120,14 +136,18 @@ export default {
       local_collection: '',
       origin: process.env.VUE_APP_STORAGE_SERVICE_API_URL,
       progress: 0,
+      import_errors: [],
     }
   },
   mounted(){
 
   },
   sockets: {
-    import_progress(payload) {
-      this.progress = payload.progress * 100
+    import_progress({progress}) {
+      this.progress = progress * 100
+    },
+    import_error({error}) {
+      this.import_errors.push(error)
     }
   },
   methods: {
@@ -161,6 +181,7 @@ export default {
       })
     },
     collection_import() {
+      this.import_errors = []
       const origin = this.parse_orign_url()
       if(!origin) return alert('Invalid URL')
 

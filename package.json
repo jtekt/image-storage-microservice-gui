@@ -1,6 +1,6 @@
 {
   "name": "image_storage_service_front_vuetify",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -14,6 +14,7 @@
     "socket.io-client": "^2.4.0",
     "vue": "^2.6.11",
     "vue-axios": "^3.3.6",
+    "vue-cookie": "^1.1.4",
     "vue-router": "^3.5.2",
     "vue-socket.io-extended": "^4.0.6",
     "vuetify": "^2.5.8",
