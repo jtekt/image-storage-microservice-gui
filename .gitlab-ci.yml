@@ -1,7 +1,6 @@
 stages:
   - containerization
   - containerization-aarch64
-  - deployment
 
 variables:
   APPLICATION_NAME: image-storage-front-vuetify
@@ -39,16 +38,3 @@ containerization-aarch64:
       --build-arg HTTPS_PROXY=http://172.16.98.151:8118
       -t ${CONTAINER_REGISTRY}/${APPLICATION_NAME}-aarch64 .
     - docker push ${CONTAINER_REGISTRY}/${APPLICATION_NAME}-aarch64
-
-# Deployment to seikai's DB server
-deployment:
-  stage: deployment
-  tags:
-    - kubectl
-  script:
-    - envsubst < kubernetes_manifest.yml | kubectl apply -f -
-    - kubectl rollout restart deployment ${APPLICATION_NAME}
-  environment:
-    name: production
-    kubernetes:
-      namespace: ${KUBERNETES_NAMESPACE} # Obtained from GitLab
