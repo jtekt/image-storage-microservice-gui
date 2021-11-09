@@ -18,8 +18,12 @@
     </v-card-text>
 
     <template v-if="item">
-      <v-img
-        :src="image_src"/>
+      <div class="text-center">
+        <img
+          class="item_image"
+          :src="image_src"/>
+      </div>
+
 
       <v-card-text>
         <v-row
@@ -56,7 +60,7 @@ export default {
     image_src(){
       return `${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/images/${this.image_id}/image`
     },
-    
+
   },
   methods: {
     get_item(){
@@ -80,4 +84,7 @@ export default {
 </script>
 
 <style scoped>
+.item_image {
+  max-height: 60vh;
+}
 </style>

@@ -14,9 +14,8 @@
         @click:row="row_clicked($event)">
 
         <template v-slot:item.file="{ item }">
-          <v-img
-            height="5em"
-            width="5em"
+          <img
+            class="thumbnail"
             :src="image_src(item)"/>
         </template>
 
@@ -98,4 +97,8 @@ export default {
 </script>
 
 <style scoped>
+.thumbnail{
+  height: 5em;
+  width: 5em;
+}
 </style>
