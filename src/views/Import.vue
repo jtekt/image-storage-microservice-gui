@@ -30,7 +30,7 @@
             <v-btn
               type="submit"
               :loading="uploading"
-              :disabled="!collection || !archive">
+              :disabled="!archive">
               <v-icon>mdi-upload</v-icon>
               <span>Import</span>
             </v-btn>
@@ -57,7 +57,6 @@ export default {
   data(){
     return {
       uploading: false,
-      collection: '',
       archive: null,
     }
   },
@@ -68,7 +67,7 @@ export default {
   methods: {
     import_collection() {
       this.uploading = true
-      const url = `${process.env.VUE_APP_STORAGE_SERVICE_API_URL}/collections/${this.collection}/import`
+      const url = `${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/import`
 
       const headers = {'Content-Type': 'multipart/form-data' }
       const body = new FormData()
@@ -76,7 +75,7 @@ export default {
 
       this.axios.post(url, body, { headers })
       .then( () => {
-        this.$router.push({name: 'collection', params: {collection_name: this.collection}})
+        this.$router.push({name: 'images'})
 
       })
       .catch(error =>{
