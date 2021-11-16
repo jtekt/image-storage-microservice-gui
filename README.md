@@ -1,24 +1,11 @@
-# image_storage_service_mongoose_front
+# Storage microservice (Mongoose version) GUI
 
-## Project setup
-```
-npm install
-```
+GUI for the image storage microservice
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
 
-### Compiles and minifies for production
-```
-npm run build
-```
+## Environment variables
 
-### Lints and fixes files
-```
-npm run lint
-```
+| Variable | Required | Description |
+| --- | --- | --- |
+| VUE_APP_IMAGE_STORAGE_API_URL | true |The URL of the storage service |
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
