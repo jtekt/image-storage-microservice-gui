@@ -1,8 +1,31 @@
 <template>
 
   <v-card>
+
     <v-toolbar flat>
-      <v-toolbar-title>Images</v-toolbar-title>
+      <v-row>
+        <v-col>
+          <v-toolbar-title>Images</v-toolbar-title>
+        </v-col>
+        <v-spacer/>
+        <v-col cols="auto">
+          <v-btn
+            text
+            @click="export_collection()">
+            <v-icon>mdi-download</v-icon>
+            <span class='ml-2'>Export</span>
+          </v-btn>
+        </v-col>
+
+        <v-col cols="auto">
+          <v-btn
+            text
+            :to="{name: 'import'}">
+            <v-icon>mdi-upload</v-icon>
+            <span class='ml-2'>Import</span>
+          </v-btn>
+        </v-col>
+      </v-row>
     </v-toolbar>
     <v-divider/>
 
@@ -83,6 +106,9 @@ export default {
         }
       })
     },
+    export_collection(){
+      window.location.href=`${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/export`
+    },
   },
   computed:{
     headers(){
@@ -96,9 +122,12 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .thumbnail{
   height: 5em;
   width: 5em;
+}
+td, th {
+  white-space: nowrap;
 }
 </style>
