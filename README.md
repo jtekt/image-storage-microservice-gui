@@ -19,5 +19,5 @@ Note: authentication is enabled when VUE_APP_LOGIN_URL and VUE_APP_IDENTIFICATIO
 ### Docker
 
 ```
-docker run -e VUE_APP_STORAGE_SERVICVE_API_URL=http://storage-ms-url 172.16.98.151:5000/image-storage-front-vuetify
+docker run -e VUE_APP_STORAGE_SERVICE_API_URL=http://storage-ms-url 172.16.98.151:5000/image-storage-front-vuetify
 ```

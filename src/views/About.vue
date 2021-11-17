@@ -29,7 +29,7 @@ export default {
       ],
       services: [
         {
-          name: 'Image storrage GUI',
+          name: 'Image storage GUI',
           url: window.location.origin,
           version: pjson.version
         },
@@ -37,11 +37,6 @@ export default {
           name: 'Image storage API',
           url: process.env.VUE_APP_STORAGE_SERVICE_API_URL,
           version: null
-        },
-        {
-          name: 'Image storage WS URL',
-          url: process.env.VUE_APP_WS_SERVER_URL,
-          version: 'N/A'
         },
       ],
     }

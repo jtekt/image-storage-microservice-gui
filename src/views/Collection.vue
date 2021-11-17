@@ -13,7 +13,7 @@
         text
         @click="export_collection()">
         <v-icon>mdi-download</v-icon>
-        <span>Export</span>
+        <span class='ml-2'>Export</span>
       </v-btn>
       <v-btn
         text
