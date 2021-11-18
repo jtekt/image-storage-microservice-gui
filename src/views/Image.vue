@@ -109,7 +109,7 @@ export default {
       return `${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/images/${this.image_id}/image`
     },
     time_formatted(){
-      const date = new Date(this.item.date)
+      const date = new Date(this.item.time)
       const date_formatted =  date.toLocaleString('ja-JP')
       return date_formatted
     }

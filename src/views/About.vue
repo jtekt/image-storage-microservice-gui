@@ -1,6 +1,14 @@
 <template>
   <v-card>
-    <v-card-title>Image storage service GUI</v-card-title>
+    <v-toolbar flat>
+      <v-btn
+        icon
+        exact
+        :to="{name: 'images'}">
+        <v-icon>mdi-arrow-left</v-icon>
+      </v-btn>
+      <v-toolbar-title>Image storage service GUI</v-toolbar-title>
+    </v-toolbar>
 
     <v-card-text>
       <p>Author: Maxime MOREILLON</p>
