@@ -1,36 +1,51 @@
 <template>
-  <v-app>
-    <v-app-bar
-      app
-      color="primary"
-      dark>
-      <v-toolbar-title>Image storage service</v-toolbar-title>
-      <v-spacer/>
-      <v-btn
-        text
-        :to="{name: 'about'}">
-        <v-icon>mdi-information-outline</v-icon>
-        <span class="ml-2">About</span>
-      </v-btn>
-    </v-app-bar>
+  <AppTemplate
+    :options="options">
 
-    <v-main class="grey lighten-4">
-      <v-container>
-        <router-view/>
-      </v-container>
-    </v-main>
+    <template v-slot:nav>
+      <v-list
+        dense
+        nav >
+        <v-list-item
+          v-for="(item, index) in nav"
+          :key="`nav_item_${index}`"
+          :to="item.to"
+          exact>
+          <v-list-item-icon>
+            <v-icon>{{item.icon}}</v-icon>
+          </v-list-item-icon>
 
-  </v-app>
+          <v-list-item-content>
+            <v-list-item-title>{{item.title}}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </template>
 
+  </AppTemplate>
 </template>
 
 <script>
-
+import AppTemplate from '@moreillon/vue_application_template_vuetify'
 export default {
   name: 'App',
 
+  components: {
+    AppTemplate
+  },
+
   data: () => ({
-    //
+    options: {
+      title: 'Image storage',
+    },
+    nav: [
+      {title: 'images', to: {name: 'Home'}, icon: 'mdi-home'},
+      {title: 'about', to: {name: 'About'}, icon: 'mdi-information-outline'},
+    ]
   }),
-};
+
+  methods: {
+
+  }
+}
 </script>
