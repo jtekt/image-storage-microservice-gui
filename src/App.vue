@@ -39,8 +39,8 @@ export default {
       title: 'Image storage',
     },
     nav: [
-      {title: 'images', to: {name: 'Home'}, icon: 'mdi-home'},
-      {title: 'about', to: {name: 'About'}, icon: 'mdi-information-outline'},
+      {title: 'Images', to: {name: 'images'}, icon: 'mdi-home'},
+      {title: 'About', to: {name: 'about'}, icon: 'mdi-information-outline'},
     ]
   }),
 
