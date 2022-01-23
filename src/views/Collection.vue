@@ -5,23 +5,31 @@
       flat
       extended
       extension-height="64">
-      <BreadCrumbs />
-      <!-- <v-toolbar-title>{{this.collection_name}}</v-toolbar-title> -->
-      <v-spacer/>
-      <v-spacer></v-spacer>
-      <v-btn
-        text
-        @click="export_collection()">
-        <v-icon>mdi-download</v-icon>
-        <span class='ml-2'>Export</span>
-      </v-btn>
-      <v-btn
-        text
-        color="#c00000"
-        @click="drop_collection()">
-        <v-icon>mdi-delete</v-icon>
-        <span>Delete</span>
-      </v-btn>
+      <v-row align="center">
+        <v-col>
+          <BreadCrumbs />
+        </v-col>
+        <v-spacer/>
+        <v-col cols="auto">
+          <v-btn
+            @click="export_collection()">
+            <v-icon>mdi-download</v-icon>
+            <span class='ml-2'>Export</span>
+          </v-btn>
+        </v-col>
+        <v-col cols="auto">
+          <v-btn
+            color="#c00000"
+            @click="drop_collection()">
+            <v-icon>mdi-delete</v-icon>
+            <span>Delete</span>
+          </v-btn>
+        </v-col>
+      </v-row>
+
+
+
+
 
       <template v-slot:extension>
         <v-form @submit.prevent="get_items()" style="width:100%;">

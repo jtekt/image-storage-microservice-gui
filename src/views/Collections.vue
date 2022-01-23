@@ -1,17 +1,18 @@
 <template>
-  <v-card max-width="500px" class="mt-5 mx-auto">
+  <v-card
+    max-width="500px"
+    class="mt-5 mx-auto"
+    :loading="loading">
     <v-toolbar flat>
-
       <v-toolbar-title>Collections</v-toolbar-title>
-      <v-spacer></v-spacer>
+      <v-spacer/>
       <v-btn
-        text
         :to="{name: 'import'}">
         <v-icon>mdi-database-import</v-icon>
-        <span>Import</span>
+        <span class="ml-2">Import</span>
       </v-btn>
     </v-toolbar>
-    <v-divider></v-divider>
+    <v-divider/>
 
     <v-card-text>
       <v-list>
