@@ -19,6 +19,7 @@
         </v-col>
         <v-col cols="auto">
           <v-btn
+            dark
             color="#c00000"
             @click="drop_collection()">
             <v-icon>mdi-delete</v-icon>
