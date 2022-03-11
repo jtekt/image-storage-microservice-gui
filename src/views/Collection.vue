@@ -1,338 +1,302 @@
 <template>
-  <div class="home">
+  <v-card>
 
-    <h1>{{collection_name}}</h1>
-
-
-    <div
-      class="error"
-      v-if="error && !loading">
-      Error loading collection
-    </div>
-
-
-
-    <template v-if="!error">
-
-      <p>
-        Collection {{collection_name}} contains {{count}} item(s)
-      </p>
-
-      <div class="buttons_wrapper">
-        <button
-          class="dangerous"
-          type="button"
-          @click="drop_collection()">
-          <DeleteIcon />
-          <span>Delete</span>
-        </button>
-        <button type="button" @click="export_collection()">
-          <DatabaseExportIcon />
-          <span>Export</span>
-        </button>
-
-        <div class="spacer"/>
-
-        <input type="text" v-model="search_query" placeholder="JSON">
-        <button
-          type="button"
-          @click="search()"
-          :disabled="!search_valid">
-          <MagnifyIcon />
-          <span>Search</span>
-        </button>
-      </div>
+    <v-toolbar
+      flat
+      extended
+      extension-height="64">
+      <v-row align="center">
+        <v-col>
+          <BreadCrumbs />
+        </v-col>
+        <v-spacer/>
+        <v-col cols="auto">
+          <v-btn
+            @click="export_collection()">
+            <v-icon>mdi-download</v-icon>
+            <span class='ml-2'>Export</span>
+          </v-btn>
+        </v-col>
+        <v-col cols="auto">
+          <v-btn
+            dark
+            color="#c00000"
+            @click="drop_collection()">
+            <v-icon>mdi-delete</v-icon>
+            <span>Delete</span>
+          </v-btn>
+        </v-col>
+      </v-row>
 
 
 
-      <template v-if="collection.length > 0">
-        <div class="table_wrapper" >
-          <table >
-            <tr>
-              <th>Image</th>
-              <th>Time</th>
-              <th>File name</th>
-              <th
-                v-for="header in table_headers"
-                :key="`header_${header}`">
-                <div class="nonstandard_proprety">
-                  {{header}}
-                </div>
-
-              </th>
-            </tr>
-
-            <tr
-              class="doc"
-              v-for="doc in collection"
-              :key="doc._id"
-              @click="$router.push({path: `/${collection_name}/${doc._id}`})">
 
 
-              <td>
-                <img :src="`${api_url}/collections/${collection_name}/images/${doc._id}/image`">
-              </td>
-              <td>
-                <div class="nowrap">
-                  {{format_date(doc.time)}}
-                </div>
-              </td>
-              <td>
-                <div class="nowrap">
-                  {{doc.image}}
-                </div>
-              </td>
+      <template v-slot:extension>
+        <v-form @submit.prevent="get_items()" style="width:100%;">
 
-              <td
-                v-for="key in table_headers"
-                :key="`${doc._id}_${key}`">
-                <div class="nonstandard_proprety">
-                  {{property_formatting(doc[key])}}
-                </div>
-
-              </td>
-            </tr>
-          </table>
-
-        </div>
+          <v-container fluid>
+            <v-row align="baseline">
+              <v-col>
+                <v-select
+                  label="key"
+                  v-model="filter_key"
+                  :items="headers.map(h => h.value)">
+                </v-select>
+              </v-col>
+              <v-col>
+                <v-text-field
+                  label="value"
+                  v-model="filter_property" />
+              </v-col>
 
 
+              <v-col>
+                <v-menu
+                  ref="menu"
+                  v-model="menu"
+                  :close-on-content-click="false"
+                  :return-value.sync="dates"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto" >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="dateRangeText"
+                      label="Date range"
+                      prepend-icon="mdi-calendar"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"/>
+                  </template>
+                  <v-date-picker
+                    v-model="dates"
+                    range
+                    no-title
+                    scrollable >
+                    <v-spacer />
+                    <v-btn
+                      text
+                      color="primary"
+                      @click="clear_dates()">
+                      Clear
+                    </v-btn>
+                    <v-btn
+                      text
+                      color="primary"
+                      @click="select_dates()">
+                      OK
+                    </v-btn>
+                  </v-date-picker>
+                </v-menu>
+              </v-col>
 
-        <div
-          v-if="!all_loaded && !loading"
-          class="load_more_container">
-          <button type="button" @click="get_list()">Load more</button>
-        </div>
-
+              <v-col cols="auto">
+                <v-btn
+                  type="submit">
+                  <v-icon>mdi-magnify</v-icon>
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-form>
       </template>
 
-      <div
-        class="loader_container"
-        v-if="loading">
-        <Loader />
-      </div>
+
+    </v-toolbar>
+    <v-divider></v-divider>
 
 
-      <div class="" v-if="!loading && !error && collection.length === 0">
-        No data
-      </div>
-    </template>
+    <v-card-text>
 
 
 
+      <v-data-table
+        :loading="loading"
+        :headers="headers"
+        :items="items"
+        :options.sync="options"
+        :server-items-length="item_count"
+        @click:row="$router.push({name: 'item', params: {item_id: $event._id}})">
 
 
-  </div>
+        <!-- Thumbnails -->
+        <template v-slot:item.image="{ item }">
+          <v-img
+            contain
+            max-height="100"
+            max-width="100"
+            :src="`${api_url}/collections/${collection_name}/images/${item._id}/image`"
+            alt="item"/>
+        </template>
+
+        <!-- Date -->
+        <template v-slot:item.time="{ item }">
+
+          <span>{{format_date(item.time)}}</span>
+
+        </template>
+
+
+
+      </v-data-table>
+
+    </v-card-text>
+
+
+
+  </v-card>
 </template>
 
 <script>
-// @ is an alias to /src
-import Loader from '@moreillon/vue_loader'
-//import XLSX from 'xlsx'
-
-import DeleteIcon from 'vue-material-design-icons/Delete.vue'
-import DatabaseExportIcon from 'vue-material-design-icons/DatabaseExport.vue'
-import MagnifyIcon from 'vue-material-design-icons/Magnify.vue'
-
+import BreadCrumbs from '@/components/BreadCrumbs.vue'
 
 export default {
-  name: 'List',
+  name: 'Collection',
+
   components: {
-    Loader,
-    DeleteIcon,
-    DatabaseExportIcon,
-    MagnifyIcon,
+    BreadCrumbs
   },
   data(){
     return {
-      search_query: null,
+      items: [],
+      item_count: 0,
+      options: {
+        sortBy: ['time'],
+        sortDesc: [false]
+      },
       loading: false,
-      error: null,
-      collection: [],
+      headers: [
+        {text: 'Image', value: "image"},
+        {text: 'Time', value: "time"},
+      ],
       api_url: process.env.VUE_APP_STORAGE_SERVICE_API_URL,
-      batch_size: 50,
-      all_loaded: false,
-      count: 0,
-      table_headers: [],
+      dates: [],
+      menu: false,
+      filter_key: null,
+      filter_property: null,
     }
   },
   mounted(){
-    this.get_db_document_count()
-    this.clear_list()
-    this.get_list()
+    this.get_items()
+    this.get_item_count()
   },
-  beforeRouteUpdate (to, from, next) {
-    this.get_db_document_count()
-    this.clear_list()
-    this.get_list()
-    next()
+  watch: {
+    options: {
+      handler () {
+        this.get_items()
+      },
+      deep: true,
+    },
   },
-
   methods: {
-    clear_list(){
-      this.collection.splice(0,this.collection.length)
-      this.all_loaded = false
-    },
-    get_db_document_count(){
-      const url = `${this.api_url}/collections/${this.collection_name}`
-      this.axios.get(url)
-      .then(response => {
-        this.count = response.data.documents
-      })
-      .catch(error =>{
-        if(error.response) console.log(error.response.data)
-        else console.log(error)
-      })
-    },
-    get_list(){
+    get_items(){
       this.loading = true
       const url = `${this.api_url}/collections/${this.collection_name}/images`
+      const { page, itemsPerPage, sortBy, sortDesc } = this.options
 
-      let params = {
-        start_index: this.collection.length,
-        batch_size: this.batch_size,
+      const sort = sortBy.reduce((acc, item, index) => {
+        acc[item] = sortDesc[index] ? 1 : -1
+        return acc
+      }, {})
+
+
+      const params = {
+        start_index: (page-1) * itemsPerPage,
+        limit: itemsPerPage === -1 ? 0 : itemsPerPage,
+        sort,
+        filter: {}
       }
 
-      if(this.search_query) params.filter = this.search_query
+      if(this.dates.length > 0) {
+        params.filter.time = {}
+        if(this.dates[0]) params.filter.time['$gte'] = this.dates[0]
+        if(this.dates[1]) params.filter.time['$lt'] = this.dates[1]
+      }
+
+      if(this.filter_property && this.filter_key) {
+        params.filter[this.filter_key] = this.filter_property
+      }
+
+
 
       this.axios.get(url, {params})
-      .then(response => {
+      .then(({data}) => {
+        this.items = data
+        this.build_headers(this.items)
 
-        response.data.forEach((doc) => {
-          this.collection.push(doc)
 
-          const ignored_headers = ['_id', 'time', 'image', 'image_url']
-          for (var key in doc) {
-            if(!this.table_headers.includes(key) && !ignored_headers.includes(key)) {
-              this.table_headers.push(key)
-            }
-          }
-        })
-
-        if(response.data.length < this.batch_size) this.all_loaded = true
       })
-      .catch(error =>{
-        this.error = true
-        if(error.response) console.log(error.response.data)
-        else console.log(error)
-      })
-      .finally(()=>{this.loading = false})
+      .catch((error) => {console.error(error)})
+      .finally(() => {this.loading = false})
     },
-    search(){
-      this.clear_list()
-      this.get_list()
+
+    format_date(raw_date){
+      const date = new Date(raw_date)
+      const date_formatted =  date.toLocaleString('ja-JP')
+      return date_formatted
     },
+
     export_collection(){
       window.location.href=`${this.api_url}/collections/${this.collection_name}/export`
     },
+
     drop_collection(){
-      if(!confirm('ホンマに？')) return
+
+      const confirm_message = `Delete collection ${this.collection_name}?\nすべてのデータが消えます．よろしいですか？\n個々のデータを消す場合には，個々のデータを選択してOKして下さい．`
+
+      if(!confirm(confirm_message)) return
       this.axios.delete(`${this.api_url}/collections/${this.collection_name}`)
-      .then(() => {
-        this.$router.push({name: 'home'})
-      })
+      .then(() => { this.$router.push({name: 'collections'}) })
       .catch(error =>{
-        alert(error)
+        if(error.response) console.log(error.response.data)
+        else console.log(error)
       })
     },
-    format_date(date){
 
-      let options = {
-        hour12: false,
-        year:'numeric',
-        month:'2-digit',
-        day: '2-digit',
-        hour:'2-digit',
-        minute:'2-digit',
-        second: '2-digit'
-      }
-      return new Date(date).toLocaleString('ja-JP', options)
-
+    get_item_count(){
+      const url = `${this.api_url}/collections/${this.collection_name}`
+      this.axios.get(url)
+      .then(({data}) => { this.item_count = data.documents })
+      .catch(error =>{
+        if(error.response) console.log(error.response.data)
+        else console.log(error)
+      })
     },
-    property_formatting(property){
-      if(['string', 'number', 'boolean'].includes(typeof(property))) return property
-      else return typeof(property)
-    }
+    build_headers(items){
+      items.forEach((item) => {
+        for (let key in item) {
+          const header_exists = this.headers.some(header => header.value === key)
+          if(!header_exists) this.headers.push({text: key, value: key})
+        }
+      })
+    },
+    clear_dates(){
+      this.dates = []
+      //this.menu = false
+      this.get_items()
+      this.$refs.menu.save(this.dates)
+    },
+    select_dates(){
+      //this.menu = false
+      this.get_items()
+      this.$refs.menu.save(this.dates)
+    },
   },
   computed: {
     collection_name(){
-      return this.$route.params.collection
+      return this.$route.params.collection_name
     },
-    search_valid(){
-      if(!this.search_query) return true
-      try {
-        JSON.parse(this.search_query)
-      } catch (e) {
-        return false
-      }
-
-      return true
-    }
+    dateRangeText () {
+      return this.dates.join(' ~ ')
+    },
   }
+
 }
 </script>
 
-<style scoped>
-
-.table_wrapper {
-  width: 100%;
-  overflow-x: auto;
-}
-table {
-  border-collapse: collapse;
-  width: 100%;
-  text-align: center;
-}
+<style>
 td, th {
-  padding: 0.25em 0.5em;
-}
-tr:not(:last-child){
-  border-bottom: 1px solid #dddddd;
-}
-tr:not(:first-child) {
-  cursor: pointer;
-  transition: background-color 0.25s;
-}
-tr:not(:first-child):hover {
-  background-color: #eeeeee;
-}
-
-td {
   white-space: nowrap;
-}
-
-.doc img {
-  width: 5em;
-}
-
-.buttons_wrapper {
-  margin: 1em 0;
-  display: flex;
-  align-items: center;
-}
-
-.spacer {
-  flex-grow: 1;
-}
-
-.buttons_wrapper > *:not(:last-child) {
-  margin-right: 1em;
-}
-
-.buttons_wrapper input[type="text"] {
-  padding: 0.25em;
-  flex-grow: 1;
-}
-
-.nonstandard_proprety {
-  max-width: 8em;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.load_more_container{
-  margin-top: 1em;
-  text-align: center;
 }
 </style>

@@ -1,6 +1,6 @@
 {
-  "name": "image_storage_microservice_front",
-  "version": "1.1.2",
+  "name": "image_storage_service_front_vuetify",
+  "version": "1.2.1",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -8,28 +8,33 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@moreillon/vue_loader": "^0.1.1",
-    "axios": "^0.21.1",
-    "core-js": "^3.9.1",
-    "dotenv": "^8.2.0",
+    "@moreillon/vue_application_template_vuetify": "^1.1.5",
+    "@moreillon/vue_authentication_wall_vuetify": "^1.1.2",
+    "axios": "^0.21.4",
+    "core-js": "^3.17.3",
     "socket.io-client": "^2.4.0",
-    "vue": "^2.6.12",
-    "vue-axios": "^2.1.5",
-    "vue-material-design-icons": "^4.11.0",
-    "vue-router": "^3.5.1",
+    "vue": "^2.6.11",
+    "vue-axios": "^3.3.6",
+    "vue-cookie": "^1.1.4",
+    "vue-router": "^3.5.2",
     "vue-socket.io-extended": "^4.0.6",
-    "vuex": "^3.6.2",
-    "xlsx": "^0.16.9"
+    "vuetify": "^2.5.8",
+    "vuex": "^3.4.0"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.5.11",
-    "@vue/cli-plugin-eslint": "^4.5.11",
-    "@vue/cli-plugin-router": "^4.5.11",
-    "@vue/cli-plugin-vuex": "^4.5.11",
-    "@vue/cli-service": "^4.5.11",
+    "@mdi/font": "^5.9.55",
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-plugin-vuex": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
-    "vue-template-compiler": "^2.6.12"
+    "sass": "~1.32.0",
+    "sass-loader": "^10.0.0",
+    "vue-cli-plugin-vuetify": "^2.4.2",
+    "vue-template-compiler": "^2.6.11",
+    "vuetify-loader": "^1.7.3"
   }
 }

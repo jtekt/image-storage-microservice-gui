@@ -1,20 +1,14 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-//import Home from '../views/Home.vue'
 
 Vue.use(VueRouter)
 
-  const routes = [
+const routes = [
 
   {
-    path: '/',
+    path: '/collections',
     name: 'collections',
-    component: () => import('../views/CollectionList.vue')
-  },
-  {
-    path: '/about',
-    name: 'about',
-    component: () => import('../views/About.vue')
+    component: () => import('../views/Collections.vue')
   },
   {
     path: '/import',
@@ -22,16 +16,24 @@ Vue.use(VueRouter)
     component: () => import('../views/Import.vue')
   },
   {
-    path: '/:collection',
+    path: '/collections/:collection_name',
     name: 'collection',
     component: () => import('../views/Collection.vue')
   },
-
   {
-    path: '/:collection/:entry_id',
-    name: 'entry',
-    component: () => import('../views/Entry.vue')
-  }
+    path: '/collections/:collection_name/items/:item_id',
+    name: 'item',
+    component: () => import('../views/Item.vue')
+  },
+  {
+    path: '/about',
+    name: 'about',
+    component: () => import('../views/About.vue')
+  },
+  {
+    path: '/',
+    redirect: {name: 'collections'},
+  },
 ]
 
 const router = new VueRouter({

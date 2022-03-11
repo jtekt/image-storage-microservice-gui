@@ -1,23 +1,18 @@
 <template>
-  <div class="about">
-    <h1>Image storage service GUI</h1>
-    <p>Author: Maxime MOREILLON</p>
-    <h2>Services</h2>
-    <table>
-      <tr>
-        <th>Service</th>
-        <th>Version</th>
-        <th>URL</th>
-      </tr>
-      <tr
-        v-for="(service, index) in services"
-        :key="`service_${index}`">
-        <td>{{service.name}}</td>
-        <td>{{service.version}}</td>
-        <td>{{service.url || 'UNDEFINED'}}</td>
-      </tr>
-    </table>
-  </div>
+  <v-card>
+    <v-card-title>Image storage service GUI</v-card-title>
+
+    <v-card-text>
+      <p>Author: Maxime MOREILLON</p>
+      <v-data-table
+        hide-default-footer
+        :itemsPerPage="-1"
+        :headers="headers"
+        :items="services"/>
+    </v-card-text>
+
+
+  </v-card>
 </template>
 
 <script>
@@ -26,9 +21,12 @@ export default {
   name: 'About',
   data () {
     return {
-      version: pjson.version,
-      api_url: process.env.VUE_APP_STORAGE_SERVICE_API_URL,
-      ws_url: process.env.VUE_APP_WS_SERVER_URL,
+      headers: [
+        {text: 'Service', value: "name"},
+        {text: 'Version', value: "version"},
+        {text: 'URL', value: "url"},
+
+      ],
       services: [
         {
           name: 'Image storage GUI',
@@ -39,11 +37,6 @@ export default {
           name: 'Image storage API',
           url: process.env.VUE_APP_STORAGE_SERVICE_API_URL,
           version: null
-        },
-        {
-          name: 'Image storage API (WS)',
-          url: process.env.VUE_APP_WS_SERVER_URL,
-          version: 'N/A'
         },
       ],
     }
@@ -68,23 +61,6 @@ export default {
 </script>
 
 <style scoped>
-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-
-}
-
-tr:not(:last-child) {
-  border-bottom: 1px solid #dddddd;
-}
-
-th {
-  text-align: left;
-}
-td {
-  padding: 0.25em;
-}
 
 
 </style>
