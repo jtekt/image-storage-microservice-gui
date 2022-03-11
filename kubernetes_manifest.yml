@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${APPLICATION_NAME}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ${APPLICATION_NAME}
+  template:
+    metadata:
+      labels:
+        app: ${APPLICATION_NAME}
+    spec:
+      containers:
+      - name: ${APPLICATION_NAME}
+        image: ${CONTAINER_IMAGE}
+        # Ensures that k8s pulls a new image on restart
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        env:
+        - name: VUE_APP_STORAGE_SERVICE_API_URL
+          value: http://172.16.116.51:31221
+        - name: VUE_APP_WS_SERVER_URL
+          value: http://172.16.116.51:31221
+        # - name: PROXY_STORAGE
+        #   value: http://image-storage
+        # - name: PROXY_WS
+        #   value: http://image-storage
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ${APPLICATION_NAME}
+spec:
+  type: NodePort
+  selector:
+    app: ${APPLICATION_NAME}
+  ports:
+  - port: 80
+    nodePort: ${SERVICE_PORT}
