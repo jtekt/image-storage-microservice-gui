@@ -192,6 +192,7 @@ export default {
   methods: {
     get_items(){
       this.loading = true
+      this.items = []
       const url = `${this.api_url}/collections/${this.collection_name}/images`
       const { page, itemsPerPage, sortBy, sortDesc } = this.options
 
@@ -227,7 +228,10 @@ export default {
 
 
       })
-      .catch((error) => {console.error(error)})
+      .catch((error) => {
+        console.error(error)
+        alert(error)
+      })
       .finally(() => {this.loading = false})
     },
 
@@ -263,6 +267,7 @@ export default {
         else console.log(error)
       })
     },
+    
     build_headers(items){
       items.forEach((item) => {
         for (let key in item) {
