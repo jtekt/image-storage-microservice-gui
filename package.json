@@ -7,6 +7,8 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
+  "author": "Maxime Moreillon",
+  "license": "MIT",
   "dependencies": {
     "@moreillon/vue_application_template_vuetify": "^1.1.6",
     "axios": "^0.21.4",
