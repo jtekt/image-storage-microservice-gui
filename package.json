@@ -2,13 +2,13 @@
   "name": "image_storage_service_front_vuetify",
   "version": "1.2.2",
   "private": true,
+  "author": "Maxime Moreillon",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(js|vue)\" --locales \"./src/locales/**/*.json\""
   },
-  "author": "Maxime Moreillon",
-  "license": "MIT",
   "dependencies": {
     "@moreillon/vue_application_template_vuetify": "^1.1.6",
     "axios": "^0.21.4",
@@ -16,6 +16,7 @@
     "vue": "^2.6.11",
     "vue-axios": "^3.4.1",
     "vue-cookie": "^1.1.4",
+    "vue-i18n": "^8.26.3",
     "vue-router": "^3.5.3",
     "vuetify": "^2.6.4",
     "vuex": "^3.4.0"
@@ -32,8 +33,10 @@
     "eslint-plugin-vue": "^6.2.2",
     "sass": "~1.32.0",
     "sass-loader": "^10.2.1",
+    "vue-cli-plugin-i18n": "~2.3.1",
     "vue-cli-plugin-vuetify": "^2.4.8",
     "vue-template-compiler": "^2.6.11",
     "vuetify-loader": "^1.7.3"
-  }
+  },
+  "license": "MIT"
 }
