@@ -1,5 +1,4 @@
 <template>
-
   <v-card>
 
     <v-toolbar flat>
@@ -34,6 +33,8 @@
         :loading="loading"
         :headers="headers"
         :items="items"
+        :server-items-length="total"
+        :options.sync="options"
         @click:row="row_clicked($event)">
 
         <template v-slot:item.file="{ item }">
@@ -64,20 +65,40 @@ export default {
         {text: 'Time', value: 'time'}
       ],
       extra_headers: [],
-      items: []
+      items: [],
+      total: 0,
+      options: {},
     }
   },
   mounted(){
     this.get_items()
+  },
+  watch: {
+    options: {
+        handler () {
+          this.get_items()
+        },
+        deep: true,
+      },
   },
   methods:{
     get_items(){
       this.loading = true
       this.items = []
       const url = `${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/images`
-      this.axios.get(url)
+      const { itemsPerPage, page, sortBy, sortDesc} = this.options
+      const params = {
+        limit: itemsPerPage,
+        skip: ( page - 1 ) * itemsPerPage,
+        sort: sortBy[0],
+        order: sortDesc[0] ? -1 : 1,
+      }
+
+
+      this.axios.get(url, { params })
       .then( ({data}) => {
-        this.items = data
+        this.items = data.items
+        this.total = data.total
         this.build_headers()
        })
       .catch( (error) => {
