@@ -1,12 +1,18 @@
 <template>
   <v-card>
 
-    <v-toolbar flat>
+    <v-toolbar 
+      flat>
       <v-row>
         <v-col>
           <v-toolbar-title>Images</v-toolbar-title>
         </v-col>
         <v-spacer/>
+
+        <v-col cols="auto">
+          <UploadDialog />
+        </v-col>
+
         <v-col cols="auto">
           <v-btn
             text
@@ -25,6 +31,15 @@
           </v-btn>
         </v-col>
       </v-row>
+
+      <template 
+        v-if="false"
+        v-slot:extension>
+        <v-text-field
+          append-icon="mdi-magnify"
+          label="Query"
+          v-model="query" />
+      </template>
     </v-toolbar>
     <v-divider/>
 
@@ -55,11 +70,16 @@
 </template>
 
 <script>
+import UploadDialog from '../components/UploadDialog.vue'
 export default {
   name: 'Images',
+  components: {
+    UploadDialog
+  },
   data(){
     return {
       loading: false,
+      query: '',
       base_headers: [
         {text: 'Image', value: 'file'},
         {text: 'Time', value: 'time'}

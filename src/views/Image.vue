@@ -1,5 +1,6 @@
 <template>
-  <v-card>
+  <v-card
+    :loading="loading">
     <v-toolbar flat>
 
       <v-row align='center'>
@@ -17,6 +18,7 @@
         <v-spacer/>
         <v-col cols="auto">
           <v-btn
+            :disabled="loading"
             color="#c00000"
             dark
             @click="delete_item()">
@@ -30,12 +32,6 @@
 
     </v-toolbar>
     <v-divider/>
-
-    <v-card-text
-      v-if="loading"
-      class="text-center">
-      <v-progress-circular indeterminate/>
-    </v-card-text>
 
     <template v-if="item">
 
