@@ -1,14 +1,13 @@
 stages:
-  - containerization
-  - containerization-aarch64
+  - build
 
 variables:
   APPLICATION_NAME: image-storage-mongoose-front
   CONTAINER_IMAGE: ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
   CONTAINER_IMAGE_DOCKER_HUB: ${DOCKER_HUB_USERNAME}/${APPLICATION_NAME}
 
-containerization:
-  stage: containerization
+build-x86:
+  stage: build
   tags:
     - "x86"
   script:
@@ -26,8 +25,8 @@ containerization:
     - docker image rm ${CONTAINER_IMAGE}
     - docker image rm ${CONTAINER_IMAGE_DOCKER_HUB}
 
-containerization-aarch64:
-  stage: containerization-aarch64
+build-aarch64:
+  stage: build
   tags:
     - "aarch64"
   script:
