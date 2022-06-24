@@ -43,7 +43,7 @@ build-x86:
 build-aarch64:
   stage: build
   tags:
-    - "aarch64"
+    - aarch64
   only:
     - master
     - mongoose
