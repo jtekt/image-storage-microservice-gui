@@ -8,6 +8,9 @@ variables:
 
 build-x86:
   stage: build
+  only:
+    - master
+    - mongoose
   tags:
     - "x86"
   script:
@@ -29,6 +32,9 @@ build-aarch64:
   stage: build
   tags:
     - "aarch64"
+  only:
+    - master
+    - mongoose
   script:
     - >
       docker build
