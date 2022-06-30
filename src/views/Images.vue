@@ -1,61 +1,44 @@
 <template>
   <v-card>
 
-    <v-toolbar 
-      flat>
+    <v-toolbar flat>
       <v-row>
         <v-col>
           <v-toolbar-title>Images</v-toolbar-title>
         </v-col>
-        <v-spacer/>
+        <v-spacer />
 
         <v-col cols="auto">
           <UploadDialog />
         </v-col>
 
         <v-col cols="auto">
-          <v-btn
-            text
-            @click="export_collection()">
+          <v-btn text @click="export_collection()">
             <v-icon>mdi-download</v-icon>
             <span class='ml-2'>Export</span>
           </v-btn>
         </v-col>
 
         <v-col cols="auto">
-          <v-btn
-            text
-            :to="{name: 'import'}">
+          <v-btn text :to="{name: 'import'}">
             <v-icon>mdi-upload</v-icon>
             <span class='ml-2'>Import</span>
           </v-btn>
         </v-col>
       </v-row>
 
-      <template 
-        v-if="false"
-        v-slot:extension>
-        <v-text-field
-          append-icon="mdi-magnify"
-          label="Query"
-          v-model="query" />
+      <template v-if="false" v-slot:extension>
+        <v-text-field append-icon="mdi-magnify" label="Query" v-model="query" />
       </template>
     </v-toolbar>
-    <v-divider/>
+    <v-divider />
 
     <v-card-text>
-      <v-data-table
-        :loading="loading"
-        :headers="headers"
-        :items="items"
-        :server-items-length="total"
-        :options.sync="options"
-        @click:row="row_clicked($event)">
+      <v-data-table :loading="loading" :headers="headers" :items="items" :server-items-length="total"
+        :options.sync="options" @click:row="row_clicked($event)">
 
         <template v-slot:item.file="{ item }">
-          <img
-            class="thumbnail"
-            :src="image_src(item)"/>
+          <img class="thumbnail" :src="image_src(item)" />
         </template>
 
         <template v-slot:item.time="{ item }">
@@ -87,7 +70,10 @@ export default {
       extra_headers: [],
       items: [],
       total: 0,
-      options: {},
+      options: {
+        sortBy: ['time'],
+        sortDesc: [true],
+      },
     }
   },
   mounted(){
