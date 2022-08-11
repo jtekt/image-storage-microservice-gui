@@ -134,7 +134,8 @@ export default {
       })
     },
     export_collection(){
-      window.location.href=`${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/export`
+      const url = `${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/export`
+      window.open(url, '_blank')
     },
   },
   computed:{
