@@ -54,8 +54,8 @@ export default {
   computed: {
     nav(){
       return [
-        {title: 'Images', to: {name: 'images'}, icon: 'mdi-home'},
-        {title: 'About', to: {name: 'about'}, icon: 'mdi-information-outline'},
+        { title: this.$t('Images'), to: {name: 'images'}, icon: 'mdi-home' },
+        { title: this.$t('About'), to: {name: 'about'}, icon: 'mdi-information-outline' },
       ]
     }
   }
