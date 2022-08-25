@@ -43,23 +43,19 @@ export default {
     LocaleSelector
   },
 
-  data() {
-    return {
-      options: {
-        title: "Image storage service",
-        authenticate: true,
-        login_url: process.env.VUE_APP_LOGIN_URL,
-        identification_url: process.env.VUE_APP_IDENTIFICATION_URL,
-      },
-    }
-
-  },
+  data: () => ({
+    options: {
+      title: 'Image storage service',
+      login_url: process.env.VUE_APP_LOGIN_URL,
+      identification_url: process.env.VUE_APP_IDENTIFICATION_URL,
+    },
+  }),
 
   computed: {
     nav(){
       return [
-        {title: this.$t('Collections'), to: {name: 'collections'}, icon: 'mdi-home'},
-        {title: this.$t('About'), to: {name: 'about'}, icon: 'mdi-information-outline'},
+        { title: this.$t('Images'), to: {name: 'images'}, icon: 'mdi-home' },
+        { title: this.$t('About'), to: {name: 'about'}, icon: 'mdi-information-outline' },
       ]
     }
   }

@@ -6,9 +6,15 @@ Vue.use(VueRouter)
 const routes = [
 
   {
-    path: '/collections',
-    name: 'collections',
-    component: () => import('../views/Collections.vue')
+    path: '/images',
+    alias: '/',
+    name: 'images',
+    component: () => import('../views/Images.vue')
+  },
+  {
+    path: '/images/:_id',
+    name: 'image',
+    component: () => import('../views/Image.vue')
   },
   {
     path: '/import',
@@ -16,24 +22,10 @@ const routes = [
     component: () => import('../views/Import.vue')
   },
   {
-    path: '/collections/:collection_name',
-    name: 'collection',
-    component: () => import('../views/Collection.vue')
-  },
-  {
-    path: '/collections/:collection_name/items/:item_id',
-    name: 'item',
-    component: () => import('../views/Item.vue')
-  },
-  {
     path: '/about',
     name: 'about',
     component: () => import('../views/About.vue')
-  },
-  {
-    path: '/',
-    redirect: {name: 'collections'},
-  },
+  }
 ]
 
 const router = new VueRouter({
