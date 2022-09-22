@@ -115,8 +115,8 @@ export default {
     get_item(){
       this.loading = true
       this.item = null
-      const url = `${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/images/${this.image_id}`
-      this.axios.get(url)
+      const route = `/images/${this.image_id}`
+      this.axios.get(route)
       .then( ({data}) => {
         this.item = data
        })
@@ -131,8 +131,8 @@ export default {
     delete_item(){
       if(!confirm(`Delete image ${this.image_id}?`)) return
       this.loading = true
-      const url = `${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/images/${this.image_id}`
-      this.axios.delete(url)
+      const route = `/images/${this.image_id}`
+      this.axios.delete(route)
       .then( () => { this.$router.push({name: 'images'}) })
       .catch( (error) => {
         alert('Failed to delete data')
@@ -152,4 +152,5 @@ export default {
 .item_image {
   max-height: 60vh;
 }
+
 </style>

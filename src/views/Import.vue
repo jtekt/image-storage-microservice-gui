@@ -67,13 +67,12 @@ export default {
   methods: {
     import_collection() {
       this.uploading = true
-      const url = `${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/import`
 
       const headers = {'Content-Type': 'multipart/form-data' }
       const body = new FormData()
       body.append('archive', this.archive)
 
-      this.axios.post(url, body, { headers })
+      this.axios.post('/import', body, { headers })
       .then( () => {
         this.$router.push({name: 'images'})
 
@@ -89,8 +88,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-
-</style>

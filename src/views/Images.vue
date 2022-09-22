@@ -91,8 +91,9 @@ export default {
     get_items(){
       this.loading = true
       this.items = []
-      const url = `${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/images`
+
       const { itemsPerPage, page, sortBy, sortDesc} = this.options
+
       const params = {
         limit: itemsPerPage,
         skip: ( page - 1 ) * itemsPerPage,
@@ -100,8 +101,7 @@ export default {
         order: sortDesc[0] ? -1 : 1,
       }
 
-
-      this.axios.get(url, { params })
+      this.axios.get('/images', { params })
       .then( ({data}) => {
         this.items = data.items
         this.total = data.total
