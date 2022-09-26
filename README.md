@@ -1,4 +1,4 @@
-# Storage microservice (Mongoose version) GUI
+# Storage microservice GUI
 
 GUI for the image storage microservice
 
