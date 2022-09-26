@@ -60,9 +60,9 @@
         if(!this.image) return
         this.uploading = true
         const formData = new FormData()
-        formData.append("image", this.image)
+        formData.append('image', this.image)
 
-        this.axios.post(`${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/images`, formData)
+        this.axios.post('/images', formData)
         .then( ({data: {_id}}) => {
           this.$router.push({name: 'image', params: {_id}})
         })
