@@ -72,8 +72,9 @@
               :key="key">
               <v-list-item-content>
                 <v-list-item-subtitle>{{key}}</v-list-item-subtitle>
-                <v-list-item-title>{{value}}</v-list-item-title>
-              </v-list-item-content>
+                <v-list-item-title>
+                  <pre>{{format_metadata(value)}}</pre>
+                </v-list-item-title>              </v-list-item-content>
             </v-list-item>
           </v-list>
         </v-card-text>
@@ -142,6 +143,13 @@ export default {
         this.loading = false
       })
     },
+    format_metadata(data) {
+      try {
+        return JSON.stringify(data, null, 2)
+      } catch (error) {
+        return data
+      }
+    }
 
   },
 
