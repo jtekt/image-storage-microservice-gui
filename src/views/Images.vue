@@ -78,6 +78,7 @@ export default {
   },
   mounted(){
     this.get_items()
+    this.get_fields()
   },
   watch: {
     options: {
@@ -105,7 +106,7 @@ export default {
       .then( ({data}) => {
         this.items = data.items
         this.total = data.total
-        this.build_headers()
+        // this.build_headers()
        })
       .catch( (error) => {
         alert('Failed to query data')
@@ -114,6 +115,15 @@ export default {
       .finally(() => {
         this.loading = false
       })
+    },
+    get_fields(){
+      this.axios.get('/images/fields')
+        .then(({ data }) => {
+          this.extra_headers = data.map(f => ({ text: f, value: `data.${f}` }))
+        })
+        .catch((error) => {
+          console.error(error)
+        })
     },
     row_clicked({_id}) {
       this.$router.push({name: 'image', params: {_id}})
@@ -124,14 +134,6 @@ export default {
     },
     image_src({_id}){
       return `${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/images/${_id}/image`
-    },
-    build_headers(){
-      this.items.forEach((item) => {
-        for (let key in item.data) {
-          const header_exists = this.extra_headers.some(header => header.value === `data.${key}`)
-          if(!header_exists) this.extra_headers.push({text: key, value: `data.${key}`})
-        }
-      })
     },
     export_collection(){
       const url = `${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/export`
