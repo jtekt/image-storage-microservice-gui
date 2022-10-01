@@ -29,10 +29,10 @@
 
       <v-row>
         <v-col cols="auto">
-          <DatePicker label="From" @selection="update_query({from: $event})"/>
+          <DatePicker label="From" v-model="from"/>
         </v-col>
         <v-col cols="auto">
-          <DatePicker label="To" @selection="update_query({to: $event})"/>
+          <DatePicker label="To" v-model="to"/>
         </v-col>
       </v-row>
 
@@ -49,7 +49,7 @@
         </template>
 
         <template v-slot:item.time="{ item }">
-          <span>{{format_date(item)}}</span>
+          <span>{{format_date(item.time)}}</span>
         </template>
 
       </v-data-table>
@@ -140,9 +140,9 @@ export default {
     row_clicked({_id}) {
       this.$router.push({name: 'image', params: {_id}})
     },
-    format_date({time}){
+    format_date(time){
       const date = new Date(time)
-      return date.toLocaleString('Ja-JP')
+      return date.toLocaleString()
     },
     image_src({_id}){
       return `${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/images/${_id}/image`
@@ -151,9 +151,7 @@ export default {
       const url = `${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/export`
       window.open(url, '_blank')
     },
-    update_query(event){
-      this.$router.push({ name: 'images', query: { ...this.$route.query, ...event } } )
-    }
+
   },
   computed:{
     headers(){
@@ -164,7 +162,28 @@ export default {
     },
     query(){
       return this.$route.query
-    }
+    },
+    // TODO: find way to generate those programatically
+    to: {
+      get() {
+        return this.$route.query.to
+      },
+      set(newVal) {
+        const query = { ...this.$route.query, to: newVal }
+        if (!newVal) delete query.to
+        this.$router.push({ query })
+      }
+    },
+    from: {
+      get() {
+        return this.$route.query.from
+      },
+      set(newVal) {
+        const query = { ...this.$route.query, from: newVal }
+        if (!newVal) delete query.from
+        this.$router.push({ query })
+      }
+    },
   }
 
 }
