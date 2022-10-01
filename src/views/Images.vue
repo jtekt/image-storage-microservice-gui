@@ -1,7 +1,7 @@
 <template>
   <v-card>
 
-    <v-toolbar flat>
+    <v-container fluid>
       <v-row>
         <v-col>
           <v-toolbar-title>Images</v-toolbar-title>
@@ -27,10 +27,17 @@
         </v-col>
       </v-row>
 
-      <template v-if="false" v-slot:extension>
-        <v-text-field append-icon="mdi-magnify" label="Query" v-model="query" />
-      </template>
-    </v-toolbar>
+      <v-row>
+        <v-col cols="auto">
+          <DatePicker label="From" @selection="update_query({from: $event})"/>
+        </v-col>
+        <v-col cols="auto">
+          <DatePicker label="To" @selection="update_query({to: $event})"/>
+        </v-col>
+      </v-row>
+
+
+    </v-container>
     <v-divider />
 
     <v-card-text>
@@ -54,15 +61,17 @@
 
 <script>
 import UploadDialog from '../components/UploadDialog.vue'
+import DatePicker from '../components/DatePicker.vue'
+
 export default {
   name: 'Images',
   components: {
-    UploadDialog
+    UploadDialog,
+    DatePicker
   },
   data(){
     return {
       loading: false,
-      query: '',
       base_headers: [
         {text: 'Image', value: 'file'},
         {text: 'Time', value: 'time'}
@@ -82,11 +91,14 @@ export default {
   },
   watch: {
     options: {
-        handler () {
-          this.get_items()
-        },
-        deep: true,
+      handler () {
+        this.get_items()
       },
+      deep: true,
+    },
+    query(){
+      this.get_items()
+    }
   },
   methods:{
     get_items(){
@@ -100,13 +112,13 @@ export default {
         skip: ( page - 1 ) * itemsPerPage,
         sort: sortBy[0],
         order: sortDesc[0] ? -1 : 1,
+        ...this.query
       }
 
       this.axios.get('/images', { params })
       .then( ({data}) => {
         this.items = data.items
         this.total = data.total
-        // this.build_headers()
        })
       .catch( (error) => {
         alert('Failed to query data')
@@ -117,7 +129,7 @@ export default {
       })
     },
     get_fields(){
-      this.axios.get('/images/fields')
+      this.axios.get('/fields')
         .then(({ data }) => {
           this.extra_headers = data.map(f => ({ text: f, value: `data.${f}` }))
         })
@@ -139,6 +151,9 @@ export default {
       const url = `${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/export`
       window.open(url, '_blank')
     },
+    update_query(event){
+      this.$router.push({ name: 'images', query: { ...this.$route.query, ...event } } )
+    }
   },
   computed:{
     headers(){
@@ -146,6 +161,9 @@ export default {
         ...this.base_headers,
         ...this.extra_headers,
       ]
+    },
+    query(){
+      return this.$route.query
     }
   }
 
