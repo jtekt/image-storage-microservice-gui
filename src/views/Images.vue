@@ -73,10 +73,10 @@ export default {
       extra_headers: [],
       items: [],
       total: 0,
-      options: {
-        sortBy: ['time'],
-        sortDesc: [true],
-      },
+      // options: {
+      //   sortBy: ['time'],
+      //   sortDesc: [true],
+      // },
     }
   },
   mounted(){
@@ -84,12 +84,6 @@ export default {
     this.get_fields()
   },
   watch: {
-    options: {
-      handler () {
-        this.get_items()
-      },
-      deep: true,
-    },
     query(){
       this.get_items()
     }
@@ -99,17 +93,9 @@ export default {
       this.loading = true
       this.items = []
 
-      const { itemsPerPage, page, sortBy, sortDesc} = this.options
+      const params = this.query
 
-      const params = {
-        limit: itemsPerPage,
-        skip: ( page - 1 ) * itemsPerPage,
-        sort: sortBy[0],
-        order: sortDesc[0] ? -1 : 1,
-        ...this.query
-      }
-
-      this.axios.get('/images', { params })
+      this.axios.get('/images', {params})
       .then( ({data}) => {
         this.items = data.items
         this.total = data.total
@@ -157,7 +143,6 @@ export default {
     query(){
       return this.$route.query
     },
-    // TODO: find way to generate those programatically
     to: {
       get() {
         return this.$route.query.to
@@ -178,6 +163,28 @@ export default {
         this.$router.push({ query })
       }
     },
+    options: {
+      get(){
+        return {
+          sortBy: ['time'],
+          sortDesc: [true],
+        }
+      },
+      set(newVal){
+
+        const { itemsPerPage, page, sortBy, sortDesc } = newVal
+
+        const params = {
+          limit: itemsPerPage,
+          skip: (page - 1) * itemsPerPage,
+          sort: sortBy[0],
+          order: sortDesc[0] ? -1 : 1,
+        }
+
+        const query = { ...this.$route.query, ...params }
+        this.$router.push({ query })
+      }
+    }
   }
 
 }
