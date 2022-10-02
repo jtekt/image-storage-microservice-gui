@@ -27,14 +27,9 @@
         </v-col>
       </v-row>
 
-      <v-row>
-        <v-col cols="auto">
-          <DatePicker label="From" v-model="from"/>
-        </v-col>
-        <v-col cols="auto">
-          <DatePicker label="To" v-model="to"/>
-        </v-col>
-      </v-row>
+      <QuerySettings :fields="fields" />
+
+      
 
 
     </v-container>
@@ -61,17 +56,19 @@
 
 <script>
 import UploadDialog from '../components/UploadDialog.vue'
-import DatePicker from '../components/DatePicker.vue'
+import QuerySettings from '../components/QuerySettings.vue'
 
 export default {
   name: 'Images',
   components: {
     UploadDialog,
-    DatePicker
+    QuerySettings
   },
   data(){
     return {
       loading: false,
+      fields: [],
+      field: null,
       base_headers: [
         {text: 'Image', value: 'file'},
         {text: 'Time', value: 'time'}
@@ -131,7 +128,7 @@ export default {
     get_fields(){
       this.axios.get('/fields')
         .then(({ data }) => {
-          this.extra_headers = data.map(f => ({ text: f, value: `data.${f}` }))
+          this.fields = data
         })
         .catch((error) => {
           console.error(error)
@@ -157,7 +154,7 @@ export default {
     headers(){
       return [
         ...this.base_headers,
-        ...this.extra_headers,
+        ...this.fields.map(f => ({ text: f, value: `data.${f}` })),
       ]
     },
     query(){
