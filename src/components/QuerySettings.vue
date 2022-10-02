@@ -5,7 +5,11 @@
                 <v-expansion-panels flat>
                     <v-expansion-panel>
                         <v-expansion-panel-header>
-                            Query settings
+                            <span>
+                                <v-icon>mdi-magnify</v-icon>
+                                <span>Query settings</span>
+                            </span>
+                            
                         </v-expansion-panel-header>
                         <v-expansion-panel-content>
                             <v-row align="baseline">
@@ -133,9 +137,7 @@ export default {
             }
         },
         unusedFilters(){
-            return this.fields.filter(f => {
-                return !Object.keys(this.filters).includes(f)
-            })
+            return this.fields.filter(f => !Object.keys(this.filters).includes(f) )
         }
     }
 

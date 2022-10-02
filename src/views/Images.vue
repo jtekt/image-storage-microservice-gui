@@ -30,10 +30,7 @@
       <QuerySettings :fields="fields" />
 
       
-
-
     </v-container>
-    <v-divider />
 
     <v-card-text>
       <v-data-table :loading="loading" :headers="headers" :items="items" :server-items-length="total"
