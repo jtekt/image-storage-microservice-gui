@@ -161,11 +161,13 @@ export default {
     },
     options: {
       get(){
+
+        // Defaults are not loaded properly
         const {
-          limit = 100,
-          sort,
-          order,
-          skip,
+          limit = 5,
+          sort = 'time',
+          order = 1,
+          skip = 0,
         } = this.$route.query
 
         return {
