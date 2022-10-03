@@ -73,10 +73,6 @@ export default {
       extra_headers: [],
       items: [],
       total: 0,
-      // options: {
-      //   sortBy: ['time'],
-      //   sortDesc: [true],
-      // },
     }
   },
   mounted(){
@@ -165,9 +161,18 @@ export default {
     },
     options: {
       get(){
+        const {
+          limit = 100,
+          sort,
+          order,
+          skip,
+        } = this.$route.query
+
         return {
-          sortBy: ['time'],
-          sortDesc: [true],
+          itemsPerPage: Number(limit),
+          sortBy: [sort],
+          sortDesc: [order === '-1'],
+          page: (skip / limit) + 1
         }
       },
       set(newVal){
@@ -175,14 +180,16 @@ export default {
         const { itemsPerPage, page, sortBy, sortDesc } = newVal
 
         const params = {
-          limit: itemsPerPage,
-          skip: (page - 1) * itemsPerPage,
-          sort: sortBy[0],
-          order: sortDesc[0] ? -1 : 1,
+          limit: String(itemsPerPage),
+          skip: String((page - 1) * itemsPerPage),
+          sort: String(sortBy[0]),
+          order: String(sortDesc[0] ? -1 : 1),
         }
 
         const query = { ...this.$route.query, ...params }
-        this.$router.push({ query })
+
+        // Stringify is dirty
+        if(JSON.stringify(this.$route.query) !== JSON.stringify(query)) this.$router.push({ query })
       }
     }
   }

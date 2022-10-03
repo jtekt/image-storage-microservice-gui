@@ -128,7 +128,7 @@ export default {
         filters: {
             get() {
                 // eslint-disable-next-line no-unused-vars
-                const { to, from, sort, order, page, ...fields } = this.$route.query
+                const { to, from, sort, order, page, limit, skip, ...fields } = this.$route.query
                 return fields
             },
             set(newVal) {
