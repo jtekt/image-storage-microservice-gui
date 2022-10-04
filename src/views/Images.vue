@@ -162,7 +162,7 @@ export default {
     options: {
       get(){
 
-        // Defaults are not loaded properly
+        // Those are not defaults, those are values which are set if the table does not set them
         const {
           limit = 5,
           sort = 'time',
@@ -176,20 +176,24 @@ export default {
           sortDesc: [order === '-1'],
           page: (skip / limit) + 1
         }
+
       },
       set(newVal){
+
+        // When the table sets some options
 
         const { itemsPerPage, page, sortBy, sortDesc } = newVal
 
         const params = {
           limit: String(itemsPerPage),
           skip: String((page - 1) * itemsPerPage),
-          sort: String(sortBy[0]),
           order: String(sortDesc[0] ? -1 : 1),
+          sort: sortBy[0],
         }
 
         const query = { ...this.$route.query, ...params }
 
+        // Preventing route duplicates
         // Stringify is dirty
         if(JSON.stringify(this.$route.query) !== JSON.stringify(query)) this.$router.push({ query })
       }
