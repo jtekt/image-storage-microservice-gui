@@ -1,6 +1,7 @@
 stages:
   - build
 
+image: moreillon/tdd-dind
 services:
   - name: docker:19.03.12-dind
 
