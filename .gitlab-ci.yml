@@ -3,20 +3,14 @@ stages:
 
 services:
   - name: docker:19.03.12-dind
-    command: ["--insecure-registry=172.16.98.151:5000"]
-
-
 
 variables:
   APPLICATION_NAME: image-storage-service-gui
-  CONTAINER_TAG: ${CI_COMMIT_SHORT_SHA}
-  CONTAINER_IMAGE: ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
-  CONTAINER_IMAGE_TAGGED: ${CONTAINER_IMAGE}:${CONTAINER_TAG}
-  CONTAINER_IMAGE_DOCKER_HUB: ${DOCKER_HUB_USERNAME}/${APPLICATION_NAME}
-  CONTAINER_IMAGE_DOCKER_HUB_TAGGED: ${CONTAINER_IMAGE_DOCKER_HUB}:${CONTAINER_TAG}
+  CONTAINER_IMAGE: ${AWS_ECR_PUBLIC_URL}/${APPLICATION_NAME}
+  CONTAINER_IMAGE_TAGGED: ${CONTAINER_IMAGE}:${CI_COMMIT_SHORT_SHA}
 
 
-build-x86:
+build:
   stage: build
   only:
     - master
@@ -24,33 +18,16 @@ build-x86:
   tags:
     - dind
   before_script:
-    - echo "${DOCKER_HUB_PASSWORD}" | docker login --username ${DOCKER_HUB_USERNAME} --password-stdin
+    # Registry login
+    - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ECR_PUBLIC_URL}
   script:
     # Building image
     - docker build -t ${CONTAINER_IMAGE} .
     # Tagging images
     - docker tag ${CONTAINER_IMAGE} ${CONTAINER_IMAGE_TAGGED}
-    - docker tag ${CONTAINER_IMAGE} ${CONTAINER_IMAGE_DOCKER_HUB}
-    - docker tag ${CONTAINER_IMAGE} ${CONTAINER_IMAGE_DOCKER_HUB_TAGGED}
+
     # Pushing images
     - docker push ${CONTAINER_IMAGE}
     - docker push ${CONTAINER_IMAGE_TAGGED}
-    - docker push ${CONTAINER_IMAGE_DOCKER_HUB}
-    - docker push ${CONTAINER_IMAGE_DOCKER_HUB_TAGGED}
 
-
-
-build-aarch64:
-  stage: build
-  tags:
-    - aarch64
-  only:
-    - master
-    - mongoose
-  script:
-    - >
-      docker build
-      --build-arg HTTP_PROXY=http://172.16.98.151:8118
-      --build-arg HTTPS_PROXY=http://172.16.98.151:8118
-      -t ${CONTAINER_REGISTRY}/${APPLICATION_NAME}-aarch64 .
-    - docker push ${CONTAINER_REGISTRY}/${APPLICATION_NAME}-aarch64
+# TODO: Build aarch64
