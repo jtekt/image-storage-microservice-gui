@@ -23,7 +23,7 @@ build:
     - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ECR_PUBLIC_URL}
     # Create repository in ECR if it does not exist yet
     - >
-      aws ecr-public create-repository --repository-name ${APPLICATION_NAME}
+      aws ecr-public create-repository --region us-east-1 --repository-name ${APPLICATION_NAME}
       || echo "Repository might have already existed"
 
   script:
