@@ -6,14 +6,13 @@
       <v-row align='center'>
         <v-col cols="auto">
           <v-btn
-            text
-            exact
-            :to="{name: 'images'}">
+            icon
+            @click="$router.go(-1)">
             <v-icon>mdi-arrow-left</v-icon>
           </v-btn>
         </v-col>
         <v-col>
-          <v-toolbar-title>{{image_id}}</v-toolbar-title>
+          <v-toolbar-title>Image</v-toolbar-title>
         </v-col>
         <v-spacer/>
         <v-col cols="auto">
@@ -23,7 +22,6 @@
             dark
             @click="delete_item()">
             <v-icon>mdi-delete</v-icon>
-            <span class='ml-2'>Delete</span>
           </v-btn>
         </v-col>
       </v-row>
