@@ -54,5 +54,5 @@ build-aarch64:
 
   script:
     # Building image
-    - docker build -t ${CONTAINER_IMAGE_AARCH64} .
+    - docker build -f Dockerfile-aarch64 -t ${CONTAINER_IMAGE_AARCH64} .
     - docker push ${CONTAINER_IMAGE_AARCH64}
