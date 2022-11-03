@@ -14,9 +14,7 @@
 
     <v-card>
 
-      <v-card-title>
-        Upload
-      </v-card-title>
+      <v-card-title>Upload</v-card-title>
 
       <v-card-text>
         <v-form @submit.prevent="upload()">
@@ -29,6 +27,7 @@
             </v-col>
             <v-col cols="auto">
               <v-btn
+                :loading="uploading"
                 :disabled="!image"
                 type="submit">
                 <v-icon>mdi-image-plus</v-icon>
