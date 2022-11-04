@@ -19,9 +19,10 @@
           <v-btn
             :disabled="loading"
             color="#c00000"
-            dark
+            text
             @click="delete_item()">
-            <v-icon>mdi-delete</v-icon>
+            <v-icon left>mdi-delete</v-icon>
+            <span>Delete</span>
           </v-btn>
         </v-col>
       </v-row>

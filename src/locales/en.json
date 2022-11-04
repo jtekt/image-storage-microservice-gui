@@ -1,5 +1,7 @@
 {
   "message": "hello i18n !!",
   "Collections": "Collections",
-  "About": "About"
+  "About": "About",
+  "Image": "Image",
+  "Images": "Images"
 }

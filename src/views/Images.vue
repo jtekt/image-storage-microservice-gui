@@ -4,7 +4,7 @@
     <v-container fluid>
       <v-row>
         <v-col>
-          <v-toolbar-title>Images</v-toolbar-title>
+          <v-toolbar-title>{{ $t('Images')}}</v-toolbar-title>
         </v-col>
         <v-spacer />
 
@@ -14,16 +14,13 @@
 
         <v-col cols="auto">
           <v-btn text @click="export_collection()">
-            <v-icon>mdi-download</v-icon>
-            <span class='ml-2'>Export</span>
+            <v-icon left>mdi-download</v-icon>
+            <span>Export</span>
           </v-btn>
         </v-col>
 
         <v-col cols="auto">
-          <v-btn text :to="{name: 'import'}">
-            <v-icon>mdi-upload</v-icon>
-            <span class='ml-2'>Import</span>
-          </v-btn>
+          <ImportDialog @import="get_items()"/>
         </v-col>
       </v-row>
 
@@ -54,12 +51,14 @@
 <script>
 import UploadDialog from '../components/UploadDialog.vue'
 import QuerySettings from '../components/QuerySettings.vue'
+import ImportDialog from '../components/ImportDialog.vue'
 
 export default {
   name: 'Images',
   components: {
     UploadDialog,
-    QuerySettings
+    QuerySettings,
+    ImportDialog
   },
   data(){
     return {
@@ -139,26 +138,7 @@ export default {
     query(){
       return this.$route.query
     },
-    to: {
-      get() {
-        return this.$route.query.to
-      },
-      set(newVal) {
-        const query = { ...this.$route.query, to: newVal }
-        if (!newVal) delete query.to
-        this.$router.push({ query })
-      }
-    },
-    from: {
-      get() {
-        return this.$route.query.from
-      },
-      set(newVal) {
-        const query = { ...this.$route.query, from: newVal }
-        if (!newVal) delete query.from
-        this.$router.push({ query })
-      }
-    },
+
     options: {
       get(){
 

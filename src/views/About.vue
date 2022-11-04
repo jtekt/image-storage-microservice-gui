@@ -11,7 +11,7 @@
     </v-toolbar>
 
     <v-card-text>
-      <p>Author: Maxime MOREILLON</p>
+      <p>Developed and maintainted by Maxime Moreillon, JTEKT Corporation</p>
       <v-data-table
         hide-default-footer
         :itemsPerPage="-1"

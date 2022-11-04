@@ -17,7 +17,7 @@
           </v-list-item-icon>
         
           <v-list-item-content>
-            <v-list-item-title>All images</v-list-item-title>
+            <v-list-item-title>{{$t('Images')}}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
@@ -103,13 +103,6 @@ export default {
     }
   },
 
-  computed: {
-    nav(){
-      return [
-        { title: this.$t('Images'), to: {name: 'images'}, icon: 'mdi-image-multiple' },
-        { title: this.$t('About'), to: {name: 'about'}, icon: 'mdi-information-outline' },
-      ]
-    }
-  }
+
 }
 </script>
