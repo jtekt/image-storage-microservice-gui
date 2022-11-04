@@ -12,7 +12,7 @@
           </v-btn>
         </v-col>
         <v-col>
-          <v-toolbar-title>Image</v-toolbar-title>
+          <v-toolbar-title>{{$t('Image')}}</v-toolbar-title>
         </v-col>
         <v-spacer/>
         <v-col cols="auto">
