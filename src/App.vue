@@ -86,7 +86,7 @@ export default {
       header_logo: require('@/assets/jtekt_logo_negative.jpg'),
       authentication_logo: require('@/assets/jtekt_logo.jpg'),
       colors: { app_bar : '#000'},
-      author: 'JTEKT Corporation',
+      author: 'Maxime MOREILLON, JTEKT Corporation',
     },
 
     // TODO: find better name for this env var
