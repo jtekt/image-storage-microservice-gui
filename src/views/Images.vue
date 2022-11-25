@@ -20,7 +20,10 @@
         </v-col>
 
         <v-col cols="auto">
-          <ImportDialog @import="get_items()"/>
+          <ImportDialog @import="get_items_and_fields()"/>
+        </v-col>
+        <v-col cols="auto">
+          <DeleteImages @deleted="get_items_and_fields()"/>
         </v-col>
       </v-row>
 
@@ -54,13 +57,15 @@
 import UploadDialog from '../components/UploadDialog.vue'
 import QuerySettings from '../components/QuerySettings.vue'
 import ImportDialog from '../components/ImportDialog.vue'
+import DeleteImages from '../components/DeleteImages.vue'
 
 export default {
   name: 'Images',
   components: {
     UploadDialog,
     QuerySettings,
-    ImportDialog
+    ImportDialog,
+    DeleteImages
   },
   data(){
     return {
@@ -77,8 +82,7 @@ export default {
     }
   },
   mounted(){
-    this.get_items()
-    this.get_fields()
+    this.get_items_and_fields()
   },
   watch: {
     query(){
@@ -128,6 +132,10 @@ export default {
       const url = `${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/export`
       window.open(url, '_blank')
     },
+    get_items_and_fields(){
+      this.get_items()
+      this.get_fields()
+    }
 
   },
   computed:{
