@@ -146,9 +146,9 @@ export default {
 
         // Those are not defaults, those are values which are set if the table does not set them
         const {
-          limit = 5,
+          limit = 10,
           sort = 'time',
-          order = -1,
+          order = -1, // Does not become default for some reason
           skip = 0,
         } = this.$route.query
 

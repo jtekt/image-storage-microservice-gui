@@ -30,7 +30,7 @@
       <v-form @submit.prevent="import_archive()">
       <v-card-text>
         <v-file-input accept=".zip" label="Archive (.zip)" v-model="archive" />
-        <UploadFields />
+        <UploadFields v-model="fields"/>
       </v-card-text>
       <v-card-text>
         <v-progress-linear height="25" :value="this.uploadProgress" rounded>
@@ -102,10 +102,10 @@ export default {
         body.append(field.key, field.value)
       })
 
+
       const options = {
         onUploadProgress: (progressEvent) => {
           this.uploadProgress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-          console.log(this.uploadProgress)
         },
         headers: { 'Content-Type': 'multipart/form-data' }
       }

@@ -34,12 +34,12 @@
 <script>
 export default {
     name: 'UploadFields',
-    prosps: {
+    props: {
         value: Array,
     },
     data(){
         return {
-            fields: [],
+            // fields: [],
 
         }
     },
@@ -49,6 +49,16 @@ export default {
         },
         deleteField(index) {
             this.fields.splice(index, 1)
+        }
+    },
+    computed: {
+        fields: {
+            get(){
+                return this.value
+            },
+            set(newVal){
+                this.$emit('input', newVal)
+            }
         }
     }
 }
