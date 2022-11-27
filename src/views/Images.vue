@@ -1,37 +1,50 @@
 <template>
   <v-card>
 
-    <v-container fluid>
-      <v-row>
-        <v-col>
-          <v-toolbar-title>{{ $t('Images')}}</v-toolbar-title>
-        </v-col>
-        <v-spacer />
-
-        <v-col cols="auto">
-          <UploadDialog />
-        </v-col>
-
-        <v-col cols="auto">
-          <v-btn text @click="export_collection()">
-            <v-icon left>mdi-download</v-icon>
-            <span>Export</span>
+    <v-toolbar flat extended>
+      <v-toolbar-title>{{ $t('Images')}}</v-toolbar-title>
+      <v-spacer />
+      <v-menu offset-y>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn icon v-bind="attrs" v-on="on">
+            <v-icon>mdi-dots-vertical</v-icon>
           </v-btn>
-        </v-col>
+        </template>
 
-        <v-col cols="auto">
-          <ImportDialog @import="get_items_and_fields()"/>
-        </v-col>
-        <v-col cols="auto">
-          <DeleteImages @deleted="get_items_and_fields()"/>
-        </v-col>
-      </v-row>
+        <v-list>
 
-      <QuerySettings :fields="fields" />
+          <v-list-item>
+            <UploadDialog />
+          </v-list-item>
+
+          <v-list-item>
+            <ExportButton />
+          </v-list-item>
+
+          <v-list-item>
+            <ImportDialog @import="get_items_and_fields()" />
+          </v-list-item>
+
+          <v-list-item>
+            <DeleteImages @deleted="get_items_and_fields()" />
+          </v-list-item>
+
+          
+
+
+
+        </v-list>
+      </v-menu>
+
+      <template v-slot:extension>
+            <QuerySettings :fields="fields" />
+      </template>
+    </v-toolbar>
+
+
+
 
       
-    </v-container>
-
     <v-card-text>
       <v-data-table :loading="loading" :headers="headers" :items="items" :server-items-length="total"
         :options.sync="options" @click:row="row_clicked($event)">
@@ -58,6 +71,7 @@ import UploadDialog from '../components/UploadDialog.vue'
 import QuerySettings from '../components/QuerySettings.vue'
 import ImportDialog from '../components/ImportDialog.vue'
 import DeleteImages from '../components/DeleteImages.vue'
+import ExportButton from '../components/ExportButton.vue'
 
 export default {
   name: 'Images',
@@ -65,7 +79,8 @@ export default {
     UploadDialog,
     QuerySettings,
     ImportDialog,
-    DeleteImages
+    DeleteImages,
+    ExportButton,
   },
   data(){
     return {
@@ -128,10 +143,7 @@ export default {
     image_src({_id}){
       return `${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/images/${_id}/image`
     },
-    export_collection(){
-      const url = `${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/export`
-      window.open(url, '_blank')
-    },
+    
     get_items_and_fields(){
       this.get_items()
       this.get_fields()

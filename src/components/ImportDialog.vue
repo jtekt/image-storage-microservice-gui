@@ -4,6 +4,7 @@
     width="40rem">
     <template v-slot:activator="{ on, attrs }">
       <v-btn
+        block
         text
         v-bind="attrs"
         v-on="on">

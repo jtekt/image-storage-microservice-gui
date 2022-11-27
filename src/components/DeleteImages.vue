@@ -1,5 +1,5 @@
 <template>
-    <v-btn color="#c00000" @click=deleteImages() :loading="deleting" text>
+    <v-btn block color="#c00000" @click=deleteImages() :loading="deleting" text>
         <v-icon left>mdi-delete</v-icon>
         <span>Delete images</span>
     </v-btn>
