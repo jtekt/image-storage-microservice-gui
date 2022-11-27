@@ -1,7 +1,7 @@
 <template>
   <v-card>
 
-    <v-toolbar flat extended>
+    <v-toolbar flat >
       <v-toolbar-title>{{ $t('Images')}}</v-toolbar-title>
       <v-spacer />
       <v-menu offset-y>
@@ -36,10 +36,10 @@
         </v-list>
       </v-menu>
 
-      <template v-slot:extension>
-            <QuerySettings :fields="fields" />
-      </template>
     </v-toolbar>
+    <v-container fluid>
+      <QuerySettings :fields="fields" />
+    </v-container>
 
 
 
