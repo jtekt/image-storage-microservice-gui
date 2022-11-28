@@ -12,16 +12,16 @@
         <span>Import</span>
       </v-btn>
 
-      <v-snackbar :color="snackbar.color" v-model="snackbar.show">
-        {{ snackbar.text }}
-      
-        <template v-slot:action="{ attrs }">
-          <v-btn dark text v-bind="attrs" @click="snackbar.show = false">
-            Close
-          </v-btn>
-        </template>
-      </v-snackbar>
-      
+      <!-- Snackbar does not render well because inside a menu -->
+      <!-- <v-snackbar :color="snackbar.color" v-model="snackbar.show">
+            {{ snackbar.text }}
+          
+            <template v-slot:action="{ attrs }">
+              <v-btn dark text v-bind="attrs" @click="snackbar.show = false">
+                Close
+              </v-btn>
+            </template>
+          </v-snackbar> -->
     </template>
 
     <v-card>
@@ -60,6 +60,8 @@
 
 
     </v-card>
+
+    
 
     
     
