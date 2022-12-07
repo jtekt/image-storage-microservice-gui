@@ -50,7 +50,7 @@
         :options.sync="options" @click:row="row_clicked($event)">
 
         <template v-slot:item.file="{ item }">
-          <img class="thumbnail" :src="image_src(item)" />
+          <v-img max-height="5em" max-width="5em" contain :src="image_src(item)" />
         </template>
 
         <template v-slot:item.time="{ item }">
@@ -206,10 +206,6 @@ export default {
 </script>
 
 <style>
-.thumbnail{
-  height: 5em;
-  width: 5em;
-}
 td, th {
   white-space: nowrap;
 }
