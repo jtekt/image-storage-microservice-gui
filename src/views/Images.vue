@@ -46,8 +46,14 @@
 
       
     <v-card-text>
-      <v-data-table :loading="loading" :headers="headers" :items="items" :server-items-length="total"
-        :options.sync="options" @click:row="row_clicked($event)">
+      <v-data-table 
+        :loading="loading" 
+        :headers="headers" 
+        :items="items" 
+        :server-items-length="total"
+        :options.sync="options" 
+        @click:row="row_clicked($event)"
+        :footer-props="footerProps">
 
         <template v-slot:item.file="{ item }">
           <v-img max-height="5em" max-width="5em" contain :src="image_src(item)" />
@@ -91,6 +97,7 @@ export default {
         {text: 'Image', value: 'file'},
         {text: 'Time', value: 'time'}
       ],
+      footerProps: { 'items-per-page-options': [10, 50, 100, -1] },
       extra_headers: [],
       items: [],
       total: 0,
