@@ -29,10 +29,6 @@
             <DeleteImages @deleted="get_items_and_fields()" />
           </v-list-item>
 
-          
-
-
-
         </v-list>
       </v-menu>
 
@@ -40,10 +36,6 @@
     <v-container fluid>
       <QuerySettings :fields="fields" />
     </v-container>
-
-
-
-
       
     <v-card-text>
       <v-data-table 
@@ -148,6 +140,7 @@ export default {
       return date.toLocaleString()
     },
     image_src({_id}){
+      // TODO: Deal with authentication
       return `${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/images/${_id}/image`
     },
     

@@ -17,68 +17,56 @@
         <v-spacer/>
         <v-col cols="auto">
           <v-btn
-            :disabled="loading"
+            :loading="deleting"
             color="#c00000"
-            text
+            icon
             @click="delete_item()">
-            <v-icon left>mdi-delete</v-icon>
-            <span>Delete</span>
+            <v-icon>mdi-delete</v-icon>
           </v-btn>
         </v-col>
       </v-row>
-
-
-
     </v-toolbar>
     <v-divider/>
 
-    <template v-if="item">
-
-      <!-- Image -->
-      <div class="text-center mt-5">
-        <img
-          class="item_image"
-          :src="image_src"/>
-      </div>
-
-
-
-      <v-card-text>
-        <v-card-text>
-          <v-list>
-            <v-list-item>
-              <v-list-item-content>
-                <v-list-item-subtitle>ID</v-list-item-subtitle>
-                <v-list-item-title>{{item._id}}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-content>
-                <v-list-item-subtitle>Time</v-list-item-subtitle>
-                <v-list-item-title >{{time_formatted}}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-content>
-                <v-list-item-subtitle>File name</v-list-item-subtitle>
-                <v-list-item-title>{{item.file}}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-          <v-list>
-            <v-list-item
-              v-for="(value, key) in item.data"
-              :key="key">
-              <v-list-item-content>
-                <v-list-item-subtitle>{{key}}</v-list-item-subtitle>
-                <v-list-item-title>
-                  <pre>{{format_metadata(value)}}</pre>
-                </v-list-item-title>              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-        </v-card-text>
+      <v-card-text v-if="item">
+        <v-row justify="center">
+          <v-col cols="auto">
+            <img class="item_image" :src="image_src" />
+          </v-col>
+        </v-row>
+        <v-list>
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-subtitle>ID</v-list-item-subtitle>
+              <v-list-item-title>{{item._id}}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-subtitle>Time</v-list-item-subtitle>
+              <v-list-item-title >{{time_formatted}}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-subtitle>File name</v-list-item-subtitle>
+              <v-list-item-title>{{item.file}}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+        <v-list>
+          <v-list-item
+            v-for="(value, key) in item.data"
+            :key="key">
+            <v-list-item-content>
+              <v-list-item-subtitle>{{key}}</v-list-item-subtitle>
+              <v-list-item-title>
+                <pre>{{format_metadata(value)}}</pre>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
       </v-card-text>
-    </template>
 
 
   </v-card>
@@ -91,6 +79,7 @@ export default {
   data(){
     return {
       loading: false,
+      deleting: false,
       item: null,
     }
   },
@@ -106,8 +95,7 @@ export default {
     },
     time_formatted(){
       const date = new Date(this.item.time)
-      const date_formatted =  date.toLocaleString('ja-JP')
-      return date_formatted
+      return date.toLocaleString('ja-JP')
     }
 
   },
@@ -130,7 +118,7 @@ export default {
     },
     delete_item(){
       if(!confirm(`Delete image ${this.image_id}?`)) return
-      this.loading = true
+      this.deleting = true
       const route = `/images/${this.image_id}`
       this.axios.delete(route)
       .then( () => { this.$router.push({name: 'images'}) })
@@ -139,7 +127,7 @@ export default {
         console.error(error)
       })
       .finally(() => {
-        this.loading = false
+        this.deleting = false
       })
     },
     format_metadata(data) {

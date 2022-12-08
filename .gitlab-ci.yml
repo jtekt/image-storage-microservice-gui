@@ -16,7 +16,6 @@ build:
   stage: build
   only:
     - master
-    - mongoose
   tags:
     - dind
   before_script:
@@ -28,20 +27,15 @@ build:
       || echo "Repository might have already existed"
 
   script:
-    # Building image
     - docker build -t ${CONTAINER_IMAGE} .
-    # Tagging image
     - docker tag ${CONTAINER_IMAGE} ${CONTAINER_IMAGE_TAGGED}
-    # Pushing images
     - docker push ${CONTAINER_IMAGE}
     - docker push ${CONTAINER_IMAGE_TAGGED}
 
-# TODO: Build aarch64
 build-aarch64:
   stage: build
   only:
     - master
-    - mongoose
   tags:
     - aarch64
   before_script:
@@ -51,8 +45,6 @@ build-aarch64:
     - >
       aws ecr-public create-repository --region us-east-1 --repository-name ${APPLICATION_NAME}
       || echo "Repository might have already existed"
-
   script:
-    # Building image
     - docker build -f Dockerfile-aarch64 -t ${CONTAINER_IMAGE_AARCH64} .
     - docker push ${CONTAINER_IMAGE_AARCH64}
