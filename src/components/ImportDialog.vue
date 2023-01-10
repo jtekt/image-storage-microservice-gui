@@ -61,10 +61,6 @@
 
     </v-card>
 
-    
-
-    
-    
   </v-dialog>
 </template>
 
@@ -82,8 +78,8 @@ export default {
       uploadProgress: 0,
       archive: null,
       fields: [],
-      
 
+      // TODO: find way to get snackbar to work
       snackbar: {
         show: false,
         text: '',
@@ -118,16 +114,20 @@ export default {
           this.$emit('import')
           this.archive = null
           this.dialog = false
-          this.snackbar.show = true
-          this.snackbar.color = 'success'
-          this.snackbar.text = 'Imported successful'
+          // TODO: try to have something better than alert
+          // this.snackbar.show = true
+          // this.snackbar.color = 'success'
+          // this.snackbar.text = 'Imported successful'
+          alert('Import successful')
         })
         .catch(error => {
           if (error.response) console.log(error.response.data)
           else console.log(error)
-          this.snackbar.show = true
-          this.snackbar.color = 'error'
-          this.snackbar.text = 'Import failed'
+          // TODO: try to have something better than alert
+          // this.snackbar.show = true
+          // this.snackbar.color = 'error'
+          // this.snackbar.text = 'Import failed'
+          alert('Import failed')
         })
         .finally(() => {
           this.uploading = false
