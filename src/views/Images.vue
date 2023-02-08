@@ -1,8 +1,7 @@
 <template>
   <v-card>
-
-    <v-toolbar flat >
-      <v-toolbar-title>{{ $t('Images')}}</v-toolbar-title>
+    <v-toolbar flat>
+      <v-toolbar-title>{{ $t("Images") }}</v-toolbar-title>
       <v-spacer />
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
@@ -12,7 +11,6 @@
         </template>
 
         <v-list>
-
           <v-list-item>
             <UploadDialog />
           </v-list-item>
@@ -28,51 +26,49 @@
           <v-list-item>
             <DeleteImages @deleted="get_items_and_fields()" />
           </v-list-item>
-
         </v-list>
       </v-menu>
-
     </v-toolbar>
     <v-container fluid>
       <QuerySettings :fields="fields" />
     </v-container>
-      
-    <v-card-text>
-      <v-data-table 
-        :loading="loading" 
-        :headers="headers" 
-        :items="items" 
-        :server-items-length="total"
-        :options.sync="options" 
-        @click:row="row_clicked($event)"
-        :footer-props="footerProps">
 
+    <v-card-text>
+      <v-data-table
+        :loading="loading"
+        :headers="headers"
+        :items="items"
+        :server-items-length="total"
+        :options.sync="options"
+        @click:row="row_clicked($event)"
+        :footer-props="footerProps"
+      >
         <template v-slot:item.file="{ item }">
-          <v-img max-height="5em" max-width="5em" contain :src="image_src(item)" />
+          <v-img
+            max-height="5em"
+            max-width="5em"
+            contain
+            :src="image_src(item)"
+          />
         </template>
 
         <template v-slot:item.time="{ item }">
-          <span>{{format_date(item.time)}}</span>
+          <span>{{ format_date(item.time) }}</span>
         </template>
-
       </v-data-table>
     </v-card-text>
-
-    
-
-
   </v-card>
 </template>
 
 <script>
-import UploadDialog from '../components/UploadDialog.vue'
-import QuerySettings from '../components/QuerySettings.vue'
-import ImportDialog from '../components/ImportDialog.vue'
-import DeleteImages from '../components/DeleteImages.vue'
-import ExportButton from '../components/ExportButton.vue'
+import UploadDialog from "../components/UploadDialog.vue"
+import QuerySettings from "../components/QuerySettings.vue"
+import ImportDialog from "../components/ImportDialog.vue"
+import DeleteImages from "../components/DeleteImages.vue"
+import ExportButton from "../components/ExportButton.vue"
 
 export default {
-  name: 'Images',
+  name: "Images",
   components: {
     UploadDialog,
     QuerySettings,
@@ -80,94 +76,94 @@ export default {
     DeleteImages,
     ExportButton,
   },
-  data(){
+  data() {
     return {
       loading: false,
       fields: [],
       field: null,
       base_headers: [
-        {text: 'Image', value: 'file'},
-        {text: 'Time', value: 'time'}
+        { text: "Image", value: "file" },
+        { text: "Time", value: "time" },
       ],
-      footerProps: { 'items-per-page-options': [10, 50, 100, -1] },
+      footerProps: { "items-per-page-options": [10, 50, 100, -1] },
       extra_headers: [],
       items: [],
       total: 0,
     }
   },
-  mounted(){
+  mounted() {
     this.get_items_and_fields()
   },
   watch: {
-    query(){
+    query() {
       this.get_items()
-    }
+    },
   },
-  methods:{
-    get_items(){
+  methods: {
+    get_items() {
       this.loading = true
       this.items = []
 
-      const params = this.query
+      const params = { ...this.query }
 
-      this.axios.get('/images', {params})
-      .then( ({data}) => {
-        this.items = data.items
-        this.total = data.total
-       })
-      .catch( (error) => {
-        alert('Failed to query data')
-        console.error(error)
-      })
-      .finally(() => {
-        this.loading = false
-      })
-    },
-    get_fields(){
-      this.axios.get('/fields')
+      this.axios
+        .get("/images", { params })
         .then(({ data }) => {
-          this.fields = data
+          this.items = data.items
+          this.total = data.total
+        })
+        .catch((error) => {
+          alert("Failed to query data")
+          console.error(error)
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
+    get_fields() {
+      this.axios
+        .get("/fields")
+        .then(({ data }) => {
+          this.fields = ["file", ...data]
         })
         .catch((error) => {
           console.error(error)
         })
     },
-    row_clicked({_id}) {
-      this.$router.push({name: 'image', params: {_id}})
+    row_clicked({ _id }) {
+      this.$router.push({ name: "image", params: { _id } })
     },
-    format_date(time){
+    format_date(time) {
       const date = new Date(time)
       return date.toLocaleString()
     },
-    image_src({_id}){
+    image_src({ _id }) {
       // TODO: Deal with authentication
       return `${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/images/${_id}/image`
     },
-    
-    get_items_and_fields(){
+
+    get_items_and_fields() {
       this.get_items()
       this.get_fields()
-    }
-
+    },
   },
-  computed:{
-    headers(){
+  computed: {
+    headers() {
       return [
         ...this.base_headers,
-        ...this.fields.map(f => ({ text: f, value: `data.${f}` })),
+        ...this.fields.map((f) => ({ text: f, value: `data.${f}` })),
       ]
     },
-    query(){
+    query() {
       return this.$route.query
     },
 
     options: {
-      get(){
-
+      get() {
         // Those are not defaults, those are values which are set if the table does not set them
         const {
           limit = 10,
-          sort = 'time',
+          sort = "time",
           order = -1, // Does not become default for some reason
           skip = 0,
         } = this.$route.query
@@ -175,13 +171,11 @@ export default {
         return {
           itemsPerPage: Number(limit),
           sortBy: [sort],
-          sortDesc: [order === '-1'],
-          page: (skip / limit) + 1
+          sortDesc: [order === "-1"],
+          page: skip / limit + 1,
         }
-
       },
-      set(newVal){
-
+      set(newVal) {
         // When the table sets some options
 
         const { itemsPerPage, page, sortBy, sortDesc } = newVal
@@ -197,16 +191,17 @@ export default {
 
         // Preventing route duplicates
         // Stringify is dirty
-        if(JSON.stringify(this.$route.query) !== JSON.stringify(query)) this.$router.push({ query })
-      }
-    }
-  }
-
+        if (JSON.stringify(this.$route.query) !== JSON.stringify(query))
+          this.$router.push({ query })
+      },
+    },
+  },
 }
 </script>
 
 <style>
-td, th {
+td,
+th {
   white-space: nowrap;
 }
 </style>
