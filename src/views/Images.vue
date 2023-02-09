@@ -124,7 +124,7 @@ export default {
       this.axios
         .get("/fields")
         .then(({ data }) => {
-          this.fields = ["file", ...data]
+          this.fields = data
         })
         .catch((error) => {
           console.error(error)
@@ -203,5 +203,9 @@ export default {
 td,
 th {
   white-space: nowrap;
+  max-width: 10ch;
+  overflow: hidden;
+
+  text-overflow: ellipsis;
 }
 </style>

@@ -141,7 +141,7 @@ export default {
     filters: {
       get() {
         // eslint-disable-next-line no-unused-vars
-        const { to, from, sort, order, page, limit, skip, ...fields } =
+        const { to, from, sort, order, page, limit, skip, regex, ...fields } =
           this.$route.query
         return fields
       },
@@ -150,8 +150,11 @@ export default {
         this.$router.push({ query })
       },
     },
+
     unusedFilters() {
-      return this.fields.filter((f) => !Object.keys(this.filters).includes(f))
+      return ["file", ...this.fields].filter(
+        (f) => !Object.keys(this.filters).includes(f)
+      )
     },
   },
 }
