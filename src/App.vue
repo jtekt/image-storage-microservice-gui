@@ -34,7 +34,16 @@
             :key="i"
             link
             exact
-            :to="{ name: 'images', query: { [field_name]: fieldValue } }"
+            :to="{
+              name: 'images',
+              query: {
+                [field_name]: fieldValue,
+                limit: 10,
+                skip: 0,
+                order: -1,
+                sort: 'time',
+              },
+            }"
           >
             <v-list-item-icon>
               <v-icon>mdi-image-multiple</v-icon>
