@@ -85,8 +85,8 @@ export default {
       fields: [],
       field: null,
       base_headers: [
-        { text: "Image", value: "file" },
-        { text: "Time", value: "time" },
+        { text: "Image", value: "file", width: "5em" },
+        { text: "Time", value: "time", width: "30ch" },
       ],
       footerProps: { "items-per-page-options": [10, 50, 100, -1] },
       extra_headers: [],
