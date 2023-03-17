@@ -24,7 +24,10 @@
           </v-list-item>
 
           <v-list-item>
-            <DeleteImages @deleted="get_items_and_fields()" />
+            <DeleteDialog
+              @deleted="get_items_and_fields()"
+              :imageCount="total"
+            />
           </v-list-item>
         </v-list>
       </v-menu>
@@ -64,7 +67,7 @@
 import UploadDialog from "../components/UploadDialog.vue"
 import QuerySettings from "../components/QuerySettings.vue"
 import ImportDialog from "../components/ImportDialog.vue"
-import DeleteImages from "../components/DeleteImages.vue"
+import DeleteDialog from "../components/DeleteDialog.vue"
 import ExportButton from "../components/ExportButton.vue"
 
 export default {
@@ -73,7 +76,7 @@ export default {
     UploadDialog,
     QuerySettings,
     ImportDialog,
-    DeleteImages,
+    DeleteDialog,
     ExportButton,
   },
   data() {
