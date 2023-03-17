@@ -53,7 +53,7 @@ export default {
   methods: {
     async deleteImages() {
       try {
-        this.deleting = false
+        this.deleting = true
         const url = "/images"
         // FOR NOW, IGNORING SKIP, LIMIT, ORDER and SORT
         const { limit, skip, sort, order, ...params } = this.query // eslint-disable-line no-unused-vars
