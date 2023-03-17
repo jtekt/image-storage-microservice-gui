@@ -21,7 +21,7 @@
           :value="true"
           no-action
           v-if="field_name"
-          prepend-icon="mdi-format-list-bulleted"
+          prepend-icon="mdi-folder-multiple-image"
         >
           <template v-slot:activator>
             <v-list-item-content>
