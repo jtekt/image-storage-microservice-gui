@@ -40,7 +40,12 @@ export default {
       menu: false,
     }
   },
-  methods: {},
+  methods: {
+    dateInUtc: (input) =>
+      new Date(
+        new Date(input).getTime() + new Date().getTimezoneOffset() * 60000
+      ),
+  },
   computed: {
     date: {
       get() {
@@ -53,7 +58,8 @@ export default {
         return `${year}-${month}-${day}`
       },
       set(newVal) {
-        this.$emit("input", new Date(newVal).toISOString())
+        // This is absurdly complex
+        this.$emit("input", this.dateInUtc(newVal).toISOString())
       },
     },
   },
