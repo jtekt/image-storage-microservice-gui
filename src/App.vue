@@ -17,44 +17,6 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-group
-          :value="true"
-          no-action
-          v-if="field_name"
-          prepend-icon="mdi-folder-multiple-image"
-        >
-          <template v-slot:activator>
-            <v-list-item-content>
-              <v-list-item-title>{{ field_name }}</v-list-item-title>
-            </v-list-item-content>
-          </template>
-
-          <v-list-item
-            v-for="(fieldValue, i) in fieldValues"
-            :key="i"
-            link
-            exact
-            :to="{
-              name: 'images',
-              query: {
-                [field_name]: fieldValue,
-                limit: 10,
-                skip: 0,
-                order: -1,
-                sort: 'time',
-              },
-            }"
-          >
-            <v-list-item-icon>
-              <v-icon>mdi-image-multiple</v-icon>
-            </v-list-item-icon>
-
-            <v-list-item-content>
-              <v-list-item-title>{{ fieldValue }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-group>
-
         <v-list-item :to="{ name: 'about' }" exact>
           <v-list-item-icon>
             <v-icon>mdi-information-outline</v-icon>
@@ -64,6 +26,8 @@
             <v-list-item-title>About</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+
+        <NavCategories />
       </v-list>
     </template>
   </AppTemplate>
@@ -72,9 +36,9 @@
 <script>
 import AppTemplate from "@moreillon/vue_application_template_vuetify"
 import LocaleSelector from "./components/LocaleSelector.vue"
+import NavCategories from "./components/NavCategories.vue"
 
-const { VUE_APP_CATEGORIZER, VUE_APP_IDENTIFICATION_URL, VUE_APP_LOGIN_URL } =
-  process.env
+const { VUE_APP_IDENTIFICATION_URL, VUE_APP_LOGIN_URL } = process.env
 
 export default {
   name: "App",
@@ -82,6 +46,7 @@ export default {
   components: {
     AppTemplate,
     LocaleSelector,
+    NavCategories,
   },
 
   data: () => ({
@@ -94,22 +59,7 @@ export default {
       colors: { app_bar: "#000" },
       author: "Maxime MOREILLON, JTEKT Corporation",
     },
-
-    field_name: VUE_APP_CATEGORIZER,
-    fieldValues: [],
   }),
-
-  mounted() {
-    this.get_field_values()
-  },
-
-  methods: {
-    async get_field_values() {
-      if (!this.field_name) return
-      const { data } = await this.axios.get(`/fields/${this.field_name}`)
-      this.fieldValues = data
-    },
-  },
 }
 </script>
 
