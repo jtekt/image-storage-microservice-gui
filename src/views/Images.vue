@@ -149,6 +149,14 @@ export default {
       this.get_items()
       this.get_fields()
     },
+    setQueryParam(key, value) {
+      if (this.query[key] === value) return
+      const query = { ...this.query }
+      if (value) query[key] = value
+      else delete query[key]
+      /* router.replace acts like router.push, the only difference is that it navigates without pushing a new history entry, as its name suggests - it replaces the current entry. */
+      this.$router.replace({ query })
+    },
   },
   computed: {
     headers() {
@@ -190,12 +198,10 @@ export default {
           sort: sortBy[0],
         }
 
-        const query = { ...this.$route.query, ...params }
-
-        // Preventing route duplicates
-        // Stringify is dirty
-        if (JSON.stringify(this.$route.query) !== JSON.stringify(query))
-          this.$router.push({ query })
+        // Not ideal but better than before
+        Object.keys(params).forEach((key) => {
+          this.setQueryParam(key, params[key])
+        })
       },
     },
   },

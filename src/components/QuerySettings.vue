@@ -106,6 +106,14 @@ export default {
       delete query[key]
       this.$router.push({ query })
     },
+    setQueryParam(key, value) {
+      if (this.query[key] === value) return
+      const query = { ...this.query }
+      if (value) query[key] = value
+      else delete query[key]
+      /* router.replace acts like router.push, the only difference is that it navigates without pushing a new history entry, as its name suggests - it replaces the current entry. */
+      this.$router.replace({ query })
+    },
   },
   computed: {
     to: {
@@ -113,9 +121,7 @@ export default {
         return this.$route.query.to
       },
       set(newVal) {
-        const query = { ...this.$route.query, to: newVal }
-        if (!newVal) delete query.to
-        this.$router.push({ query })
+        this.setQueryParam("to", newVal)
       },
     },
     from: {
@@ -123,9 +129,7 @@ export default {
         return this.$route.query.from
       },
       set(newVal) {
-        const query = { ...this.$route.query, from: newVal }
-        if (!newVal) delete query.from
-        this.$router.push({ query })
+        this.setQueryParam("from", newVal)
       },
     },
     regex: {
@@ -133,9 +137,7 @@ export default {
         return this.$route.query.regex
       },
       set(newVal) {
-        const query = { ...this.$route.query, regex: newVal }
-        if (!newVal) delete query.regex
-        this.$router.push({ query })
+        this.setQueryParam("regex", newVal)
       },
     },
     filters: {
@@ -146,8 +148,9 @@ export default {
         return fields
       },
       set(newVal) {
-        const query = { ...this.$route.query, ...newVal }
-        this.$router.push({ query })
+        Object.keys(newVal).forEach((key) => {
+          this.setQueryParam(key, newVal[key])
+        })
       },
     },
 
