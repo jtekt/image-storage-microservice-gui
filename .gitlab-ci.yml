@@ -4,18 +4,17 @@ stages:
 image: moreillon/tdd-dind
 services:
   - name: docker:19.03.12-dind
-    command: ["--insecure-registry=172.16.98.151:5000"]
 
 variables:
   APPLICATION_NAME: image-storage-service-gui
   CONTAINER_IMAGE: ${AWS_ECR_PUBLIC_URL}/${APPLICATION_NAME}
-  CONTAINER_IMAGE_TAGGED: ${CONTAINER_IMAGE}:${CI_COMMIT_SHORT_SHA}
-  CONTAINER_IMAGE_AARCH64: ${CONTAINER_IMAGE}:aarch64-${CI_COMMIT_SHORT_SHA}
+  CONTAINER_IMAGE_TAGGED: ${CONTAINER_IMAGE}:${CI_COMMIT_TAG}
+  CONTAINER_IMAGE_AARCH64: ${CONTAINER_IMAGE}:aarch64-${CI_COMMIT_TAG}
 
 build:
   stage: build
   only:
-    - master
+    - tags
   tags:
     - dind
   before_script:
@@ -35,7 +34,7 @@ build:
 build-aarch64:
   stage: build
   only:
-    - master
+    - tags
   tags:
     - aarch64
   before_script:
