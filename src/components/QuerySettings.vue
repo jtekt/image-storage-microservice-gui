@@ -6,7 +6,7 @@
           <v-expansion-panel>
             <v-expansion-panel-header>
               <span>
-                <v-icon>mdi-magnify</v-icon>
+                <v-icon left>mdi-magnify</v-icon>
                 <span>Query settings</span>
               </span>
             </v-expansion-panel-header>
@@ -20,47 +20,54 @@
                 </v-col>
               </v-row>
 
-              <v-row v-for="(key, index) in Object.keys(filters)" :key="index">
+              <v-row
+                v-for="(_, index) of filtersArray"
+                :key="index"
+                align="center"
+              >
                 <v-col cols="">
-                  <v-text-field :value="key" label="Field" readonly />
+                  <v-combobox
+                    :items="unusedFilters"
+                    v-model="filtersArray[index].key"
+                    label="Field"
+                  />
                 </v-col>
                 <v-col cols="">
-                  <v-text-field :value="filters[key]" label="Value" readonly />
+                  <v-text-field
+                    v-model="filtersArray[index].value"
+                    label="Value"
+                  />
                 </v-col>
                 <v-col cols="auto">
-                  <v-btn @click="removeFilter(key)" icon color="#c00000">
-                    <v-icon>mdi-delete</v-icon>
+                  <v-btn @click="removeFilter(index)" icon>
+                    <v-icon>mdi-close</v-icon>
                   </v-btn>
                 </v-col>
               </v-row>
 
-              <v-form @submit.prevent="addFilter()">
-                <v-row>
-                  <v-col>
-                    <v-select
-                      :items="unusedFilters"
-                      v-model="newFilterField"
-                      label="New filter field"
-                    />
-                  </v-col>
-                  <v-col>
-                    <v-text-field
-                      label="New filter value"
-                      v-model="newFilterValue"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="auto">
-                    <v-btn type="submit" :disabled="!newFilterValue" icon>
-                      <v-icon>mdi-plus</v-icon>
-                    </v-btn>
-                  </v-col>
-                </v-row>
-              </v-form>
+              <v-row>
+                <v-col cols="auto">
+                  <v-btn color="primary" @click="addFilter()">
+                    <v-icon left>mdi-plus</v-icon>
+                    <span>Add filter</span>
+                  </v-btn>
+                </v-col>
+              </v-row>
 
-              <!-- TODO: regex -->
               <v-row align="baseline">
                 <v-col cols="auto">
                   <v-switch label="Partial match" v-model="regex"></v-switch>
+                </v-col>
+                <v-spacer />
+                <v-col cols="auto">
+                  <v-btn
+                    color="primary"
+                    @click="applyQuerySettings()"
+                    :loading="loading"
+                  >
+                    <v-icon left>mdi-magnify</v-icon>
+                    <span>Apply</span>
+                  </v-btn>
                 </v-col>
               </v-row>
             </v-expansion-panel-content>
@@ -73,7 +80,6 @@
 
 <script>
 import DatePicker from "../components/DatePicker.vue"
-
 export default {
   name: "QuerySettings",
   components: {
@@ -81,82 +87,66 @@ export default {
   },
   props: {
     fields: Array,
+    loading: Boolean,
   },
   data() {
     return {
-      newFilterField: null,
-      newFilterValue: null,
+      from: this.$route.query.from,
+      to: this.$route.query.to,
+      regex: this.$route.query.regex,
+      filtersArray: [],
     }
+  },
+  mounted() {
+    // eslint-disable-next-line no-unused-vars
+    const { to, from, sort, order, page, limit, skip, regex, ...filters } =
+      this.$route.query
+    this.filtersArray = Object.keys(filters).map((key) => ({
+      key,
+      value: filters[key],
+    }))
   },
 
   methods: {
     addFilter() {
-      // this.filters = { ... this.filters, [this.newFilterField]: this.newFilterValue }
-      // OR
+      this.filtersArray.push({ key: "", value: "" })
+    },
+    removeFilter(index) {
+      this.filtersArray.splice(index, 1)
+    },
+    applyQuerySettings() {
+      // Not included here: limit, skip, order, sort
+
+      const { limit, skip, order, sort } = this.$route.query
+
+      const filters = this.filtersArray.reduce(
+        (prev, { key, value }) => ({ ...prev, [key]: value }),
+        {}
+      )
+
       const query = {
-        ...this.$route.query,
-        [this.newFilterField]: this.newFilterValue,
+        ...{ limit, skip, order, sort }, // Using this notation to show those are not set in this component
+        from: this.from,
+        to: this.to,
+        regex: this.regex,
+        ...filters,
       }
-      this.$router.push({ query })
-      this.newFilterField = null
-      this.newFilterValue = null
+
+      // PROBLEM: regex becomes a string
+      if (!this.shallowCompare(query, this.$route.query))
+        this.$router.replace({ query })
     },
-    removeFilter(key) {
-      const query = { ...this.$route.query }
-      delete query[key]
-      this.$router.push({ query })
-    },
-    setQueryParam(key, value) {
-      if (this.query[key] === value) return
-      const query = { ...this.query }
-      if (value) query[key] = value
-      else delete query[key]
-      /* router.replace acts like router.push, the only difference is that it navigates without pushing a new history entry, as its name suggests - it replaces the current entry. */
-      this.$router.replace({ query })
+    shallowCompare(obj1, obj2) {
+      return (
+        Object.keys(obj1).length === Object.keys(obj2).length &&
+        Object.keys(obj1).every((key) => obj1[key] === obj2[key])
+      )
     },
   },
   computed: {
-    to: {
-      get() {
-        return this.$route.query.to
-      },
-      set(newVal) {
-        this.setQueryParam("to", newVal)
-      },
-    },
-    from: {
-      get() {
-        return this.$route.query.from
-      },
-      set(newVal) {
-        this.setQueryParam("from", newVal)
-      },
-    },
-    regex: {
-      get() {
-        return this.$route.query.regex
-      },
-      set(newVal) {
-        this.setQueryParam("regex", newVal)
-      },
-    },
-    filters: {
-      get() {
-        // eslint-disable-next-line no-unused-vars
-        const { to, from, sort, order, page, limit, skip, regex, ...fields } =
-          this.$route.query
-        return fields
-      },
-      set(newVal) {
-        Object.keys(newVal).forEach((key) => {
-          this.setQueryParam(key, newVal[key])
-        })
-      },
-    },
-
     unusedFilters() {
       return ["file", ...this.fields].filter(
-        (f) => !Object.keys(this.filters).includes(f)
+        (f) => !this.filtersArray.map(({ key }) => key).includes(f)
       )
     },
   },
