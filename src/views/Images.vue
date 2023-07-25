@@ -88,7 +88,7 @@ export default {
         { text: "Image", value: "file", width: "5em" },
         { text: "Time", value: "time", width: "30ch" },
       ],
-      footerProps: { "items-per-page-options": [10, 50, 100, -1] },
+      footerProps: { "items-per-page-options": [10, 50, 100, 500] },
       extra_headers: [],
       items: [],
       total: 0,
