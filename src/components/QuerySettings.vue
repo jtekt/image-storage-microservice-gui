@@ -56,7 +56,7 @@
 
               <v-row align="baseline">
                 <v-col cols="auto">
-                  <v-switch label="Partial match" v-model="regex"></v-switch>
+                  <v-switch label="Partial match" v-model="regex" />
                 </v-col>
                 <v-spacer />
                 <v-col cols="auto">
@@ -93,7 +93,9 @@ export default {
     return {
       from: this.$route.query.from,
       to: this.$route.query.to,
-      regex: this.$route.query.regex,
+      regex: this.$route.query.regex
+        ? this.$route.query.regex === "true"
+        : false,
       filtersArray: [],
     }
   },
@@ -128,7 +130,7 @@ export default {
         ...{ limit, skip, order, sort }, // Using this notation to show those are not set in this component
         from: this.from,
         to: this.to,
-        regex: this.regex,
+        regex: this.regex ? "true" : undefined,
         ...filters,
       }
 
