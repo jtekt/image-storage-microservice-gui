@@ -20,7 +20,7 @@
       />
     </template>
 
-    <v-date-picker v-model="date" no-title scrollable>
+    <v-date-picker v-model="date" no-title scrollable color="primary">
       <v-spacer />
 
       <v-btn text color="primary" @click="menu = false"> Close </v-btn>
@@ -59,7 +59,13 @@ export default {
       },
       set(newVal) {
         // This is absurdly complex
-        this.$emit("input", this.dateInUtc(newVal).toISOString())
+        const formattedNewVal = newVal
+          ? this.dateInUtc(newVal).toISOString()
+          : null
+
+        this.$emit("input", formattedNewVal)
+
+        // this.$emit("input", this.dateInUtc(newVal).toISOString())
       },
     },
   },

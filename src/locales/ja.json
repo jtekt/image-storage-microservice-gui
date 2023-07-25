@@ -3,5 +3,9 @@
   "Collections": "コレクション",
   "About": "アプリについて",
   "Image": "画像",
-  "Images": "画像"
+  "Images": "画像",
+  "Query settings": "検索設定",
+  "Add filter": "フィルター追加",
+  "Apply query settings": "検索",
+  "Apply filters": "フィルターを設定する"
 }

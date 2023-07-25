@@ -3,5 +3,9 @@
   "Collections": "Collections",
   "About": "About",
   "Image": "Image",
-  "Images": "Images"
+  "Images": "Images",
+  "Query settings": "Query settings",
+  "Add filter": "Add filter",
+  "Apply query settings": "Apply query settings",
+  "Apply filters": "Apply filters"
 }

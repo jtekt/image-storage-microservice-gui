@@ -33,7 +33,7 @@
       </v-menu>
     </v-toolbar>
     <v-container fluid>
-      <QuerySettings :fields="fields" />
+      <QuerySettings :fields="fields" :loading="loading" />
     </v-container>
 
     <v-card-text>
