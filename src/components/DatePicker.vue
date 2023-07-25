@@ -63,8 +63,9 @@ export default {
           ? this.dateInUtc(newVal).toISOString()
           : null
 
-        console.log({ formattedNewVal })
         this.$emit("input", formattedNewVal)
+
+        // this.$emit("input", this.dateInUtc(newVal).toISOString())
       },
     },
   },
