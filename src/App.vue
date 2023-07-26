@@ -7,13 +7,31 @@
         </v-list-item>
         <v-divider />
 
-        <v-list-item :to="{ name: 'images' }" exact>
+        <v-list-item
+          :to="{
+            name: 'images',
+            query: { limit: 10, sort: 'time', order: -1, skip: 0 },
+          }"
+          exact
+        >
           <v-list-item-icon>
             <v-icon>mdi-image-multiple</v-icon>
           </v-list-item-icon>
 
           <v-list-item-content>
             <v-list-item-title>{{ $t("Images") }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <NavCategories v-if="categorizer" />
+
+        <v-list-item :to="{ name: 'folders' }" exact v-if="folderStructure">
+          <v-list-item-icon>
+            <v-icon>mdi-file-tree</v-icon>
+          </v-list-item-icon>
+
+          <v-list-item-content>
+            <v-list-item-title>{{ $t("Folder") }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
@@ -26,8 +44,6 @@
             <v-list-item-title>About</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-
-        <NavCategories />
       </v-list>
     </template>
   </AppTemplate>
@@ -38,7 +54,12 @@ import AppTemplate from "@moreillon/vue_application_template_vuetify"
 import LocaleSelector from "./components/LocaleSelector.vue"
 import NavCategories from "./components/NavCategories.vue"
 
-const { VUE_APP_IDENTIFICATION_URL, VUE_APP_LOGIN_URL } = process.env
+const {
+  VUE_APP_IDENTIFICATION_URL,
+  VUE_APP_LOGIN_URL,
+  VUE_APP_CATEGORIZER,
+  VUE_APP_FOLDER_STRUCTURE,
+} = process.env
 
 export default {
   name: "App",
@@ -50,6 +71,8 @@ export default {
   },
 
   data: () => ({
+    categorizer: VUE_APP_CATEGORIZER,
+    folderStructure: VUE_APP_FOLDER_STRUCTURE,
     options: {
       title: "Image storage service",
       login_url: VUE_APP_LOGIN_URL,

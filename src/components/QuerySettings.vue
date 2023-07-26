@@ -86,7 +86,7 @@ export default {
   },
   props: {
     fields: Array,
-    loading: Boolean,
+    loading: { type: Boolean, default: false },
   },
   data() {
     return {
