@@ -18,6 +18,9 @@
       <div v-for="image in images" :Key="image._id">
         <FolderImagePreview :image="image" />
       </div>
+      <div v-if="this.imageTotal > this.limit" class="pt-2">
+        {{ this.imageTotal - this.limit }} more...
+      </div>
     </div>
   </div>
 </template>
@@ -38,24 +41,26 @@ export default {
   data() {
     return {
       loading: false,
-      currentFolder: "",
+      currentFolder: VUE_APP_FOLDER_STRUCTURE.split(",")[this.depth],
       folders: [],
       images: [],
+      imageTotal: 0,
+      limit: 10,
     }
   },
+  mounted() {
+    if (this.$route.query[this.currentFolder] === this.name) this.openFolder()
+  },
   methods: {
+    handleFolderClicked() {
+      if (this.open) this.closeFolder()
+      else this.openFolder()
+    },
     async openFolder() {
-      if (this.folders.length) {
-        this.folders = []
-        return
-      }
-      if (this.images.length) {
-        this.images = []
-        return
-      }
-      this.currentFolder = VUE_APP_FOLDER_STRUCTURE.split(",")[this.depth]
       // If not last folder, then get folders
+
       if (this.currentFolder) {
+        this.setQueryParam(this.currentFolder, this.name)
         const url = `/fields/${this.currentFolder}`
         const params = {
           ...this.parents,
@@ -73,18 +78,32 @@ export default {
         const url = `/images`
         const params = {
           ...this.parents,
-          limit: 10,
+          limit: this.limit,
         }
         this.loading = true
         try {
           const { data } = await this.axios.get(url, { params })
           this.images = data.items
+          this.imageTotal = data.total
         } catch (error) {
           alert(error)
         } finally {
           this.loading = false
         }
       }
+    },
+    closeFolder() {
+      this.folders = []
+      this.images = []
+      this.setQueryParam(this.currentFolder, undefined)
+    },
+    setQueryParam(key, value) {
+      if (this.$route.query[key] === value) return
+      const query = { ...this.$route.query }
+      if (value) query[key] = value
+      else delete query[key]
+      /* router.replace acts like router.push, the only difference is that it navigates without pushing a new history entry, as its name suggests - it replaces the current entry. */
+      this.$router.replace({ query })
     },
   },
   computed: {
