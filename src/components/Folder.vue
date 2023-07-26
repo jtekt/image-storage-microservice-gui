@@ -20,6 +20,9 @@
       </div>
       <div v-if="this.imageTotal > this.limit" class="pt-2">
         {{ this.imageTotal - this.limit }} more...
+        <router-link :to="{ name: 'images', query: parents }">
+          See all
+        </router-link>
       </div>
     </div>
   </div>
@@ -42,6 +45,7 @@ export default {
     return {
       loading: false,
       currentFolder: VUE_APP_FOLDER_STRUCTURE.split(",")[this.depth],
+
       folders: [],
       images: [],
       imageTotal: 0,
@@ -49,7 +53,8 @@ export default {
     }
   },
   mounted() {
-    if (this.$route.query[this.currentFolder] === this.name) this.openFolder()
+    const parentFolder = VUE_APP_FOLDER_STRUCTURE.split(",")[this.depth - 1]
+    if (this.$route.query[parentFolder] === this.name) this.openFolder()
   },
   methods: {
     handleFolderClicked() {
@@ -59,8 +64,11 @@ export default {
     async openFolder() {
       // If not last folder, then get folders
 
+      Object.keys(this.parents).forEach((key) => {
+        this.setQueryParam(key, this.parents[key])
+      })
+
       if (this.currentFolder) {
-        this.setQueryParam(this.currentFolder, this.name)
         const url = `/fields/${this.currentFolder}`
         const params = {
           ...this.parents,
@@ -75,6 +83,7 @@ export default {
           this.loading = false
         }
       } else {
+        // TODO: deal with query params
         const url = `/images`
         const params = {
           ...this.parents,
