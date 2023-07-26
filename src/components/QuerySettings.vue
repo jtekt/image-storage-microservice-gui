@@ -144,8 +144,11 @@ export default {
     },
   },
   computed: {
+    allFilters() {
+      return ["file", "filter", ...this.fields]
+    },
     unusedFilters() {
-      return ["file", ...this.fields].filter(
+      return this.allFilters.filter(
         (f) => !this.filtersArray.map(({ key }) => key).includes(f)
       )
     },
