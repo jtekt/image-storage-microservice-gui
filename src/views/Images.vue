@@ -64,11 +64,11 @@
 </template>
 
 <script>
-import UploadDialog from "../components/UploadDialog.vue"
-import QuerySettings from "../components/QuerySettings.vue"
-import ImportDialog from "../components/ImportDialog.vue"
-import DeleteDialog from "../components/DeleteDialog.vue"
-import ExportButton from "../components/ExportButton.vue"
+import UploadDialog from "../components/UploadDialog.vue";
+import QuerySettings from "../components/QuerySettings.vue";
+import ImportDialog from "../components/ImportDialog.vue";
+import DeleteDialog from "../components/DeleteDialog.vue";
+import ExportButton from "../components/ExportButton.vue";
 
 export default {
   name: "Images",
@@ -92,70 +92,74 @@ export default {
       extra_headers: [],
       items: [],
       total: 0,
-    }
+    };
   },
   mounted() {
-    this.get_items_and_fields()
+    this.get_items_and_fields();
   },
   watch: {
     query() {
-      this.get_items()
+      this.get_items();
     },
   },
   methods: {
     get_items() {
-      this.loading = true
-      this.items = []
+      this.loading = true;
+      this.items = [];
 
-      const params = { ...this.query }
+      const params = { ...this.query };
 
       this.axios
         .get("/images", { params })
         .then(({ data }) => {
-          this.items = data.items
-          this.total = data.total
+          this.items = data.items;
+          this.total = data.total;
         })
         .catch((error) => {
-          alert("Failed to query data")
-          console.error(error)
+          alert("Failed to query data");
+          console.error(error);
         })
         .finally(() => {
-          this.loading = false
-        })
+          this.loading = false;
+        });
     },
     get_fields() {
       this.axios
         .get("/fields")
         .then(({ data }) => {
-          this.fields = data
+          this.fields = data;
         })
         .catch((error) => {
-          console.error(error)
-        })
+          console.error(error);
+        });
     },
     row_clicked({ _id }) {
-      this.$router.push({ name: "image", params: { _id } })
+      const routeData = this.$router.resolve({
+        name: "image",
+        params: { _id },
+      });
+      window.open(routeData.href, "_blank");
     },
     format_date(time) {
-      const date = new Date(time)
-      return date.toLocaleString()
+      const date = new Date(time);
+      return date.toLocaleString();
     },
     image_src({ _id }) {
       // TODO: Deal with authentication
-      return `${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/images/${_id}/image`
+      return `${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/images/${_id}/image`;
     },
 
     get_items_and_fields() {
-      this.get_items()
-      this.get_fields()
+      this.get_items();
+      this.get_fields();
     },
     setQueryParam(key, value) {
-      if (this.query[key] === value) return
-      const query = { ...this.query }
-      if (value) query[key] = value
-      else delete query[key]
+      if (this.query[key] === value) return;
+      const query = { ...this.query };
+      if (value) query[key] = value;
+      else delete query[key];
       /* router.replace acts like router.push, the only difference is that it navigates without pushing a new history entry, as its name suggests - it replaces the current entry. */
-      this.$router.replace({ query })
+      this.$router.replace({ query });
     },
   },
   computed: {
@@ -163,10 +167,10 @@ export default {
       return [
         ...this.base_headers,
         ...this.fields.map((f) => ({ text: f, value: `data.${f}` })),
-      ]
+      ];
     },
     query() {
-      return this.$route.query
+      return this.$route.query;
     },
 
     options: {
@@ -177,35 +181,35 @@ export default {
           sort = "time",
           order = -1, // Does not become default for some reason
           skip = 0,
-        } = this.$route.query
+        } = this.$route.query;
 
         return {
           itemsPerPage: Number(limit),
           sortBy: [sort],
           sortDesc: [order === "-1"],
           page: skip / limit + 1,
-        }
+        };
       },
       set(newVal) {
         // When the table sets some options
 
-        const { itemsPerPage, page, sortBy, sortDesc } = newVal
+        const { itemsPerPage, page, sortBy, sortDesc } = newVal;
 
         const params = {
           limit: String(itemsPerPage),
           skip: String((page - 1) * itemsPerPage),
           order: String(sortDesc[0] ? -1 : 1),
           sort: sortBy[0],
-        }
+        };
 
         // Not ideal but better than before
         Object.keys(params).forEach((key) => {
-          this.setQueryParam(key, params[key])
-        })
+          this.setQueryParam(key, params[key]);
+        });
       },
     },
   },
-}
+};
 </script>
 
 <style>
