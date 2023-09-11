@@ -31,7 +31,7 @@ export default {
             version,
             headers: [
                 { text: 'Service', value: 'name' },
-                { text: 'Version', value: 'version' },
+                { text: 'URL', value: 'url' },
             ],
             services: [
                 {
