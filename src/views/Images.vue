@@ -27,6 +27,7 @@
                         <DeleteDialog
                             @deleted="get_items_and_fields()"
                             :imageCount="total"
+                            :selected="selectedIds"
                         />
                     </v-list-item>
                 </v-list>
@@ -45,6 +46,9 @@
                 :options.sync="options"
                 @click:row="row_clicked($event)"
                 :footer-props="footerProps"
+                v-model="selected"
+                :show-select="allow_select"
+                item-key="_id"
             >
                 <template v-slot:item.file="{ item }">
                     <v-img
@@ -83,6 +87,8 @@ export default {
     },
     data() {
         return {
+            selected: [],
+            allow_select: true,
             loading: false,
             fields: [],
             field: null,
@@ -123,6 +129,7 @@ export default {
                 })
                 .finally(() => {
                     this.loading = false
+                    this.reset_selection()
                 })
         },
         get_fields() {
@@ -153,7 +160,7 @@ export default {
 
         get_items_and_fields() {
             this.get_items()
-            this.get_fields()
+            // this.get_fields()
         },
         setQueryParam(key, value) {
             if (this.query[key] === value) return
@@ -162,6 +169,9 @@ export default {
             else delete query[key]
             /* router.replace acts like router.push, the only difference is that it navigates without pushing a new history entry, as its name suggests - it replaces the current entry. */
             this.$router.replace({ query })
+        },
+        reset_selection() {
+            this.selected = []
         },
     },
     computed: {
@@ -173,6 +183,10 @@ export default {
         },
         query() {
             return this.$route.query
+        },
+        selectedIds() {
+            // Extract _id from selected items
+            return this.selected.map((item) => item._id)
         },
 
         options: {
