@@ -69,7 +69,7 @@ export default {
                 let queryParams = params
                 if (this.selected.length > 0)
                     queryParams = { ...queryParams, ids: this.selected }
-                await this.axios.delete(url, { queryParams })
+                await this.axios.delete(url, { params: queryParams })
                 this.$emit('deleted')
                 this.dialog = false
             } catch (error) {
