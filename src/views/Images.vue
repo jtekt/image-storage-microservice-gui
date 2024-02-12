@@ -160,7 +160,7 @@ export default {
 
         get_items_and_fields() {
             this.get_items()
-            // this.get_fields()
+            this.get_fields()
         },
         setQueryParam(key, value) {
             if (this.query[key] === value) return
