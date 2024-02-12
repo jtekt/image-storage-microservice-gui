@@ -89,7 +89,7 @@ export default {
         },
         button_label() {
             return this.selected.length === 0
-                ? `Delete all images`
+                ? `Delete images`
                 : `Delete ${this.numberWithCommas(
                       this.selected.length
                   )} selected image(s)`
