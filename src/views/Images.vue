@@ -16,7 +16,10 @@
                     </v-list-item>
 
                     <v-list-item>
-                        <ExportButton />
+                        <ExportButton
+                            :imageCount="total"
+                            :selected="selectedIds"
+                        />
                     </v-list-item>
 
                     <v-list-item>
