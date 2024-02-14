@@ -72,30 +72,103 @@
                 <v-expansion-panel>
                     <v-expansion-panel-header class="font-weight-medium">
                         Editable Image Data
+                        <v-spacer />
+                        <div align="right" v-if="edit_mode">
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-btn
+                                        icon
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        color="error"
+                                        @click.stop="cancel_edit()"
+                                    >
+                                        <v-icon> mdi-close-box </v-icon>
+                                    </v-btn>
+                                </template>
+                                <div class="text-center">Cancel Changes</div>
+                            </v-tooltip>
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-btn
+                                        icon
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        color="success"
+                                        :disabled="
+                                            !isJsonValid || !made_changes
+                                        "
+                                        @click.stop="save_data()"
+                                    >
+                                        <v-icon> mdi-content-save </v-icon>
+                                    </v-btn>
+                                </template>
+                                <div class="text-center">Save Changes</div>
+                            </v-tooltip>
+                        </div>
+
+                        <div align="right" v-else>
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-btn
+                                        icon
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        color="secondary"
+                                        @click.stop="start_edit()"
+                                    >
+                                        <v-icon> mdi-lead-pencil </v-icon>
+                                    </v-btn>
+                                </template>
+                                <div class="text-center">
+                                    Edit image properties
+                                </div>
+                            </v-tooltip>
+                        </div>
                     </v-expansion-panel-header>
                     <v-expansion-panel-content>
-                        <v-row>
-                            <v-col>
-                                <v-list>
-                                    <v-list-item
-                                        v-for="(value, key) in item.data"
-                                        :key="key"
-                                    >
-                                        <v-list-item-content>
-                                            <v-list-item-subtitle
-                                                class="text-button font-weight-medium"
-                                                >{{ key }}</v-list-item-subtitle
-                                            >
-                                            <v-list-item-title>
-                                                <pre>{{
-                                                    format_metadata(value)
-                                                }}</pre>
-                                            </v-list-item-title>
-                                        </v-list-item-content>
-                                    </v-list-item>
-                                </v-list>
-                            </v-col>
-                        </v-row>
+                        <div v-if="edit_mode">
+                            <v-textarea
+                                filled
+                                no-resize
+                                rows="20"
+                                row-height="20"
+                                v-model="data_string"
+                                :error="!isJsonValid"
+                                :error-messages="
+                                    !isJsonValid ? 'Invalid JSON' : ''
+                                "
+                            />
+                        </div>
+                        <div v-else class="pt-5">
+                            <v-row>
+                                <v-col>
+                                    <v-list>
+                                        <v-list-item
+                                            v-for="(value, key) in item.data"
+                                            :key="key"
+                                        >
+                                            <v-list-item-content>
+                                                <v-list-item-subtitle
+                                                    class="text-button font-weight-medium"
+                                                >
+                                                    {{ key }}
+                                                </v-list-item-subtitle>
+                                                <v-list-item-title>
+                                                    <pre>
+                                                        {{
+                                                            format_metadata(
+                                                                value
+                                                            )
+                                                        }}
+                                                    </pre>
+                                                </v-list-item-title>
+                                            </v-list-item-content>
+                                        </v-list-item>
+                                    </v-list>
+                                </v-col>
+                            </v-row>
+                        </div>
                     </v-expansion-panel-content>
                 </v-expansion-panel>
             </v-expansion-panels>
@@ -114,7 +187,8 @@ export default {
             deleting: false,
             item: null,
             panel: [0, 1],
-            on_edit: false,
+            edit_mode: false,
+            data_string: '',
         }
     },
     mounted() {
@@ -131,6 +205,27 @@ export default {
         time_formatted() {
             const date = new Date(this.item.time)
             return date.toLocaleString('ja-JP')
+        },
+        isJsonValid() {
+            try {
+                JSON.parse(this.data_string)
+            } catch (e) {
+                return false
+            }
+            return true
+        },
+        made_changes() {
+            return (
+                JSON.stringify(this.item.data) !==
+                JSON.stringify(JSON.parse(this.data_string))
+            )
+        },
+    },
+    watch: {
+        data_string(newVal) {
+            if (newVal.trim() === '') {
+                this.data_string = '{}'
+            }
         },
     },
     methods: {
@@ -168,7 +263,6 @@ export default {
                     this.deleting = false
                 })
         },
-
         format_metadata(data) {
             try {
                 return JSON.stringify(data, null, 2)
@@ -176,14 +270,39 @@ export default {
                 return data
             }
         },
-        edit_data() {
-            this.on_edit = true
+        start_edit() {
+            this.edit_mode = true
+            if (this.item.data)
+                this.data_string = this.format_metadata(this.item.data)
         },
         save_data() {
-            this.on_edit = false
+            if (!this.isJsonValid) return
+            if (!confirm('Save changes?')) return
+            const route = `/images/${this.image_id}`
+            let data = JSON.parse(this.data_string)
+            this.axios
+                .put(route, { ...data })
+                .then(() => {
+                    this.get_item()
+                    this.reset_changes()
+                })
+                .catch((error) => {
+                    alert('Failed to delete data')
+                    console.error(error)
+                })
         },
         cancel_edit() {
-            this.on_edit = false
+            if (!this.made_changes) {
+                this.reset_changes()
+                return
+            }
+
+            if (!confirm('Abandon changes?')) return
+            this.reset_changes()
+        },
+        reset_changes() {
+            this.edit_mode = false
+            this.data_string = ''
         },
     },
 }
