@@ -25,38 +25,80 @@
                     <img class="item_image" :src="image_src" />
                 </v-col>
             </v-row>
-            <v-list>
-                <v-list-item>
-                    <v-list-item-content>
-                        <v-list-item-subtitle>ID</v-list-item-subtitle>
-                        <v-list-item-title>{{ item._id }}</v-list-item-title>
-                    </v-list-item-content>
-                </v-list-item>
-                <v-list-item>
-                    <v-list-item-content>
-                        <v-list-item-subtitle>Time</v-list-item-subtitle>
-                        <v-list-item-title>{{
-                            time_formatted
-                        }}</v-list-item-title>
-                    </v-list-item-content>
-                </v-list-item>
-                <v-list-item>
-                    <v-list-item-content>
-                        <v-list-item-subtitle>File name</v-list-item-subtitle>
-                        <v-list-item-title>{{ item.file }}</v-list-item-title>
-                    </v-list-item-content>
-                </v-list-item>
-            </v-list>
-            <v-list>
-                <v-list-item v-for="(value, key) in item.data" :key="key">
-                    <v-list-item-content>
-                        <v-list-item-subtitle>{{ key }}</v-list-item-subtitle>
-                        <v-list-item-title>
-                            <pre>{{ format_metadata(value) }}</pre>
-                        </v-list-item-title>
-                    </v-list-item-content>
-                </v-list-item>
-            </v-list>
+
+            <v-expansion-panels multiple focusable popout v-model="panel">
+                <v-expansion-panel>
+                    <v-expansion-panel-header class="font-weight-medium"
+                        >Constant Image Data</v-expansion-panel-header
+                    >
+                    <v-expansion-panel-content>
+                        <v-list>
+                            <v-list-item>
+                                <v-list-item-content>
+                                    <v-list-item-subtitle
+                                        class="text-button font-weight-medium"
+                                        >ID</v-list-item-subtitle
+                                    >
+                                    <v-list-item-title>{{
+                                        item._id
+                                    }}</v-list-item-title>
+                                </v-list-item-content>
+                            </v-list-item>
+                            <v-list-item>
+                                <v-list-item-content>
+                                    <v-list-item-subtitle
+                                        class="text-button font-weight-medium"
+                                        >Time</v-list-item-subtitle
+                                    >
+                                    <v-list-item-title>{{
+                                        time_formatted
+                                    }}</v-list-item-title>
+                                </v-list-item-content>
+                            </v-list-item>
+                            <v-list-item>
+                                <v-list-item-content>
+                                    <v-list-item-subtitle
+                                        class="text-button font-weight-medium"
+                                        >File name</v-list-item-subtitle
+                                    >
+                                    <v-list-item-title>{{
+                                        item.file
+                                    }}</v-list-item-title>
+                                </v-list-item-content>
+                            </v-list-item>
+                        </v-list>
+                    </v-expansion-panel-content>
+                </v-expansion-panel>
+                <v-expansion-panel>
+                    <v-expansion-panel-header class="font-weight-medium">
+                        Editable Image Data
+                    </v-expansion-panel-header>
+                    <v-expansion-panel-content>
+                        <v-row>
+                            <v-col>
+                                <v-list>
+                                    <v-list-item
+                                        v-for="(value, key) in item.data"
+                                        :key="key"
+                                    >
+                                        <v-list-item-content>
+                                            <v-list-item-subtitle
+                                                class="text-button font-weight-medium"
+                                                >{{ key }}</v-list-item-subtitle
+                                            >
+                                            <v-list-item-title>
+                                                <pre>{{
+                                                    format_metadata(value)
+                                                }}</pre>
+                                            </v-list-item-title>
+                                        </v-list-item-content>
+                                    </v-list-item>
+                                </v-list>
+                            </v-col>
+                        </v-row>
+                    </v-expansion-panel-content>
+                </v-expansion-panel>
+            </v-expansion-panels>
         </v-card-text>
     </v-card>
 </template>
@@ -71,6 +113,8 @@ export default {
             loading: false,
             deleting: false,
             item: null,
+            panel: [0, 1],
+            on_edit: false,
         }
     },
     mounted() {
@@ -131,6 +175,15 @@ export default {
             } catch (error) {
                 return data
             }
+        },
+        edit_data() {
+            this.on_edit = true
+        },
+        save_data() {
+            this.on_edit = false
+        },
+        cancel_edit() {
+            this.on_edit = false
         },
     },
 }
