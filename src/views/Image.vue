@@ -30,9 +30,15 @@
             <v-row>
                 <v-col>
                     <v-card elevation="0" outlined>
-                        <v-card-title class="font-weight-medium">
-                            Constant Image Data</v-card-title
-                        >
+                        <v-toolbar flat>
+                            <v-row align="center">
+                                <v-col>
+                                    <v-toolbar-title class="font-weight-medium">
+                                        Constant Image Data</v-toolbar-title
+                                    >
+                                </v-col>
+                            </v-row>
+                        </v-toolbar>
                         <v-card-text>
                             <v-list>
                                 <v-list-item>
@@ -76,64 +82,84 @@
             <v-row>
                 <v-col>
                     <v-card elevation="0" outlined>
-                        <v-card-title class="font-weight-medium">
-                            Editable Image Data
-                            <v-spacer />
-                            <div align="right" v-if="edit_mode">
-                                <v-tooltip bottom>
-                                    <template v-slot:activator="{ on, attrs }">
-                                        <v-btn
-                                            icon
-                                            v-bind="attrs"
-                                            v-on="on"
-                                            color="error"
-                                            @click.stop="cancel_edit()"
-                                        >
-                                            <v-icon> mdi-close-box </v-icon>
-                                        </v-btn>
-                                    </template>
-                                    <div class="text-center">
-                                        Cancel Changes
+                        <v-toolbar flat>
+                            <v-row align="center">
+                                <v-col>
+                                    <v-toolbar-title class="font-weight-medium">
+                                        Editable Image Data</v-toolbar-title
+                                    >
+                                </v-col>
+                                <v-spacer />
+                                <v-col cols="auto">
+                                    <div v-if="edit_mode">
+                                        <v-tooltip bottom>
+                                            <template
+                                                v-slot:activator="{ on, attrs }"
+                                            >
+                                                <v-btn
+                                                    icon
+                                                    v-bind="attrs"
+                                                    v-on="on"
+                                                    color="error"
+                                                    @click.stop="cancel_edit()"
+                                                >
+                                                    <v-icon>
+                                                        mdi-close-box
+                                                    </v-icon>
+                                                </v-btn>
+                                            </template>
+                                            <div class="text-center">
+                                                Cancel Changes
+                                            </div>
+                                        </v-tooltip>
+                                        <v-tooltip bottom>
+                                            <template
+                                                v-slot:activator="{ on, attrs }"
+                                            >
+                                                <v-btn
+                                                    icon
+                                                    v-bind="attrs"
+                                                    v-on="on"
+                                                    color="success"
+                                                    :disabled="
+                                                        !isJsonValid ||
+                                                        !made_changes
+                                                    "
+                                                    @click.stop="save_data()"
+                                                >
+                                                    <v-icon>
+                                                        mdi-content-save
+                                                    </v-icon>
+                                                </v-btn>
+                                            </template>
+                                            <div class="text-center">
+                                                Save Changes
+                                            </div>
+                                        </v-tooltip>
                                     </div>
-                                </v-tooltip>
-                                <v-tooltip bottom>
-                                    <template v-slot:activator="{ on, attrs }">
-                                        <v-btn
-                                            icon
-                                            v-bind="attrs"
-                                            v-on="on"
-                                            color="success"
-                                            :disabled="
-                                                !isJsonValid || !made_changes
-                                            "
-                                            @click.stop="save_data()"
+                                    <v-tooltip bottom v-else>
+                                        <template
+                                            v-slot:activator="{ on, attrs }"
                                         >
-                                            <v-icon> mdi-content-save </v-icon>
-                                        </v-btn>
-                                    </template>
-                                    <div class="text-center">Save Changes</div>
-                                </v-tooltip>
-                            </div>
-
-                            <div align="right" v-else>
-                                <v-tooltip bottom>
-                                    <template v-slot:activator="{ on, attrs }">
-                                        <v-btn
-                                            icon
-                                            v-bind="attrs"
-                                            v-on="on"
-                                            color="secondary"
-                                            @click.stop="start_edit()"
-                                        >
-                                            <v-icon> mdi-lead-pencil </v-icon>
-                                        </v-btn>
-                                    </template>
-                                    <div class="text-center">
-                                        Edit image properties
-                                    </div>
-                                </v-tooltip>
-                            </div></v-card-title
-                        >
+                                            <v-btn
+                                                icon
+                                                v-bind="attrs"
+                                                v-on="on"
+                                                color="secondary"
+                                                @click.stop="start_edit()"
+                                            >
+                                                <v-icon>
+                                                    mdi-lead-pencil
+                                                </v-icon>
+                                            </v-btn>
+                                        </template>
+                                        <div class="text-center">
+                                            Edit image properties
+                                        </div>
+                                    </v-tooltip>
+                                </v-col>
+                            </v-row>
+                        </v-toolbar>
                         <v-card-text>
                             <div v-if="edit_mode" class="pt-5">
                                 <v-textarea
