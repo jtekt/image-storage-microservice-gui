@@ -3,7 +3,9 @@
         <v-toolbar flat>
             <v-row align="center">
                 <v-col>
-                    <v-toolbar-title>{{ $t('Image') }}</v-toolbar-title>
+                    <v-toolbar-title class="font-weight-medium">{{
+                        $t('Image')
+                    }}</v-toolbar-title>
                 </v-col>
                 <v-spacer />
                 <v-col cols="auto">
@@ -25,150 +27,161 @@
                     <img class="item_image" :src="image_src" />
                 </v-col>
             </v-row>
-
-            <v-expansion-panels multiple focusable popout v-model="panel">
-                <v-expansion-panel>
-                    <v-expansion-panel-header class="font-weight-medium"
-                        >Constant Image Data</v-expansion-panel-header
-                    >
-                    <v-expansion-panel-content>
-                        <v-list>
-                            <v-list-item>
-                                <v-list-item-content>
-                                    <v-list-item-subtitle
-                                        class="text-button font-weight-medium"
-                                        >ID</v-list-item-subtitle
-                                    >
-                                    <v-list-item-title>{{
-                                        item._id
-                                    }}</v-list-item-title>
-                                </v-list-item-content>
-                            </v-list-item>
-                            <v-list-item>
-                                <v-list-item-content>
-                                    <v-list-item-subtitle
-                                        class="text-button font-weight-medium"
-                                        >Time</v-list-item-subtitle
-                                    >
-                                    <v-list-item-title>{{
-                                        time_formatted
-                                    }}</v-list-item-title>
-                                </v-list-item-content>
-                            </v-list-item>
-                            <v-list-item>
-                                <v-list-item-content>
-                                    <v-list-item-subtitle
-                                        class="text-button font-weight-medium"
-                                        >File name</v-list-item-subtitle
-                                    >
-                                    <v-list-item-title>{{
-                                        item.file
-                                    }}</v-list-item-title>
-                                </v-list-item-content>
-                            </v-list-item>
-                        </v-list>
-                    </v-expansion-panel-content>
-                </v-expansion-panel>
-                <v-expansion-panel>
-                    <v-expansion-panel-header class="font-weight-medium">
-                        Editable Image Data
-                        <v-spacer />
-                        <div align="right" v-if="edit_mode">
-                            <v-tooltip bottom>
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-btn
-                                        icon
-                                        v-bind="attrs"
-                                        v-on="on"
-                                        color="error"
-                                        @click.stop="cancel_edit()"
-                                    >
-                                        <v-icon> mdi-close-box </v-icon>
-                                    </v-btn>
-                                </template>
-                                <div class="text-center">Cancel Changes</div>
-                            </v-tooltip>
-                            <v-tooltip bottom>
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-btn
-                                        icon
-                                        v-bind="attrs"
-                                        v-on="on"
-                                        color="success"
-                                        :disabled="
-                                            !isJsonValid || !made_changes
-                                        "
-                                        @click.stop="save_data()"
-                                    >
-                                        <v-icon> mdi-content-save </v-icon>
-                                    </v-btn>
-                                </template>
-                                <div class="text-center">Save Changes</div>
-                            </v-tooltip>
-                        </div>
-
-                        <div align="right" v-else>
-                            <v-tooltip bottom>
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-btn
-                                        icon
-                                        v-bind="attrs"
-                                        v-on="on"
-                                        color="secondary"
-                                        @click.stop="start_edit()"
-                                    >
-                                        <v-icon> mdi-lead-pencil </v-icon>
-                                    </v-btn>
-                                </template>
-                                <div class="text-center">
-                                    Edit image properties
-                                </div>
-                            </v-tooltip>
-                        </div>
-                    </v-expansion-panel-header>
-                    <v-expansion-panel-content>
-                        <div v-if="edit_mode" class="pt-5">
-                            <v-textarea
-                                filled
-                                no-resize
-                                rows="20"
-                                row-height="20"
-                                v-model="data_string"
-                                :error="!isJsonValid"
-                                :error-messages="
-                                    !isJsonValid ? 'Invalid JSON' : ''
-                                "
-                            />
-                        </div>
-                        <div v-else>
-                            <v-row>
-                                <v-col>
-                                    <v-list>
-                                        <v-list-item
-                                            v-for="(value, key) in item.data"
-                                            :key="key"
+            <v-row>
+                <v-col>
+                    <v-card elevation="0" outlined>
+                        <v-card-title class="font-weight-medium">
+                            Editable Image Data</v-card-title
+                        >
+                        <v-card-text>
+                            <v-list>
+                                <v-list-item>
+                                    <v-list-item-content>
+                                        <v-list-item-subtitle
+                                            class="text-button font-weight-medium"
+                                            >ID</v-list-item-subtitle
                                         >
-                                            <v-list-item-content>
-                                                <v-list-item-subtitle
-                                                    class="text-button font-weight-medium"
-                                                    >{{
-                                                        key
-                                                    }}</v-list-item-subtitle
-                                                >
-                                                <v-list-item-title>
-                                                    <pre>{{
-                                                        format_metadata(value)
-                                                    }}</pre>
-                                                </v-list-item-title>
-                                            </v-list-item-content>
-                                        </v-list-item>
-                                    </v-list>
-                                </v-col>
-                            </v-row>
-                        </div>
-                    </v-expansion-panel-content>
-                </v-expansion-panel>
-            </v-expansion-panels>
+                                        <v-list-item-title>{{
+                                            item._id
+                                        }}</v-list-item-title>
+                                    </v-list-item-content>
+                                </v-list-item>
+                                <v-list-item>
+                                    <v-list-item-content>
+                                        <v-list-item-subtitle
+                                            class="text-button font-weight-medium"
+                                            >Time</v-list-item-subtitle
+                                        >
+                                        <v-list-item-title>{{
+                                            time_formatted
+                                        }}</v-list-item-title>
+                                    </v-list-item-content>
+                                </v-list-item>
+                                <v-list-item>
+                                    <v-list-item-content>
+                                        <v-list-item-subtitle
+                                            class="text-button font-weight-medium"
+                                            >File name</v-list-item-subtitle
+                                        >
+                                        <v-list-item-title>{{
+                                            item.file
+                                        }}</v-list-item-title>
+                                    </v-list-item-content>
+                                </v-list-item>
+                            </v-list>
+                        </v-card-text>
+                    </v-card>
+                </v-col>
+            </v-row>
+            <v-row>
+                <v-col>
+                    <v-card elevation="0" outlined>
+                        <v-card-title class="font-weight-medium">
+                            Editable Image Data
+                            <v-spacer />
+                            <div align="right" v-if="edit_mode">
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn
+                                            icon
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            color="error"
+                                            @click.stop="cancel_edit()"
+                                        >
+                                            <v-icon> mdi-close-box </v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <div class="text-center">
+                                        Cancel Changes
+                                    </div>
+                                </v-tooltip>
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn
+                                            icon
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            color="success"
+                                            :disabled="
+                                                !isJsonValid || !made_changes
+                                            "
+                                            @click.stop="save_data()"
+                                        >
+                                            <v-icon> mdi-content-save </v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <div class="text-center">Save Changes</div>
+                                </v-tooltip>
+                            </div>
+
+                            <div align="right" v-else>
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn
+                                            icon
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            color="secondary"
+                                            @click.stop="start_edit()"
+                                        >
+                                            <v-icon> mdi-lead-pencil </v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <div class="text-center">
+                                        Edit image properties
+                                    </div>
+                                </v-tooltip>
+                            </div></v-card-title
+                        >
+                        <v-card-text>
+                            <div v-if="edit_mode" class="pt-5">
+                                <v-textarea
+                                    filled
+                                    no-resize
+                                    rows="20"
+                                    row-height="20"
+                                    v-model="data_string"
+                                    :error="!isJsonValid"
+                                    :error-messages="
+                                        !isJsonValid ? 'Invalid JSON' : ''
+                                    "
+                                />
+                            </div>
+                            <div v-else>
+                                <v-row>
+                                    <v-col>
+                                        <v-list>
+                                            <v-list-item
+                                                v-for="(
+                                                    value, key
+                                                ) in item.data"
+                                                :key="key"
+                                            >
+                                                <v-list-item-content>
+                                                    <v-list-item-subtitle
+                                                        class="text-button font-weight-medium"
+                                                        >{{
+                                                            key
+                                                        }}</v-list-item-subtitle
+                                                    >
+                                                    <v-list-item-title>
+                                                        <pre>{{
+                                                            format_metadata(
+                                                                value
+                                                            )
+                                                        }}</pre>
+                                                    </v-list-item-title>
+                                                </v-list-item-content>
+                                            </v-list-item>
+                                        </v-list>
+                                    </v-col>
+                                </v-row>
+                            </div>
+                        </v-card-text>
+                    </v-card>
+                </v-col>
+            </v-row>
         </v-card-text>
     </v-card>
 </template>
