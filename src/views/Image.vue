@@ -127,7 +127,7 @@
                         </div>
                     </v-expansion-panel-header>
                     <v-expansion-panel-content>
-                        <div v-if="edit_mode">
+                        <div v-if="edit_mode" class="pt-5">
                             <v-textarea
                                 filled
                                 no-resize
@@ -140,7 +140,7 @@
                                 "
                             />
                         </div>
-                        <div v-else class="pt-5">
+                        <div v-else>
                             <v-row>
                                 <v-col>
                                     <v-list>
