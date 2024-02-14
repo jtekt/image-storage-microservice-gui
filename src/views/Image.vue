@@ -31,7 +31,7 @@
                 <v-col>
                     <v-card elevation="0" outlined>
                         <v-card-title class="font-weight-medium">
-                            Editable Image Data</v-card-title
+                            Constant Image Data</v-card-title
                         >
                         <v-card-text>
                             <v-list>
