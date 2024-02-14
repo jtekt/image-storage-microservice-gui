@@ -289,11 +289,6 @@ export default {
                 })
         },
         cancel_edit() {
-            if (!this.made_changes) {
-                this.reset_changes()
-                return
-            }
-
             if (!confirm('Abandon changes?')) return
             this.reset_changes()
         },
