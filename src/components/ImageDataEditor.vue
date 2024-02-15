@@ -58,39 +58,29 @@
             </v-row>
         </v-toolbar>
         <v-card-text>
-            <div v-if="edit_mode" class="pt-5">
-                <v-textarea
-                    filled
-                    no-resize
-                    :rows="textarea_row"
-                    :row-height="textarea_row"
-                    v-model="data_string"
-                    :error="!isJsonValid"
-                    :error-messages="!isJsonValid ? 'Invalid JSON' : ''"
-                />
-            </div>
-            <div v-else>
-                <v-row>
-                    <v-col>
-                        <v-list>
-                            <v-list-item
-                                v-for="(value, key) in json"
-                                :key="key"
-                            >
-                                <v-list-item-content>
-                                    <v-list-item-subtitle
-                                        class="text-button font-weight-medium"
-                                        >{{ key }}</v-list-item-subtitle
-                                    >
-                                    <v-list-item-title>
-                                        <pre>{{ format_metadata(value) }}</pre>
-                                    </v-list-item-title>
-                                </v-list-item-content>
-                            </v-list-item>
-                        </v-list>
-                    </v-col>
-                </v-row>
-            </div>
+            <v-textarea
+                v-if="edit_mode"
+                filled
+                no-resize
+                :rows="textarea_row"
+                :row-height="textarea_row"
+                v-model="data_string"
+                :error="!isJsonValid"
+                :error-messages="!isJsonValid ? 'Invalid JSON' : ''"
+            />
+            <v-list v-else>
+                <v-list-item v-for="(value, key) in json" :key="key">
+                    <v-list-item-content>
+                        <v-list-item-subtitle
+                            class="text-button font-weight-medium"
+                            >{{ key }}</v-list-item-subtitle
+                        >
+                        <v-list-item-title>
+                            <pre>{{ format_metadata(value) }}</pre>
+                        </v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+            </v-list>
         </v-card-text>
     </v-card>
 </template>
@@ -110,12 +100,12 @@ export default {
             default: '',
         },
         json: {
-            type: [Object, Array],
+            type: Object,
             default: null,
         },
         textarea_row: {
             type: Number,
-            default: 10, // Default value for the prop
+            default: 10,
         },
     },
     methods: {
