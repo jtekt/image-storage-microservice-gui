@@ -28,12 +28,19 @@
                         label="Archive (.zip)"
                         v-model="archive"
                     />
-                    <ImageDataEditor
-                        title="Fields"
-                        :textarea_row="5"
-                        :json="fields"
-                        @save-data="fields = $event"
-                    />
+                    <v-card elevation="0" outlined>
+                        <v-card-title class="font-weight-medium">
+                            Fields</v-card-title
+                        >
+                        <v-card-text>
+                            <ImageDataField
+                                v-model="data_string"
+                                :textarea_row="1"
+                                :auto_grow="true"
+                                @valid-input="validInput = $event"
+                            />
+                        </v-card-text>
+                    </v-card>
                 </v-card-text>
                 <v-card-text>
                     <v-progress-linear
@@ -57,7 +64,7 @@
                         text
                         type="submit"
                         :loading="uploading"
-                        :disabled="!archive"
+                        :disabled="!archive || !validInput"
                     >
                         <v-icon left>mdi-upload</v-icon>
                         <span>Import</span>
@@ -69,11 +76,11 @@
 </template>
 
 <script>
-import ImageDataEditor from './ImageDataEditor.vue'
+import ImageDataField from './ImageDataField.vue'
 export default {
     name: 'ImportDialog',
     components: {
-        ImageDataEditor,
+        ImageDataField,
     },
     data() {
         return {
@@ -81,7 +88,8 @@ export default {
             uploading: false,
             uploadProgress: 0,
             archive: null,
-            fields: {},
+            data_string: '{}',
+            validInput: true,
 
             // TODO: find way to get snackbar to work
             snackbar: {
@@ -90,6 +98,16 @@ export default {
                 color: 'sucess',
             },
         }
+    },
+    computed: {
+        fields() {
+            try {
+                return JSON.parse(this.data_string)
+            } catch (e) {
+                alert('JSON invalid')
+            }
+            return null
+        },
     },
     methods: {
         import_archive() {
@@ -102,11 +120,6 @@ export default {
             Object.entries(this.fields).forEach(([key, value]) => {
                 body.append(key, value)
             })
-
-            // console.log(this.fields)
-            // for (var pair of body.entries()) {
-            //     console.log(pair[0] + ', ' + pair[1])
-            // }
 
             const options = {
                 onUploadProgress: (progressEvent) => {
