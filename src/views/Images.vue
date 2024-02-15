@@ -1,5 +1,5 @@
 <template>
-    <v-card>
+    <v-card :loading="loading || fieldsLoading">
         <v-toolbar flat>
             <v-toolbar-title>{{ $t('Images') }}</v-toolbar-title>
             <v-spacer />
@@ -42,7 +42,7 @@
 
         <v-card-text>
             <v-data-table
-                :loading="loading"
+                :loading="loading || fieldsLoading"
                 :headers="headers"
                 :items="items"
                 :server-items-length="total"
@@ -95,6 +95,7 @@ export default {
             loading: false,
             fields: [],
             field: null,
+            fieldsLoading: false,
             base_headers: [
                 { text: 'Image', value: 'file', width: '5em' },
                 { text: 'Time', value: 'time', width: '30ch' },
@@ -136,6 +137,7 @@ export default {
                 })
         },
         get_fields() {
+            this.fieldsLoading = true
             this.axios
                 .get('/fields')
                 .then(({ data }) => {
@@ -143,6 +145,9 @@ export default {
                 })
                 .catch((error) => {
                     console.error(error)
+                })
+                .finally(() => {
+                    this.fieldsLoading = false
                 })
         },
         row_clicked({ _id }) {
