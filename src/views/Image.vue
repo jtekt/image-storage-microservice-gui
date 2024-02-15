@@ -34,7 +34,7 @@
                             <v-row align="center">
                                 <v-col>
                                     <v-toolbar-title class="font-weight-medium">
-                                        Constant Image Data</v-toolbar-title
+                                        System Fields</v-toolbar-title
                                     >
                                 </v-col>
                             </v-row>
@@ -84,7 +84,7 @@
                     <ImageDataEditor
                         :json="item.data"
                         :textarea_row="10"
-                        title="Editable Image Data"
+                        title="Editable Fields"
                         @save-data="save_data"
                     />
                 </v-col>
