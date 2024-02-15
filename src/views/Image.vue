@@ -44,7 +44,7 @@
                                 <v-list-item>
                                     <v-list-item-content>
                                         <v-list-item-subtitle
-                                            class="text-button font-weight-medium"
+                                            class="font-weight-medium"
                                             >ID</v-list-item-subtitle
                                         >
                                         <v-list-item-title>{{
@@ -55,7 +55,7 @@
                                 <v-list-item>
                                     <v-list-item-content>
                                         <v-list-item-subtitle
-                                            class="text-button font-weight-medium"
+                                            class="font-weight-medium"
                                             >Time</v-list-item-subtitle
                                         >
                                         <v-list-item-title>{{
@@ -66,7 +66,7 @@
                                 <v-list-item>
                                     <v-list-item-content>
                                         <v-list-item-subtitle
-                                            class="text-button font-weight-medium"
+                                            class="font-weight-medium"
                                             >File name</v-list-item-subtitle
                                         >
                                         <v-list-item-title>{{

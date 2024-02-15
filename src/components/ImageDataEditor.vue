@@ -66,10 +66,9 @@
             <v-list v-else>
                 <v-list-item v-for="(value, key) in json" :key="key">
                     <v-list-item-content>
-                        <v-list-item-subtitle
-                            class="text-button font-weight-medium"
-                            >{{ key }}</v-list-item-subtitle
-                        >
+                        <v-list-item-subtitle class="font-weight-medium">{{
+                            key
+                        }}</v-list-item-subtitle>
                         <v-list-item-title>
                             <pre>{{ format_metadata(value) }}</pre>
                         </v-list-item-title>
