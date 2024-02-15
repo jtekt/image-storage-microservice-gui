@@ -36,7 +36,6 @@
                             <ImageDataField
                                 v-model="data_string"
                                 :textarea_row="1"
-                                :auto_grow="true"
                                 @valid-input="validInput = $event"
                             />
                         </v-card-text>

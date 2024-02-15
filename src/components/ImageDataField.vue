@@ -25,7 +25,7 @@ export default {
         },
         auto_grow: {
             type: Boolean,
-            default: false,
+            default: true,
         },
     },
     watch: {

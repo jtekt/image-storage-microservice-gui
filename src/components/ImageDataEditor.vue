@@ -58,15 +58,10 @@
             </v-row>
         </v-toolbar>
         <v-card-text>
-            <v-textarea
+            <ImageDataField
                 v-if="edit_mode"
-                filled
-                no-resize
-                :rows="textarea_row"
-                :row-height="textarea_row"
                 v-model="data_string"
-                :error="!isJsonValid"
-                :error-messages="!isJsonValid ? 'Invalid JSON' : ''"
+                @valid-input="isJsonValid = $event"
             />
             <v-list v-else>
                 <v-list-item v-for="(value, key) in json" :key="key">
@@ -86,12 +81,17 @@
 </template>
 
 <script>
+import ImageDataField from './ImageDataField.vue'
 export default {
     name: 'ImageDataEditor',
+    components: {
+        ImageDataField,
+    },
     data() {
         return {
             edit_mode: false,
             data_string: '',
+            isJsonValid: true,
         }
     },
     props: {
@@ -136,22 +136,7 @@ export default {
             this.data_string = ''
         },
     },
-    watch: {
-        data_string(newVal) {
-            if (newVal.trim() === '') {
-                this.data_string = '{}'
-            }
-        },
-    },
     computed: {
-        isJsonValid() {
-            try {
-                JSON.parse(this.data_string)
-            } catch (e) {
-                return false
-            }
-            return true
-        },
         made_changes() {
             return (
                 JSON.stringify(this.json) !==
