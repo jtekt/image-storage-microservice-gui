@@ -28,18 +28,6 @@
                         label="Archive (.zip)"
                         v-model="archive"
                     />
-                    <v-card elevation="0" outlined>
-                        <v-card-title class="font-weight-medium">
-                            Fields</v-card-title
-                        >
-                        <v-card-text>
-                            <ImageDataField
-                                v-model="data_string"
-                                :textarea_row="1"
-                                @valid-input="validInput = $event"
-                            />
-                        </v-card-text>
-                    </v-card>
                 </v-card-text>
                 <v-card-text>
                     <v-progress-linear
@@ -75,20 +63,14 @@
 </template>
 
 <script>
-import ImageDataField from './ImageDataField.vue'
 export default {
     name: 'ImportDialog',
-    components: {
-        ImageDataField,
-    },
     data() {
         return {
             dialog: false,
             uploading: false,
             uploadProgress: 0,
             archive: null,
-            data_string: '{}',
-            validInput: true,
 
             // TODO: find way to get snackbar to work
             snackbar: {
@@ -98,16 +80,6 @@ export default {
             },
         }
     },
-    computed: {
-        fields() {
-            try {
-                return JSON.parse(this.data_string)
-            } catch (e) {
-                alert('JSON invalid')
-            }
-            return null
-        },
-    },
     methods: {
         import_archive() {
             this.uploading = true
@@ -116,10 +88,6 @@ export default {
             const body = new FormData()
 
             body.append('archive', this.archive)
-            Object.entries(this.fields).forEach(([key, value]) => {
-                body.append(key, value)
-            })
-
             const options = {
                 onUploadProgress: (progressEvent) => {
                     this.uploadProgress = Math.round(
