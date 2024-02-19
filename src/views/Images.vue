@@ -27,6 +27,14 @@
                     </v-list-item>
 
                     <v-list-item>
+                        <UpdateDialog
+                            @updated="get_items_and_fields()"
+                            :imageCount="total"
+                            :selected="selectedIds"
+                        />
+                    </v-list-item>
+
+                    <v-list-item>
                         <DeleteDialog
                             @deleted="get_items_and_fields()"
                             :imageCount="total"
@@ -76,6 +84,7 @@ import QuerySettings from '../components/QuerySettings.vue'
 import ImportDialog from '../components/ImportDialog.vue'
 import DeleteDialog from '../components/DeleteDialog.vue'
 import ExportButton from '../components/ExportButton.vue'
+import UpdateDialog from '../components/UpdateDialog.vue'
 
 const { VUE_APP_IMAGE_STORAGE_API_URL } = process.env
 
@@ -87,6 +96,7 @@ export default {
         ImportDialog,
         DeleteDialog,
         ExportButton,
+        UpdateDialog,
     },
     data() {
         return {
