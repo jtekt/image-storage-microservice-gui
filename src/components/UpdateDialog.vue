@@ -19,6 +19,7 @@
                             v-model="data_string"
                             :textarea_row="1"
                             @valid-input="validInput = $event"
+                            @input-type="input_type = $event"
                         />
                     </v-card-text>
                 </v-card>
@@ -35,7 +36,7 @@
                 <v-btn
                     text
                     :loading="updating"
-                    :disabled="!validInput"
+                    :disabled="!validInput || input_type === undefined"
                     @click.stop="updateFields()"
                 >
                     <v-icon left>mdi-lead-pencil</v-icon>
@@ -47,6 +48,7 @@
 </template>
 
 <script>
+import yaml from 'js-yaml'
 import ImageDataField from './ImageDataField.vue'
 export default {
     name: 'UpdateDialog',
@@ -62,6 +64,7 @@ export default {
             dialog: false,
             updating: false,
             data_string: '{}',
+            input_type: 'JSON',
             validInput: true,
         }
     },
@@ -69,20 +72,20 @@ export default {
         query() {
             return this.$route.query
         },
-        fields() {
-            try {
-                return JSON.parse(this.data_string)
-            } catch (e) {
-                alert('JSON invalid')
-            }
-            return null
-        },
         dialog_label() {
             return this.selected.length === 0
                 ? `Update ${this.numberWithCommas(this.imageCount)} images`
                 : `Update ${this.numberWithCommas(
                       this.selected.length
                   )} selected image(s)`
+        },
+        json_value() {
+            if (this.input_type === 'JSON') {
+                return JSON.parse(this.data_string)
+            } else if (this.input_type === 'YAML') {
+                return yaml.load(this.data_string)
+            }
+            return null
         },
     },
     methods: {
@@ -92,7 +95,7 @@ export default {
         updateFields() {
             if (!this.validInput) return
             if (!confirm('Save changes?')) return
-            const data = this.fields
+            const data = this.json_value
 
             let params = this.query
             if (this.selected.length > 0)
