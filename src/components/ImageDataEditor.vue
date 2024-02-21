@@ -31,7 +31,9 @@
                                     v-bind="attrs"
                                     v-on="on"
                                     color="success"
-                                    :disabled="!isJsonValid || !made_changes"
+                                    :disabled="
+                                        !inputValid || input_type === undefined
+                                    "
                                     @click.stop="save_data()"
                                 >
                                     <v-icon> mdi-content-save </v-icon>
@@ -61,7 +63,8 @@
             <ImageDataField
                 v-if="edit_mode"
                 v-model="data_string"
-                @valid-input="isJsonValid = $event"
+                @valid-input="inputValid = $event"
+                @input-type="input_type = $event"
             />
             <v-list v-else>
                 <v-list-item v-for="(value, key) in json" :key="key">
@@ -80,7 +83,9 @@
 </template>
 
 <script>
+import yaml from 'js-yaml'
 import ImageDataField from './ImageDataField.vue'
+
 export default {
     name: 'ImageDataEditor',
     components: {
@@ -90,7 +95,8 @@ export default {
         return {
             edit_mode: false,
             data_string: '',
-            isJsonValid: true,
+            input_type: 'JSON',
+            inputValid: true,
         }
     },
     props: {
@@ -116,10 +122,9 @@ export default {
             }
         },
         save_data() {
-            if (!this.isJsonValid) return
+            if (!this.inputValid) return
             if (!confirm('Save changes?')) return
-            let data = JSON.parse(this.data_string)
-            this.$emit('save-data', data)
+            this.$emit('save-data', this.json_value)
             this.reset_changes()
         },
         start_edit() {
@@ -136,11 +141,13 @@ export default {
         },
     },
     computed: {
-        made_changes() {
-            return (
-                JSON.stringify(this.json) !==
-                JSON.stringify(JSON.parse(this.data_string))
-            )
+        json_value() {
+            if (this.input_type === 'JSON') {
+                return JSON.parse(this.data_string)
+            } else if (this.input_type === 'YAML') {
+                return yaml.load(this.data_string)
+            }
+            return null
         },
     },
 }
