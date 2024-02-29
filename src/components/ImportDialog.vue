@@ -51,7 +51,7 @@
                         text
                         type="submit"
                         :loading="uploading"
-                        :disabled="!archive || !validInput"
+                        :disabled="!archive"
                     >
                         <v-icon left>mdi-upload</v-icon>
                         <span>Import</span>
