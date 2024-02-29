@@ -6,6 +6,7 @@
                     active-class="primary--text"
                     v-model="selected_type"
                     column
+                    mandatory
                 >
                     <v-chip
                         key="JSON"
