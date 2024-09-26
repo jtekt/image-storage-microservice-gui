@@ -1,5 +1,5 @@
 <template>
-    <AppTemplate :options="options">
+    <AppTemplate :options="options" @user="handleUserChanged($event)">
         <template v-slot:nav>
             <v-list dense nav>
                 <v-list-item>
@@ -72,6 +72,8 @@ const {
     VUE_APP_LOGIN_URL,
     VUE_APP_CATEGORIZER,
     VUE_APP_FOLDER_STRUCTURE,
+    VUE_APP_OIDC_AUTHORITY,
+    VUE_APP_OIDC_CLIENT_ID,
 } = process.env
 
 export default {
@@ -90,12 +92,22 @@ export default {
             title: 'Image storage service',
             login_url: VUE_APP_LOGIN_URL,
             identification_url: VUE_APP_IDENTIFICATION_URL,
+            oidc_authority: VUE_APP_OIDC_AUTHORITY,
+            oidc_client_id: VUE_APP_OIDC_CLIENT_ID,
             header_logo: require('@/assets/jtekt_logo_negative.jpg'),
             authentication_logo: require('@/assets/jtekt_logo.jpg'),
             colors: { app_bar: '#000' },
             author: 'Maxime MOREILLON, JTEKT Corporation',
         },
     }),
+    methods: {
+        handleUserChanged(user) {
+            if (user.id_token)
+                this.axios.defaults.headers.common[
+                    'Authorization'
+                ] = `Bearer ${user.id_token}`
+        },
+    },
 }
 </script>
 
