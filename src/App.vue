@@ -74,6 +74,7 @@ const {
     VUE_APP_FOLDER_STRUCTURE,
     VUE_APP_OIDC_AUTHORITY,
     VUE_APP_OIDC_CLIENT_ID,
+    VUE_APP_OIDC_AUDIENCE,
 } = process.env
 
 export default {
@@ -92,8 +93,13 @@ export default {
             title: 'Image storage service',
             login_url: VUE_APP_LOGIN_URL,
             identification_url: VUE_APP_IDENTIFICATION_URL,
-            oidc_authority: VUE_APP_OIDC_AUTHORITY,
-            oidc_client_id: VUE_APP_OIDC_CLIENT_ID,
+            oidc: {
+                authority: VUE_APP_OIDC_AUTHORITY,
+                client_id: VUE_APP_OIDC_CLIENT_ID,
+                extraQueryParams: {
+                    audience: VUE_APP_OIDC_AUDIENCE,
+                },
+            },
             header_logo: require('@/assets/jtekt_logo_negative.jpg'),
             authentication_logo: require('@/assets/jtekt_logo.jpg'),
             colors: { app_bar: '#000' },
