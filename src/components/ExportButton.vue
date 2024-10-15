@@ -33,6 +33,7 @@ export default {
             if (this.selected.length > 0)
                 queryParams = { ...queryParams, ids: this.selected }
             const urlSearch = Object.keys(queryParams)
+                .filter((key) => queryParams[key] !== undefined)
                 .map((key) => {
                     if (Array.isArray(queryParams[key])) {
                         // If the value is an array, create multiple parameters with the same key
