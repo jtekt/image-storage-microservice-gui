@@ -12,6 +12,7 @@
 </template>
 
 <script>
+import { getAuthenticationToken } from '../utils/auth.js'
 const { VUE_APP_IMAGE_STORAGE_API_URL } = process.env
 
 export default {
@@ -21,7 +22,13 @@ export default {
     },
     computed: {
         imageSrc() {
-            const token = this.$cookies.get('jwt')
+            const token = getAuthenticationToken(this.$cookies)
+
+            if (!token) {
+                alert('No authentication token found')
+                return
+            }
+
             return `${VUE_APP_IMAGE_STORAGE_API_URL}/images/${this.image._id}/image?jwt=${token}`
         },
     },

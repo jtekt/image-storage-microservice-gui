@@ -94,8 +94,10 @@
 </template>
 
 <script>
-const { VUE_APP_IMAGE_STORAGE_API_URL } = process.env
+import { getAuthenticationToken } from '../utils/auth.js'
 import ImageDataEditor from '../components/ImageDataEditor.vue'
+
+const { VUE_APP_IMAGE_STORAGE_API_URL } = process.env
 
 export default {
     name: 'Images',
@@ -117,7 +119,13 @@ export default {
             return this.$route.params._id
         },
         image_src() {
-            const token = this.$cookies.get('jwt')
+            const token = getAuthenticationToken(this.$cookies)
+
+            if (!token) {
+                alert('No authentication token found')
+                return
+            }
+
             return `${VUE_APP_IMAGE_STORAGE_API_URL}/images/${this.image_id}/image?jwt=${token}`
         },
         time_formatted() {

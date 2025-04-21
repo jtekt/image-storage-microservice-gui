@@ -1,5 +1,5 @@
 <template>
-    <AppTemplate :options="options">
+    <AppTemplate :options="options" @user="updateUser">
         <template v-slot:nav>
             <v-list dense nav>
                 <v-list-item>
@@ -66,6 +66,7 @@
 import AppTemplate from '@moreillon/vue_application_template_vuetify'
 import LocaleSelector from './components/LocaleSelector.vue'
 import NavCategories from './components/NavCategories.vue'
+import { getAuthenticationToken } from './utils/auth.js'
 
 const {
     VUE_APP_IDENTIFICATION_URL,
@@ -106,6 +107,21 @@ export default {
             author: 'Maxime MOREILLON, JTEKT Corporation',
         },
     }),
+
+    methods: {
+        updateUser() {
+            const token = getAuthenticationToken(this.$cookies)
+
+            // setting or unsetting the header depends on jwt being in cookies
+            if (token) {
+                this.axios.defaults.headers.common[
+                    'Authorization'
+                ] = `Bearer ${token}`
+            } else {
+                delete this.axios.defaults.headers.common['Authorization']
+            }
+        },
+    },
 }
 </script>
 

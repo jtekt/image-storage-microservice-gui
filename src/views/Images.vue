@@ -85,6 +85,7 @@ import ImportDialog from '../components/ImportDialog.vue'
 import DeleteDialog from '../components/DeleteDialog.vue'
 import ExportButton from '../components/ExportButton.vue'
 import UpdateDialog from '../components/UpdateDialog.vue'
+import { getAuthenticationToken } from '../utils/auth.js'
 
 const { VUE_APP_IMAGE_STORAGE_API_URL } = process.env
 
@@ -172,7 +173,13 @@ export default {
             return date.toLocaleString()
         },
         image_src({ _id }) {
-            const token = this.$cookies.get('jwt')
+            const token = getAuthenticationToken(this.$cookies)
+
+            if (!token) {
+                alert('No authentication token found')
+                return
+            }
+
             return `${VUE_APP_IMAGE_STORAGE_API_URL}/images/${_id}/image?jwt=${token}`
         },
 
@@ -180,12 +187,21 @@ export default {
             this.get_items()
             this.get_fields()
         },
-        setQueryParam(key, value) {
-            if (this.query[key] === value) return
+        set_query_params(newParams) {
             const query = { ...this.query }
-            if (value) query[key] = value
-            else delete query[key]
-            /* router.replace acts like router.push, the only difference is that it navigates without pushing a new history entry, as its name suggests - it replaces the current entry. */
+
+            Object.entries(newParams).forEach(([key, value]) => {
+                if (value !== undefined && value !== null && value !== '') {
+                    query[key] = value
+                } else {
+                    delete query[key]
+                }
+            })
+
+            // Prevent redundant navigation
+            if (JSON.stringify(query) === JSON.stringify(this.$route.query))
+                return
+
             this.$router.replace({ query })
         },
         reset_selection() {
@@ -236,10 +252,9 @@ export default {
                     sort: sortBy[0],
                 }
 
-                // Not ideal but better than before
-                Object.keys(params).forEach((key) => {
-                    this.setQueryParam(key, params[key])
-                })
+                // Set all query params once
+
+                this.set_query_params(params)
             },
         },
     },
