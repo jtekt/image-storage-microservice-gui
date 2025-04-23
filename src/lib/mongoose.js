@@ -1,42 +1,57 @@
-// const validTopLevelFields = ['file', 'time', '_id', 'data']
+const validTopLevelFields = ['file', '_id', 'data', 'userId']
 
-export const validateMongooseQuery = (value) => {
-    return !!value
-    // try {
-    //     if (!value) return false
-    //     const parsed = JSON.parse(value)
+export const validateMongooseQuery = (queryObject) => {
+    let errorMessages = []
+    try {
+        if (!queryObject) return FontFaceSetLoadEvent
 
-    //     // Allow empty query
-    //     if (Object.keys(parsed).length === 0) return true
+        const keys = Object.keys(queryObject)
 
-    //     return Object.keys(parsed).every((key) => {
-    //         // Split key to handle data.* notation
-    //         const [baseKey, ...subKeys] = key.split('.')
+        keys.forEach((key) => {
+            // Split key to handle data.* notation
+            const [baseKey, ...subKeys] = key.split('.')
 
-    //         // Check if base key is valid
-    //         if (!validTopLevelFields.includes(baseKey)) return false
+            // Check if base key is valid
+            if (!validTopLevelFields.includes(baseKey))
+                errorMessages.push(`Invalid property: ${baseKey}`)
 
-    //         // If it's not 'data' and has subkeys, it's invalid (only one level allowed)
-    //         if (baseKey !== 'data' && subKeys.length > 0) return false
+            // If it's not 'data' and has subkeys, it's invalid (only one level allowed)
+            if (baseKey !== 'data' && subKeys.length > 0)
+                errorMessages.push(
+                    `Property ${baseKey} has invalid sub keys(${subKeys.join(
+                        ', '
+                    )})`
+                )
 
-    //         const value = parsed[key]
+            const value = queryObject[key]
 
-    //         // For file and time, must be string if not an object
-    //         if (baseKey === 'file' || baseKey === 'time') {
-    //             if (typeof value !== 'object') return typeof value === 'string'
-    //         }
+            // If value is an object (operators), check for valid MongoDB operators
+            if (typeof value === 'object') {
+                Object.keys(value).forEach((op) => {
+                    if (!op.startsWith('$') && op !== '_id') {
+                        // Not valid
+                        errorMessages.push(
+                            `Property ${baseKey}.${op} key is invalid`
+                        )
+                    }
 
-    //         // If value is an object (operators), check for valid MongoDB operators
-    //         if (typeof value === 'object' && value !== null) {
-    //             return Object.keys(value).every(
-    //                 (op) => op.startsWith('$') || op === '_id'
-    //             )
-    //         }
+                    const subVal = value[op]
+                    if (
+                        typeof subVal !== 'string' &&
+                        typeof subVal !== 'boolean'
+                    )
+                        errorMessages.push(
+                            `Property ${baseKey}.${op} has invalid content`
+                        )
+                })
+            }
+        })
+    } catch (error) {
+        errorMessages = ['Invalid JSON: ' + error.message]
+    }
 
-    //         // For data.* fields, any value is allowed
-    //         return true
-    //     })
-    // } catch (e) {
-    //     return false
-    // }
+    return {
+        success: errorMessages.length === 0,
+        errors: errorMessages,
+    }
 }

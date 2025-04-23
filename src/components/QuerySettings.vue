@@ -87,7 +87,10 @@
 
                                 <v-row v-if="advancedMode">
                                     <v-col>
-                                        <RawQueryEditor v-model="rawQuery" />
+                                        <QueryEditor
+                                            v-model="rawQuery"
+                                            :errors="validQuery.errors"
+                                        />
                                     </v-col>
                                 </v-row>
 
@@ -129,13 +132,13 @@
 <script>
 import DatePicker from '../components/DatePicker.vue'
 import { validateMongooseQuery } from '../lib/mongoose'
-import RawQueryEditor from './QueryEditor.vue'
+import QueryEditor from './QueryEditor.vue'
 
 export default {
     name: 'QuerySettings',
     components: {
         DatePicker,
-        RawQueryEditor,
+        QueryEditor,
     },
     props: {
         fields: Array,
@@ -146,7 +149,12 @@ export default {
             panel: 0,
             filtersArray: [],
             advancedMode: false,
-            rawQuery: '{}',
+            rawQuery: `{
+    "data": {
+        "$exists": true
+    }
+}`,
+            validQuery: { success: true, errors: [] },
         }
     },
     mounted() {
@@ -187,19 +195,14 @@ export default {
             let query = { limit, skip, order, sort }
 
             if (this.advancedMode) {
-                try {
-                    const parsedQuery = JSON.parse(this.rawQuery)
-                    if (!validateMongooseQuery(parsedQuery)) {
-                        throw new Error('Invalid MongoDB query format')
-                    }
-                    query = {
-                        ...query,
-                        filter: this.rawQuery,
-                    }
-                } catch (e) {
-                    console.error(e)
-                    this.$vuetify.goTo(0)
-                    return
+                if (!this.validQuery.success)
+                    alert(this.validQuery.errors.join(', '))
+
+                query = {
+                    ...query,
+                    to: this.to,
+                    from: this.from,
+                    filter: this.rawQuery,
                 }
             } else {
                 const filters = this.filtersArray.reduce(
@@ -215,7 +218,6 @@ export default {
                 }
             }
 
-            console.log('Query changed', query, this.$route.query)
             if (!this.shallowCompare(query, this.$route.query)) {
                 this.$router.replace({ query })
             }
@@ -233,6 +235,7 @@ export default {
             else delete query[key]
             this.$router.replace({ query })
         },
+        validateMongooseQuery,
     },
     computed: {
         allFilters() {
@@ -272,6 +275,23 @@ export default {
         advancedMode(newVal) {
             if (newVal && !this.rawQuery) {
                 this.rawQuery = '{}'
+            }
+        },
+        rawQuery(newVal) {
+            if (!this.advancedMode) return (this.validQuery = { success: true })
+
+            try {
+                const parsedQuery = JSON.parse(newVal)
+
+                if (typeof parsedQuery !== 'object')
+                    throw new Error('Query is not an object')
+
+                this.validQuery = validateMongooseQuery(parsedQuery)
+            } catch (error) {
+                this.validQuery = {
+                    success: false,
+                    errors: [`Invalid JSON: ${error.message}`],
+                }
             }
         },
     },

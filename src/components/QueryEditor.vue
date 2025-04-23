@@ -1,53 +1,87 @@
 <template>
-    <v-row>
-        <v-col>
-            <v-textarea
-                v-model="localQuery"
-                label="MongoDB Query (JSON)"
-                outlined
-                :rules="jsonRules"
-                placeholder='{ "file": "example.jpg" }'
-                rows="4"
-                @input="updateQuery"
-            />
-            <v-btn
-                color="secondary"
-                @click="beautifyQuery"
-                :disabled="!isValidJson"
-                class="mb-2"
-            >
-                <v-icon left>mdi-format-align-justify</v-icon>
-                Beautify
-            </v-btn>
-        </v-col>
-    </v-row>
+    <v-container>
+        <v-row class="mb-2">
+            <v-col cols="auto">
+                <v-btn
+                    color="primary"
+                    :disabled="!isJsonValid"
+                    @click="beautifyJson"
+                >
+                    Beautify
+                </v-btn>
+            </v-col>
+            <v-col cols="auto">
+                <v-select
+                    v-model="indentSpaces"
+                    :items="[2, 4, 8]"
+                    label="Indent Spaces"
+                    solo
+                    dense
+                    hide-details
+                    style="width: 80px"
+                    :disabled="!isJsonValid"
+                    @change="beautifyJson"
+                ></v-select>
+            </v-col>
+        </v-row>
+        <v-textarea
+            v-model="jsonString"
+            outlined
+            label="Advanced Query"
+            rows="10"
+            auto-grow
+            hide-details
+            class="json-editor"
+        >
+        </v-textarea>
+        <div
+            v-for="(error, index) in errors"
+            :key="index"
+            class="red--text text--lighten-1"
+        >
+            {{ error }}
+        </div>
+    </v-container>
 </template>
 
 <script>
 export default {
-    name: 'RawQueryEditor',
+    name: 'QueryEditor',
     props: {
         value: {
-            type: String,
-            default: '{}',
+            type: [Object, String],
+            default: () => ({
+                data: {},
+            }),
+        },
+        errors: {
+            type: Array,
+            default: () => [],
         },
     },
     data() {
         return {
-            localQuery: this.value,
-            jsonRules: [
-                (v) => !!v || 'Query is required',
-                (v) =>
-                    this.validateMongoQuery(v) ||
-                    'Invalid MongoDB query format. Only "file", "time", and "data" fields are allowed.',
-            ],
-            validFields: ['file', 'time', 'data'],
+            indentSpaces: 4,
         }
     },
     computed: {
-        isValidJson() {
+        jsonString: {
+            get() {
+                if (typeof this.value === 'object' && this.value !== null) {
+                    return JSON.stringify(this.value, null, this.indentSpaces)
+                }
+                return (
+                    this.value ||
+                    JSON.stringify({ data: {} }, null, this.indentSpaces)
+                )
+            },
+            set(newValue) {
+                this.$emit('input', newValue)
+            },
+        },
+        isJsonValid() {
             try {
-                JSON.parse(this.localQuery)
+                JSON.parse(this.jsonString)
                 return true
             } catch {
                 return false
@@ -55,64 +89,25 @@ export default {
         },
     },
     methods: {
-        updateQuery() {
-            this.$emit('input', this.localQuery)
-        },
-        beautifyQuery() {
+        beautifyJson() {
             try {
-                const parsed = JSON.parse(this.localQuery)
-                this.localQuery = JSON.stringify(parsed, null, 4)
-                this.updateQuery()
-            } catch (e) {
-                // Silently fail if already validated
+                let parsed = JSON.parse(this.jsonString)
+                this.jsonString = JSON.stringify(
+                    parsed,
+                    null,
+                    this.indentSpaces
+                )
+                this.errorMessages = []
+            } catch (error) {
+                this.errorMessages = ['Invalid JSON: ' + error.message]
             }
-        },
-        validateMongoQuery(value) {
-            const validTopLevelFields = ['file', 'time', '_id', 'data']
-            try {
-                if (!value) return false
-                const parsed = JSON.parse(value)
-
-                // Allow empty query
-                if (Object.keys(parsed).length === 0) return true
-
-                return Object.keys(parsed).every((key) => {
-                    // Split key to handle data.* notation
-                    const [baseKey, ...subKeys] = key.split('.')
-
-                    // Check if base key is valid
-                    if (!validTopLevelFields.includes(baseKey)) return false
-
-                    // If it's not 'data' and has subkeys, it's invalid (only one level allowed)
-                    if (baseKey !== 'data' && subKeys.length > 0) return false
-
-                    const value = parsed[key]
-
-                    // For file and time, must be string if not an object
-                    if (baseKey === 'file' || baseKey === 'time') {
-                        if (typeof value !== 'object')
-                            return typeof value === 'string'
-                    }
-
-                    // If value is an object (operators), check for valid MongoDB operators
-                    if (typeof value === 'object' && value !== null) {
-                        return Object.keys(value).every(
-                            (op) => op.startsWith('$') || op === '_id'
-                        )
-                    }
-
-                    // For data.* fields, any value is allowed
-                    return true
-                })
-            } catch (e) {
-                return false
-            }
-        },
-    },
-    watch: {
-        value(newVal) {
-            this.localQuery = newVal
         },
     },
 }
 </script>
+
+<style scoped>
+.json-editor {
+    font-family: 'Courier New', Courier, monospace;
+}
+</style>
