@@ -38,12 +38,12 @@
 </template>
 
 <script>
-import { getAuthenticationToken } from '../utils/auth'
+import { getAuthenticationToken } from "../utils/auth"
 
 const { VUE_APP_CATEGORIZER } = process.env
 
 export default {
-  name: 'NavCategories',
+  name: "NavCategories",
   data: () => ({
     field_name: VUE_APP_CATEGORIZER,
     fieldValues: [],
@@ -64,7 +64,7 @@ export default {
         })
         this.fieldValues = data
       } catch (error) {
-        console.error('Error fetching field values:', error)
+        console.error("Error fetching field values:", error)
       }
     },
   },

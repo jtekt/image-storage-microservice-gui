@@ -1,7 +1,7 @@
 <template>
   <v-card :loading="loading || fieldsLoading">
     <v-toolbar flat>
-      <v-toolbar-title>{{ $t('Images') }}</v-toolbar-title>
+      <v-toolbar-title>{{ $t("Images") }}</v-toolbar-title>
       <v-spacer />
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
@@ -76,18 +76,18 @@
 </template>
 
 <script>
-import UploadDialog from '../components/UploadDialog.vue'
-import QuerySettings from '../components/QuerySettings.vue'
-import ImportDialog from '../components/ImportDialog.vue'
-import DeleteDialog from '../components/DeleteDialog.vue'
-import ExportButton from '../components/ExportButton.vue'
-import UpdateDialog from '../components/UpdateDialog.vue'
-import { getAuthenticationToken } from '../utils/auth.js'
+import UploadDialog from "../components/UploadDialog.vue"
+import QuerySettings from "../components/QuerySettings.vue"
+import ImportDialog from "../components/ImportDialog.vue"
+import DeleteDialog from "../components/DeleteDialog.vue"
+import ExportButton from "../components/ExportButton.vue"
+import UpdateDialog from "../components/UpdateDialog.vue"
+import { getAuthenticationToken } from "../utils/auth.js"
 
 const { VUE_APP_IMAGE_STORAGE_API_URL } = process.env
 
 export default {
-  name: 'Images',
+  name: "Images",
   components: {
     UploadDialog,
     QuerySettings,
@@ -105,10 +105,10 @@ export default {
       field: null,
       fieldsLoading: false,
       base_headers: [
-        { text: 'Image', value: 'file', width: '5em' },
-        { text: 'Time', value: 'time', width: '30ch' },
+        { text: "Image", value: "file", width: "5em" },
+        { text: "Time", value: "time", width: "30ch" },
       ],
-      footerProps: { 'items-per-page-options': [10, 50, 100, 500] },
+      footerProps: { "items-per-page-options": [10, 50, 100, 500] },
       extra_headers: [],
       items: [],
       total: 0,
@@ -130,13 +130,13 @@ export default {
       const params = { ...this.query }
 
       this.axios
-        .get('/images', { params })
+        .get("/images", { params })
         .then(({ data }) => {
           this.items = data.items
           this.total = data.total
         })
         .catch((error) => {
-          alert('Failed to query data')
+          alert("Failed to query data")
           console.error(error)
         })
         .finally(() => {
@@ -147,7 +147,7 @@ export default {
     get_fields() {
       this.fieldsLoading = true
       this.axios
-        .get('/fields')
+        .get("/fields")
         .then(({ data }) => {
           this.fields = data
         })
@@ -160,10 +160,10 @@ export default {
     },
     row_clicked({ _id }) {
       const routeData = this.$router.resolve({
-        name: 'image',
+        name: "image",
         params: { _id },
       })
-      window.open(routeData.href, '_blank')
+      window.open(routeData.href, "_blank")
     },
     format_date(time) {
       const date = new Date(time)
@@ -173,7 +173,7 @@ export default {
       const token = getAuthenticationToken(this.$cookies)
 
       if (!token) {
-        alert('No authentication token found')
+        alert("No authentication token found")
         return
       }
 
@@ -188,7 +188,7 @@ export default {
       const query = { ...this.query }
 
       Object.entries(newParams).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== '') {
+        if (value !== undefined && value !== null && value !== "") {
           query[key] = value
         } else {
           delete query[key]
@@ -223,8 +223,8 @@ export default {
       get() {
         // Those are not defaults, those are values which are set if the table does not set them
         const {
-          sort = 'time',
-          order = '-1', // Does not become default for some reason
+          sort = "time",
+          order = "-1", // Does not become default for some reason
           limit = 10,
           skip = 0,
         } = this.$route.query
@@ -232,7 +232,7 @@ export default {
         return {
           itemsPerPage: Number(limit),
           sortBy: [sort],
-          sortDesc: [order === '-1'],
+          sortDesc: [order === "-1"],
           page: skip / limit + 1,
         }
       },

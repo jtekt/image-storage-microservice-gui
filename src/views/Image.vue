@@ -4,7 +4,7 @@
       <v-row align="center">
         <v-col>
           <v-toolbar-title class="font-weight-medium">{{
-            $t('Image')
+            $t("Image")
           }}</v-toolbar-title>
         </v-col>
         <v-spacer />
@@ -85,13 +85,13 @@
 </template>
 
 <script>
-import { getAuthenticationToken } from '../utils/auth.js'
-import ImageDataEditor from '../components/ImageDataEditor.vue'
+import { getAuthenticationToken } from "../utils/auth.js"
+import ImageDataEditor from "../components/ImageDataEditor.vue"
 
 const { VUE_APP_IMAGE_STORAGE_API_URL } = process.env
 
 export default {
-  name: 'Images',
+  name: "Images",
   components: {
     ImageDataEditor,
   },
@@ -113,7 +113,7 @@ export default {
       const token = getAuthenticationToken(this.$cookies)
 
       if (!token) {
-        alert('No authentication token found')
+        alert("No authentication token found")
         return
       }
 
@@ -121,7 +121,7 @@ export default {
     },
     time_formatted() {
       const date = new Date(this.item.time)
-      return date.toLocaleString('ja-JP')
+      return date.toLocaleString("ja-JP")
     },
   },
   methods: {
@@ -135,7 +135,7 @@ export default {
           this.item = data
         })
         .catch((error) => {
-          alert('Failed to query data')
+          alert("Failed to query data")
           console.error(error)
         })
         .finally(() => {
@@ -149,10 +149,10 @@ export default {
       this.axios
         .delete(route)
         .then(() => {
-          this.$router.push({ name: 'images' })
+          this.$router.push({ name: "images" })
         })
         .catch((error) => {
-          alert('Failed to delete data')
+          alert("Failed to delete data")
           console.error(error)
         })
         .finally(() => {
@@ -174,7 +174,7 @@ export default {
           this.get_item()
         })
         .catch((error) => {
-          alert('Failed to delete data')
+          alert("Failed to delete data")
           console.error(error)
         })
     },

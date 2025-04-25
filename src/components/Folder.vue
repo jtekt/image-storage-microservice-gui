@@ -29,10 +29,10 @@
 </template>
 
 <script>
-import FolderImagePreview from './FolderImagePreview.vue'
+import FolderImagePreview from "./FolderImagePreview.vue"
 const { VUE_APP_FOLDER_STRUCTURE } = process.env
 export default {
-  name: 'Folder',
+  name: "Folder",
   components: {
     FolderImagePreview,
   },
@@ -44,7 +44,7 @@ export default {
   data() {
     return {
       loading: false,
-      currentFolder: VUE_APP_FOLDER_STRUCTURE.split(',')[this.depth],
+      currentFolder: VUE_APP_FOLDER_STRUCTURE.split(",")[this.depth],
 
       folders: [],
       images: [],
@@ -53,7 +53,7 @@ export default {
     }
   },
   mounted() {
-    const parentFolder = VUE_APP_FOLDER_STRUCTURE.split(',')[this.depth - 1]
+    const parentFolder = VUE_APP_FOLDER_STRUCTURE.split(",")[this.depth - 1]
     if (this.$route.query[parentFolder] === this.name) this.openFolder()
   },
   methods: {

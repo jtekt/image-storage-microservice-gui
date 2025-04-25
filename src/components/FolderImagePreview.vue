@@ -9,11 +9,11 @@
 </template>
 
 <script>
-import { getAuthenticationToken } from '../utils/auth.js'
+import { getAuthenticationToken } from "../utils/auth.js"
 const { VUE_APP_IMAGE_STORAGE_API_URL } = process.env
 
 export default {
-  name: 'FolderImagePreview',
+  name: "FolderImagePreview",
   props: {
     image: Object,
   },
@@ -22,7 +22,7 @@ export default {
       const token = getAuthenticationToken(this.$cookies)
 
       if (!token) {
-        alert('No authentication token found')
+        alert("No authentication token found")
         return
       }
 

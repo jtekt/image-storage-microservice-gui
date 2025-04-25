@@ -24,7 +24,7 @@
           </v-list-item-icon>
 
           <v-list-item-content>
-            <v-list-item-title>{{ $t('Images') }}</v-list-item-title>
+            <v-list-item-title>{{ $t("Images") }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
@@ -36,7 +36,7 @@
           </v-list-item-icon>
 
           <v-list-item-content>
-            <v-list-item-title>{{ $t('Folder') }}</v-list-item-title>
+            <v-list-item-title>{{ $t("Folder") }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
@@ -55,10 +55,10 @@
 </template>
 
 <script>
-import AppTemplate from '@moreillon/vue_application_template_vuetify'
-import LocaleSelector from './components/LocaleSelector.vue'
-import NavCategories from './components/NavCategories.vue'
-import { getAuthenticationToken } from './utils/auth.js'
+import AppTemplate from "@moreillon/vue_application_template_vuetify"
+import LocaleSelector from "./components/LocaleSelector.vue"
+import NavCategories from "./components/NavCategories.vue"
+import { getAuthenticationToken } from "./utils/auth.js"
 
 const {
   VUE_APP_IDENTIFICATION_URL,
@@ -71,7 +71,7 @@ const {
 } = process.env
 
 export default {
-  name: 'App',
+  name: "App",
 
   components: {
     AppTemplate,
@@ -83,7 +83,7 @@ export default {
     categorizer: VUE_APP_CATEGORIZER,
     folderStructure: VUE_APP_FOLDER_STRUCTURE,
     options: {
-      title: 'Image storage service',
+      title: "Image storage service",
       login_url: VUE_APP_LOGIN_URL,
       identification_url: VUE_APP_IDENTIFICATION_URL,
       oidc: {
@@ -93,10 +93,10 @@ export default {
           audience: VUE_APP_OIDC_AUDIENCE,
         },
       },
-      header_logo: require('@/assets/jtekt_logo_negative.jpg'),
-      authentication_logo: require('@/assets/jtekt_logo.jpg'),
-      colors: { app_bar: '#000' },
-      author: 'Maxime MOREILLON, JTEKT Corporation',
+      header_logo: require("@/assets/jtekt_logo_negative.jpg"),
+      authentication_logo: require("@/assets/jtekt_logo.jpg"),
+      colors: { app_bar: "#000" },
+      author: "Maxime MOREILLON, JTEKT Corporation",
     },
   }),
 
@@ -106,9 +106,9 @@ export default {
 
       // setting or unsetting the header depends on jwt being in cookies
       if (token) {
-        this.axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+        this.axios.defaults.headers.common["Authorization"] = `Bearer ${token}`
       } else {
-        delete this.axios.defaults.headers.common['Authorization']
+        delete this.axios.defaults.headers.common["Authorization"]
       }
     },
   },
