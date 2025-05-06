@@ -38,8 +38,6 @@
 </template>
 
 <script>
-import { getAuthenticationToken } from "../utils/auth"
-
 const { VUE_APP_CATEGORIZER } = process.env
 
 export default {
@@ -55,13 +53,7 @@ export default {
     async get_field_values() {
       if (!this.field_name) return
       try {
-        const token = getAuthenticationToken(this.$cookies)
-
-        const { data } = await this.axios.get(`/fields/${this.field_name}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+        const { data } = await this.axios.get(`/fields/${this.field_name}`)
         this.fieldValues = data
       } catch (error) {
         console.error("Error fetching field values:", error)
