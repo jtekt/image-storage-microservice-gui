@@ -57,11 +57,23 @@
         v-model="selected"
         :show-select="allow_select"
         item-key="_id"
+        dense
       >
+        <!-- Column header tooltips -->
+        <template v-for="header in headers" v-slot:[`header.${header.value}`]>
+          <v-tooltip top :key="header.value">
+            <template v-slot:activator="{ on, attrs }">
+              <span v-bind="attrs" v-on="on" class="font-weight-bold">
+                {{ header.text }}
+              </span>
+            </template>
+            <span>{{ header.text }}</span>
+          </v-tooltip>
+        </template>
         <template v-slot:item.file="{ item }">
           <v-img
-            max-height="5em"
-            max-width="5em"
+            max-height="46px"
+            max-width="46px"
             contain
             :src="image_src(item)"
           />
@@ -261,7 +273,7 @@ export default {
 td,
 th {
   white-space: nowrap;
-  max-width: 10ch;
+  max-width: 15ch;
   overflow: hidden;
 
   text-overflow: ellipsis;
