@@ -11,7 +11,7 @@
         "i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(js|vue)\" --locales \"./src/locales/**/*.json\""
     },
     "dependencies": {
-        "@moreillon/vue_application_template_vuetify": "^3.2.1",
+        "@moreillon/vue_application_template_vuetify": "^3.4.2",
         "axios": "^0.24.0",
         "core-js": "^3.22.6",
         "js-yaml": "^4.1.0",

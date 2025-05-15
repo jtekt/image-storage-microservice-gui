@@ -52,8 +52,12 @@ export default {
   methods: {
     async get_field_values() {
       if (!this.field_name) return
-      const { data } = await this.axios.get(`/fields/${this.field_name}`)
-      this.fieldValues = data
+      try {
+        const { data } = await this.axios.get(`/fields/${this.field_name}`)
+        this.fieldValues = data
+      } catch (error) {
+        console.error("Error fetching field values:", error)
+      }
     },
   },
 }
