@@ -139,7 +139,7 @@ export default {
 
       const keys = Object.keys(filters)
       this.filtersArray = keys.length
-        ? keys.map((key, i) => ({
+        ? keys.map((key) => ({
             key,
             value: filters[key],
             not: false,
