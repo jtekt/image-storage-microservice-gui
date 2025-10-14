@@ -27,6 +27,18 @@
                   :key="index"
                   align="center"
                 >
+                  <v-col cols="auto" v-if="index > 0">
+                    <v-btn-toggle
+                      v-model="filtersArray[index].join"
+                      dense
+                      mandatory
+                      color="primary"
+                    >
+                      <v-btn value="AND">AND</v-btn>
+                      <v-btn value="OR">OR</v-btn>
+                    </v-btn-toggle>
+                  </v-col>
+
                   <v-col cols="">
                     <v-combobox
                       :items="unusedFilters"
@@ -39,6 +51,10 @@
                       v-model="filtersArray[index].value"
                       label="Value"
                     />
+                  </v-col>
+
+                  <v-col cols="auto">
+                    <v-switch v-model="filtersArray[index].not" label="NOT" />
                   </v-col>
                   <v-col cols="auto">
                     <v-btn @click="removeFilter(index)" icon>
@@ -99,35 +115,84 @@ export default {
 
   methods: {
     addFilter() {
-      this.filtersArray.push({ key: "", value: "" })
+      this.filtersArray.push({ key: "", value: "", not: false, join: "AND" })
     },
     removeFilter(index) {
       this.filtersArray.splice(index, 1)
     },
     loadFiltersFromQuery() {
+      // prettier-ignore
       // eslint-disable-next-line no-unused-vars
-      const { to, from, sort, order, page, limit, skip, regex, ...filters } =
-        this.$route.query
-      this.filtersArray = Object.keys(filters).map((key) => ({
-        key,
-        value: filters[key],
-      }))
+      const { to, from, sort, order, page, limit, skip, regex, filter, ...filters } = this.$route.query
+
+      this.regex = regex === "true" || regex === true
+
+      if (filter) {
+        try {
+          const obj = JSON.parse(filter)
+          this.buildFiltersWithUrlFilters(obj)
+          return
+        } catch (e) {
+          console.log("Malformed filter in URL; falling back to key=value", e)
+        }
+      }
+
+      const keys = Object.keys(filters)
+      this.filtersArray = keys.length
+        ? keys.map((key, i) => ({
+            key,
+            value: filters[key],
+            not: false,
+            join: "AND",
+          }))
+        : []
     },
     applyFilters() {
-      const { to, from, regex, limit, skip, order, sort } = this.$route.query
+      const { to, from, limit, skip, order, sort } = this.$route.query
+      let query = { to, from, limit, skip, order, sort }
 
-      const filters = this.filtersArray.reduce(
-        (prev, { key, value }) => ({ ...prev, [key]: value }),
-        {}
-      )
+      const filterObj = this.buildFilterFromFlatRows()
+      if (filterObj) query.filter = JSON.stringify(filterObj)
+      else delete query.filter
 
-      const query = {
-        ...{ to, from, regex, limit, skip, order, sort }, // Using this notation to show those are not set in this component
-        ...filters,
-      }
+      this.filtersArray.forEach(({ key }) => delete query[key])
+
+      Object.keys(query).forEach((k) => {
+        if (query[k] === undefined || query[k] === null || query[k] === "")
+          delete query[k]
+      })
 
       if (!this.shallowCompare(query, this.$route.query))
         this.$router.replace({ query })
+    },
+    buildFilterFromFlatRows() {
+      const groups = []
+      let current = []
+
+      this.filtersArray.forEach((row, idx) => {
+        const clause = this.rowToClause(row)
+        if (!clause) return
+
+        if (idx === 0) {
+          current = [clause]
+          return
+        }
+
+        if (row.join === "OR") current.push(clause)
+        else {
+          groups.push(current)
+          current = [clause]
+        }
+      })
+
+      if (current.length) groups.push(current)
+      if (!groups.length) return null
+
+      if (groups.length === 1) {
+        const g = groups[0]
+        return g.length === 1 ? g[0] : { $or: g }
+      }
+      return { $and: groups.map((g) => (g.length === 1 ? g[0] : { $or: g })) }
     },
     shallowCompare(obj1, obj2) {
       return (
@@ -138,19 +203,112 @@ export default {
     setQueryParam(key, value) {
       if (this.$route.query[key] === value) return
       const query = { ...this.$route.query }
-      if (value) query[key] = value
+      if (value !== undefined && value !== null && value !== "")
+        query[key] = value
       else delete query[key]
       this.$router.replace({ query })
+    },
+    isPureNumericString(str) {
+      if (typeof str !== "string") return false
+      const s = str.trim()
+      if (!s) return false
+      // avoid converting codes like "00123"
+      if (s.length > 1 && s[0] === "0" && !s.startsWith("0.")) return false
+      return /^[+-]?((\d+(\.\d*)?)|(\.\d+))([eE][+-]?\d+)?$/.test(s)
+    },
+    parseValue(value) {
+      if (this.isPureNumericString(value)) {
+        const n = Number(value)
+        return Number.isNaN(n) ? value : n
+      }
+      return value
+    },
+    isTopLevelField(key) {
+      return key === "file" || key === "_id" || key === "time"
+    },
+    toBackendKey(key) {
+      return this.isTopLevelField(key) ? key : `data.${key}`
+    },
+    rowToClause({ key, value, not }) {
+      if (!key || value === "") return null
+      const backendKey = this.toBackendKey(key)
+
+      if (this.regex) {
+        const regexObj = { $regex: String(value), $options: "i" }
+        return not
+          ? { [backendKey]: { $not: regexObj } }
+          : { [backendKey]: regexObj }
+      }
+
+      const parsedValue = this.parseValue(value)
+      return not
+        ? { [backendKey]: { $ne: parsedValue } }
+        : { [backendKey]: parsedValue }
+    },
+    buildFiltersWithUrlFilters(obj) {
+      const rows = []
+      const push = (clause, joinWithPrev) => {
+        const keyRaw = Object.keys(clause)[0]
+        const val = clause[keyRaw]
+        const key = keyRaw.startsWith("data.") ? keyRaw.slice(5) : keyRaw
+
+        let not = false
+        let value
+
+        if (val && typeof val === "object") {
+          if ("$ne" in val) {
+            not = true
+            value = val.$ne
+          } else if ("$not" in val && val.$not?.$regex !== undefined) {
+            not = true
+            value = val.$not.$regex
+          } else if ("$regex" in val) {
+            value = val.$regex
+          } else if ("$eq" in val) {
+            value = val.$eq
+          } else {
+            value = ""
+          }
+        } else {
+          value = val
+        }
+
+        rows.push({
+          key,
+          value: String(value ?? ""),
+          not,
+          join: joinWithPrev || "AND",
+        })
+      }
+
+      if (obj?.$or) {
+        obj.$or.forEach((c, i) => push(c, i === 0 ? "AND" : "OR"))
+      } else if (obj?.$and) {
+        obj.$and.forEach((group) => {
+          if (group.$or) {
+            group.$or.forEach((c, i) =>
+              push(c, rows.length === 0 ? "AND" : i === 0 ? "AND" : "OR")
+            )
+          } else {
+            push(group, rows.length === 0 ? "AND" : "AND")
+          }
+        })
+      } else if (obj && Object.keys(obj).length) {
+        push(obj, "AND")
+      }
+
+      this.filtersArray = rows
     },
   },
   computed: {
     allFilters() {
-      return ["file", "filter", ...this.fields]
+      return ["file", ...this.fields]
     },
     unusedFilters() {
-      return this.allFilters.filter(
-        (f) => !this.filtersArray.map(({ key }) => key).includes(f)
-      )
+      //TODO: Temporarily allow duplicates.
+      // const used = new Set(this.filtersArray.map(r => r.key).filter(Boolean))
+      // return this.allFilters.filter(f => !used.has(f))
+      return this.allFilters
     },
     to: {
       get() {
