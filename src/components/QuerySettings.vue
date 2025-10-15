@@ -20,52 +20,18 @@
                     <DatePicker label="To" v-model="to" />
                   </v-col>
                 </v-row>
-
-                <!-- This could be its own component -->
-                <v-row
-                  v-for="(_, index) of filtersArray"
-                  :key="index"
-                  align="center"
-                >
-                  <v-col cols="auto" v-if="index > 0">
-                    <v-btn-toggle
-                      v-model="filtersArray[index].join"
-                      dense
-                      mandatory
-                      color="primary"
-                    >
-                      <v-btn value="AND">AND</v-btn>
-                      <v-btn value="OR">OR</v-btn>
-                    </v-btn-toggle>
-                  </v-col>
-
-                  <v-col cols="">
-                    <v-combobox
-                      :items="unusedFilters"
-                      v-model="filtersArray[index].key"
-                      label="Field"
+                <v-row class="mb-4" v-if="hasFilters">
+                  <v-col cols="12">
+                    <FilterGroup
+                      :group="root"
+                      :fields-all="allFilters"
+                      :is-root="true"
                     />
-                  </v-col>
-                  <v-col cols="">
-                    <v-text-field
-                      v-model="filtersArray[index].value"
-                      label="Value"
-                    />
-                  </v-col>
-
-                  <v-col cols="auto">
-                    <v-switch v-model="filtersArray[index].not" label="NOT" />
-                  </v-col>
-                  <v-col cols="auto">
-                    <v-btn @click="removeFilter(index)" icon>
-                      <v-icon>mdi-close</v-icon>
-                    </v-btn>
                   </v-col>
                 </v-row>
-
-                <v-row>
+                <v-row class="mt-2" v-else>
                   <v-col cols="auto">
-                    <v-btn color="primary" @click="addFilter()">
+                    <v-btn color="primary" @click="addFirstFilter">
                       <v-icon left>mdi-plus</v-icon>
                       <span>{{ $t("Add filter") }}</span>
                     </v-btn>
@@ -95,18 +61,22 @@
 
 <script>
 import DatePicker from "../components/DatePicker.vue"
+import FilterGroup from "./advanceFilter/FilterGroup.vue"
 export default {
   name: "QuerySettings",
   components: {
     DatePicker,
+    FilterGroup,
   },
   props: {
     fields: Array,
     loading: { type: Boolean, default: false },
   },
   data() {
+    const makeGroup = (op = "AND") => ({ type: "group", op, children: [] })
     return {
-      filtersArray: [],
+      root: null,
+      makeGroup,
     }
   },
   mounted() {
@@ -114,85 +84,59 @@ export default {
   },
 
   methods: {
-    addFilter() {
-      this.filtersArray.push({ key: "", value: "", not: false, join: "AND" })
+    isTopLevelField(key) {
+      return key === "file" || key === "_id" || key === "time"
     },
-    removeFilter(index) {
-      this.filtersArray.splice(index, 1)
+    toBackendKey(key) {
+      return this.isTopLevelField(key) ? key : `data.${key}`
     },
-    loadFiltersFromQuery() {
-      // prettier-ignore
-      // eslint-disable-next-line no-unused-vars
-      const { to, from, sort, order, page, limit, skip, regex, filter, ...filters } = this.$route.query
+    isPureNumericString(str) {
+      if (typeof str !== "string") return false
+      const s = str.trim()
+      if (!s) return false
+      if (s.length > 1 && s[0] === "0" && !s.startsWith("0.")) return false
+      return /^[+-]?((\d+(\.\d*)?)|(\.\d+))([eE][+-]?\d+)?$/.test(s)
+    },
+    parseValue(value) {
+      if (this.isPureNumericString(value)) {
+        const n = Number(value)
+        return Number.isNaN(n) ? value : n
+      }
+      return value
+    },
+    nodeToClause(node) {
+      if (!node) return null
 
-      this.regex = regex === "true" || regex === true
+      if (node.type === "cond") {
+        const { key, value, not } = node
+        if (!key || value === "") return null
+        const backendKey = this.toBackendKey(key)
 
-      if (filter) {
-        try {
-          const obj = JSON.parse(filter)
-          this.buildFiltersWithUrlFilters(obj)
-          return
-        } catch (e) {
-          console.log("Malformed filter in URL; falling back to key=value", e)
+        if (this.regex) {
+          const regexObj = { $regex: String(value), $options: "i" }
+          return not
+            ? { [backendKey]: { $not: regexObj } }
+            : { [backendKey]: regexObj }
         }
+
+        const parsedValue = this.parseValue(value)
+        return not
+          ? { [backendKey]: { $ne: parsedValue } }
+          : { [backendKey]: parsedValue }
       }
 
-      const keys = Object.keys(filters)
-      this.filtersArray = keys.length
-        ? keys.map((key) => ({
-            key,
-            value: filters[key],
-            not: false,
-            join: "AND",
-          }))
-        : []
-    },
-    applyFilters() {
-      const { to, from, limit, skip, order, sort } = this.$route.query
-      let query = { to, from, limit, skip, order, sort }
-
-      const filterObj = this.buildFilterFromFlatRows()
-      if (filterObj) query.filter = JSON.stringify(filterObj)
-      else delete query.filter
-
-      this.filtersArray.forEach(({ key }) => delete query[key])
-
-      Object.keys(query).forEach((k) => {
-        if (query[k] === undefined || query[k] === null || query[k] === "")
-          delete query[k]
-      })
-
-      if (!this.shallowCompare(query, this.$route.query))
-        this.$router.replace({ query })
-    },
-    buildFilterFromFlatRows() {
-      const groups = []
-      let current = []
-
-      this.filtersArray.forEach((row, idx) => {
-        const clause = this.rowToClause(row)
-        if (!clause) return
-
-        if (idx === 0) {
-          current = [clause]
-          return
-        }
-
-        if (row.join === "OR") current.push(clause)
-        else {
-          groups.push(current)
-          current = [clause]
-        }
-      })
-
-      if (current.length) groups.push(current)
-      if (!groups.length) return null
-
-      if (groups.length === 1) {
-        const g = groups[0]
-        return g.length === 1 ? g[0] : { $or: g }
+      if (node.type === "group") {
+        const parts = node.children.map(this.nodeToClause).filter(Boolean)
+        if (!parts.length) return null
+        if (parts.length === 1) return parts[0]
+        return node.op === "OR" ? { $or: parts } : { $and: parts }
       }
-      return { $and: groups.map((g) => (g.length === 1 ? g[0] : { $or: g })) }
+
+      return null
+    },
+    buildFilterObject() {
+      const clause = this.nodeToClause(this.root)
+      return clause || null
     },
     shallowCompare(obj1, obj2) {
       return (
@@ -208,53 +152,60 @@ export default {
       else delete query[key]
       this.$router.replace({ query })
     },
-    isPureNumericString(str) {
-      if (typeof str !== "string") return false
-      const s = str.trim()
-      if (!s) return false
-      // avoid converting codes like "00123"
-      if (s.length > 1 && s[0] === "0" && !s.startsWith("0.")) return false
-      return /^[+-]?((\d+(\.\d*)?)|(\.\d+))([eE][+-]?\d+)?$/.test(s)
-    },
-    parseValue(value) {
-      if (this.isPureNumericString(value)) {
-        const n = Number(value)
-        return Number.isNaN(n) ? value : n
+    loadFiltersFromQuery() {
+      // prettier-ignore
+      // eslint-disable-next-line no-unused-vars
+      const { to, from, sort, order, page, limit, skip, regex, filter, ...filters } = this.$route.query
+
+      this.regex = regex === "true" || regex === true
+      if (filter) {
+        try {
+          const obj = JSON.parse(filter)
+          this.root = this.rehydrateTreeFromQuery(obj) // NEW
+          return
+        } catch (e) {
+          console.log("Malformed filter in URL; falling back to key=value", e)
+        }
       }
-      return value
-    },
-    isTopLevelField(key) {
-      return key === "file" || key === "_id" || key === "time"
-    },
-    toBackendKey(key) {
-      return this.isTopLevelField(key) ? key : `data.${key}`
-    },
-    rowToClause({ key, value, not }) {
-      if (!key || value === "") return null
-      const backendKey = this.toBackendKey(key)
-
-      if (this.regex) {
-        const regexObj = { $regex: String(value), $options: "i" }
-        return not
-          ? { [backendKey]: { $not: regexObj } }
-          : { [backendKey]: regexObj }
+      const keys = Object.keys(filters)
+      if (keys.length) {
+        this.root = {
+          type: "group",
+          op: "AND",
+          children: keys.map((key) => ({
+            type: "cond",
+            key,
+            value: String(filters[key] ?? ""),
+            not: false,
+          })),
+        }
+      } else {
+        this.root = null
       }
-
-      const parsedValue = this.parseValue(value)
-      return not
-        ? { [backendKey]: { $ne: parsedValue } }
-        : { [backendKey]: parsedValue }
     },
-    buildFiltersWithUrlFilters(obj) {
-      const rows = []
-      const push = (clause, joinWithPrev) => {
-        const keyRaw = Object.keys(clause)[0]
-        const val = clause[keyRaw]
-        const key = keyRaw.startsWith("data.") ? keyRaw.slice(5) : keyRaw
 
-        let not = false
-        let value
+    applyFilters() {
+      const { to, from, limit, skip, order, sort } = this.$route.query
+      let query = { to, from, limit, skip, order, sort }
 
+      const filterObj = this.buildFilterObject()
+      if (filterObj) query.filter = JSON.stringify(filterObj)
+      else delete query.filter
+
+      // prune empties
+      Object.keys(query).forEach((k) => {
+        if (query[k] === undefined || query[k] === null || query[k] === "")
+          delete query[k]
+      })
+
+      if (!this.shallowCompare(query, this.$route.query))
+        this.$router.replace({ query })
+    },
+    rehydrateTreeFromQuery(obj) {
+      const makeCond = (keyRaw, val) => {
+        const key = keyRaw?.startsWith("data.") ? keyRaw.slice(5) : keyRaw
+        let not = false,
+          value = ""
         if (val && typeof val === "object") {
           if ("$ne" in val) {
             not = true
@@ -272,43 +223,53 @@ export default {
         } else {
           value = val
         }
-
-        rows.push({
-          key,
-          value: String(value ?? ""),
-          not,
-          join: joinWithPrev || "AND",
-        })
+        return { type: "cond", key, value: String(value ?? ""), not }
       }
-
-      if (obj?.$or) {
-        obj.$or.forEach((c, i) => push(c, i === 0 ? "AND" : "OR"))
-      } else if (obj?.$and) {
-        obj.$and.forEach((group) => {
-          if (group.$or) {
-            group.$or.forEach((c, i) =>
-              push(c, rows.length === 0 ? "AND" : i === 0 ? "AND" : "OR")
-            )
-          } else {
-            push(group, rows.length === 0 ? "AND" : "AND")
+      const hydrate = (node) => {
+        if (!node || typeof node !== "object") {
+          return { type: "group", op: "AND", children: [] }
+        }
+        if (node.$and || node.$or) {
+          const op = node.$or ? "OR" : "AND"
+          const arr = node.$or || node.$and
+          return {
+            type: "group",
+            op,
+            children: arr.map((part) => {
+              if (part.$and || part.$or) return hydrate(part)
+              const key = Object.keys(part)[0]
+              return makeCond(key, part[key])
+            }),
           }
-        })
-      } else if (obj && Object.keys(obj).length) {
-        push(obj, "AND")
+        } else {
+          // single condition object { k: v }
+          const key = Object.keys(node)[0]
+          if (!key) return { type: "group", op: "AND", children: [] }
+          return {
+            type: "group",
+            op: "AND",
+            children: [makeCond(key, node[key])],
+          }
+        }
       }
-
-      this.filtersArray = rows
+      return hydrate(obj)
+    },
+    addFirstFilter() {
+      if (!this.root) this.root = this.makeGroup("AND")
+      if (!Array.isArray(this.root.children)) this.root.children = []
+      this.root.children.push({ type: "cond", key: "", value: "", not: false })
     },
   },
   computed: {
     allFilters() {
       return ["file", ...this.fields]
     },
-    unusedFilters() {
-      //TODO: Temporarily allow duplicates.
-      // const used = new Set(this.filtersArray.map(r => r.key).filter(Boolean))
-      // return this.allFilters.filter(f => !used.has(f))
-      return this.allFilters
+    hasFilters() {
+      return !!(
+        this.root &&
+        Array.isArray(this.root.children) &&
+        this.root.children.length
+      )
     },
     to: {
       get() {
@@ -332,7 +293,7 @@ export default {
         return this.$route.query.regex
       },
       set(newVal) {
-        this.setQueryParam("regex", newVal)
+        this.setQueryParam("regex", newVal === "true" ? "true" : undefined)
       },
     },
   },
