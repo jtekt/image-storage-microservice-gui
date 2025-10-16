@@ -23,7 +23,7 @@
     <v-card-text>
       <div v-for="(child, idx) in group.children" :key="idx" class="pb-5">
         <!-- Condition -->
-        <v-row v-if="child.type === 'cond'" align="center">
+        <v-row v-if="child.type === 'condition'" align="center">
           <v-col cols="">
             <v-combobox :items="fieldsAll" v-model="child.key" label="Field" />
           </v-col>
@@ -56,7 +56,7 @@
             <v-icon left>mdi-plus</v-icon> Add Filter
           </v-btn>
         </v-col>
-        <v-col cols="auto">
+        <v-col cols="auto" v-if="isRoot">
           <v-btn small color="primary" @click="addSubgroup">
             <v-icon left>mdi-plus</v-icon> Add Subgroup
           </v-btn>
@@ -76,10 +76,26 @@ export default {
   },
   methods: {
     addFilter() {
-      this.group.children.push({ type: "cond", key: "", value: "", not: false })
+      this.group.children.push({
+        type: "condition",
+        key: "",
+        value: "",
+        not: false,
+      })
     },
     addSubgroup() {
-      this.group.children.push({ type: "group", op: "AND", children: [] })
+      this.group.children.push({
+        type: "group",
+        op: "AND",
+        children: [
+          {
+            type: "condition",
+            key: "",
+            value: "",
+            not: false,
+          },
+        ],
+      })
     },
     removeChild(idx) {
       this.group.children.splice(idx, 1)

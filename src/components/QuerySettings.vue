@@ -73,10 +73,8 @@ export default {
     loading: { type: Boolean, default: false },
   },
   data() {
-    const makeGroup = (op = "AND") => ({ type: "group", op, children: [] })
     return {
       root: null,
-      makeGroup,
     }
   },
   mounted() {
@@ -84,6 +82,9 @@ export default {
   },
 
   methods: {
+    makeGroup(op = "AND") {
+      return { type: "group", op, children: [] }
+    },
     isTopLevelField(key) {
       return key === "file" || key === "_id" || key === "time"
     },
@@ -107,7 +108,7 @@ export default {
     nodeToClause(node) {
       if (!node) return null
 
-      if (node.type === "cond") {
+      if (node.type === "condition") {
         const { key, value, not } = node
         if (!key || value === "") return null
         const backendKey = this.toBackendKey(key)
@@ -161,7 +162,7 @@ export default {
       if (filter) {
         try {
           const obj = JSON.parse(filter)
-          this.root = this.rehydrateTreeFromQuery(obj) // NEW
+          this.root = this.rehydrateTreeFromQuery(obj)
           return
         } catch (e) {
           console.log("Malformed filter in URL; falling back to key=value", e)
@@ -173,7 +174,7 @@ export default {
           type: "group",
           op: "AND",
           children: keys.map((key) => ({
-            type: "cond",
+            type: "condition",
             key,
             value: String(filters[key] ?? ""),
             not: false,
@@ -201,30 +202,30 @@ export default {
       if (!this.shallowCompare(query, this.$route.query))
         this.$router.replace({ query })
     },
-    rehydrateTreeFromQuery(obj) {
-      const makeCond = (keyRaw, val) => {
-        const key = keyRaw?.startsWith("data.") ? keyRaw.slice(5) : keyRaw
-        let not = false,
-          value = ""
-        if (val && typeof val === "object") {
-          if ("$ne" in val) {
-            not = true
-            value = val.$ne
-          } else if ("$not" in val && val.$not?.$regex !== undefined) {
-            not = true
-            value = val.$not.$regex
-          } else if ("$regex" in val) {
-            value = val.$regex
-          } else if ("$eq" in val) {
-            value = val.$eq
-          } else {
-            value = ""
-          }
+    makeCondition(keyRaw, val) {
+      const key = keyRaw?.startsWith("data.") ? keyRaw.slice(5) : keyRaw
+      let not = false,
+        value = ""
+      if (val && typeof val === "object") {
+        if ("$ne" in val) {
+          not = true
+          value = val.$ne
+        } else if ("$not" in val && val.$not?.$regex !== undefined) {
+          not = true
+          value = val.$not.$regex
+        } else if ("$regex" in val) {
+          value = val.$regex
+        } else if ("$eq" in val) {
+          value = val.$eq
         } else {
-          value = val
+          value = ""
         }
-        return { type: "cond", key, value: String(value ?? ""), not }
+      } else {
+        value = val
       }
+      return { type: "condition", key, value: String(value ?? ""), not }
+    },
+    rehydrateTreeFromQuery(obj) {
       const hydrate = (node) => {
         if (!node || typeof node !== "object") {
           return { type: "group", op: "AND", children: [] }
@@ -238,7 +239,7 @@ export default {
             children: arr.map((part) => {
               if (part.$and || part.$or) return hydrate(part)
               const key = Object.keys(part)[0]
-              return makeCond(key, part[key])
+              return this.makeCondition(key, part[key])
             }),
           }
         } else {
@@ -248,7 +249,7 @@ export default {
           return {
             type: "group",
             op: "AND",
-            children: [makeCond(key, node[key])],
+            children: [this.makeCondition(key, node[key])],
           }
         }
       }
@@ -257,7 +258,12 @@ export default {
     addFirstFilter() {
       if (!this.root) this.root = this.makeGroup("AND")
       if (!Array.isArray(this.root.children)) this.root.children = []
-      this.root.children.push({ type: "cond", key: "", value: "", not: false })
+      this.root.children.push({
+        type: "condition",
+        key: "",
+        value: "",
+        not: false,
+      })
     },
   },
   computed: {
