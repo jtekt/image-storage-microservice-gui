@@ -24,15 +24,14 @@
         </v-list>
       </v-menu>
 
-      <v-btn
-        v-if="isRoot"
-        small
-        color="primary"
-        class="ml-2 rail-button"
-        @click="addSubgroup"
-      >
-        <v-icon left>mdi-plus</v-icon> Group
-      </v-btn>
+      <div class="rail-button" v-if="isRoot">
+        <v-btn small color="primary" @click="addSubgroup">
+          <v-icon left>mdi-plus</v-icon> Group
+        </v-btn>
+        <v-btn small color="primary" @click="addFilter" class="ml-3">
+          <v-icon left>mdi-plus</v-icon> Filter
+        </v-btn>
+      </div>
 
       <v-btn
         v-if="!isRoot"
@@ -47,7 +46,11 @@
 
     <!-- CONTENT -->
     <v-card-text>
-      <div v-for="(child, idx) in group.children" :key="idx" class="pt-8">
+      <div
+        v-for="(child, idx) in group.children"
+        :key="idx"
+        :class="isRoot ? 'pt-0' : 'pt-6'"
+      >
         <!-- Condition -->
         <v-row v-if="child.type === 'condition'" align="center">
           <v-col>
@@ -66,7 +69,7 @@
           </v-col>
         </v-row>
 
-        <!-- Subgroup (recursive) -->
+        <!-- Subgroup (can be recursive) -->
         <FilterGroup
           v-else-if="child.type === 'group'"
           :group="child"
@@ -76,10 +79,10 @@
         />
       </div>
 
-      <v-row class="mt-1" no-gutters>
+      <v-row class="mt-1" v-if="!isRoot">
         <v-col cols="auto">
           <v-btn small color="primary" @click="addFilter">
-            <v-icon left>mdi-plus</v-icon> Add Filter
+            <v-icon left>mdi-plus</v-icon> Filter
           </v-btn>
         </v-col>
       </v-row>
@@ -119,13 +122,11 @@ export default {
 </script>
 
 <style scoped>
-/* space for the left rail and op pill */
 .filter-group {
   position: relative;
   padding-left: 90px;
 }
 
-/* rail container */
 .rail {
   position: absolute;
   left: 16px;
@@ -137,7 +138,6 @@ export default {
   justify-content: center;
 }
 
-/* vertical line */
 .rail-line {
   position: absolute;
   top: 8px;
@@ -146,7 +146,6 @@ export default {
   border-left: 2px solid rgba(0, 0, 0, 0.12);
 }
 
-/* end dots */
 .rail-dot {
   position: absolute;
   left: 12px;
@@ -163,7 +162,6 @@ export default {
   bottom: 8px;
 }
 
-/* operator button (pill look via large radius) */
 .op-pill {
   position: absolute;
   top: 45%;
@@ -172,10 +170,11 @@ export default {
   padding: 0 10px;
 }
 
-/* tiny label under the operator */
 .rail-button {
   position: absolute;
-  bottom: -25px;
+  bottom: -35px;
+  display: flex;
+  left: -15px;
 }
 .rail-button-top {
   position: absolute;
