@@ -23,7 +23,7 @@
                 <v-row class="mb-4" v-if="hasFilters">
                   <v-col cols="12">
                     <FilterGroup
-                      :group="root"
+                      v-model="root"
                       :fields-all="allFilters"
                       :is-root="true"
                     />

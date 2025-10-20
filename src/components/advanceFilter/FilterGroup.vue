@@ -9,7 +9,7 @@
       <v-menu offset-y left transition="fade-transition">
         <template v-slot:activator="{ on, attrs }">
           <v-btn v-bind="attrs" v-on="on" small class="op-pill">
-            <span>{{ group.op }}</span>
+            <span>{{ internalGroup.op }}</span>
             <v-icon right>mdi-chevron-down</v-icon>
           </v-btn>
         </template>
@@ -17,7 +17,7 @@
           <v-list-item
             v-for="item in ['AND', 'OR']"
             :key="item"
-            @click="group.op = item"
+            @click="updateOp(item)"
           >
             <v-list-item-title>{{ item }}</v-list-item-title>
           </v-list-item>
@@ -47,20 +47,29 @@
     <!-- CONTENT -->
     <v-card-text>
       <div
-        v-for="(child, idx) in group.children"
+        v-for="(child, idx) in internalGroup.children"
         :key="idx"
         :class="isRoot ? 'pt-0' : 'pt-6'"
       >
         <!-- Condition -->
         <v-row v-if="child.type === 'condition'" align="center">
           <v-col>
-            <v-combobox :items="fieldsAll" v-model="child.key" label="Field" />
+            <v-combobox
+              :items="fieldsAll"
+              v-model="child.key"
+              label="Field"
+              @change="emitChange"
+            />
           </v-col>
           <v-col>
-            <v-text-field v-model="child.value" label="Value" />
+            <v-text-field
+              v-model="child.value"
+              label="Value"
+              @input="emitChange"
+            />
           </v-col>
           <v-col cols="auto" class="px-3">
-            <v-switch v-model="child.not" label="NOT" />
+            <v-switch v-model="child.not" label="NOT" @change="emitChange" />
           </v-col>
           <v-col cols="auto">
             <v-btn icon @click="removeChild(idx)">
@@ -69,10 +78,10 @@
           </v-col>
         </v-row>
 
-        <!-- Subgroup (can be recursive) -->
+        <!-- Subgroup (recursive) -->
         <FilterGroup
           v-else-if="child.type === 'group'"
-          :group="child"
+          v-model="internalGroup.children[idx]"
           :fields-all="fieldsAll"
           :is-root="false"
           @remove="removeChild(idx)"
@@ -94,28 +103,61 @@
 export default {
   name: "FilterGroup",
   props: {
-    group: { type: Object, required: true },
+    value: { type: Object, required: true },
     fieldsAll: { type: Array, required: true },
     isRoot: { type: Boolean, default: false },
   },
+  data() {
+    return {
+      internalGroup: this.copyGroup(
+        this.value || { type: "group", op: "AND", children: [] }
+      ),
+    }
+  },
   methods: {
+    copyGroup(obj) {
+      return JSON.parse(
+        JSON.stringify(obj ?? { type: "group", op: "AND", children: [] })
+      )
+    },
+    emitChange() {
+      this.$emit("input", this.copyGroup(this.internalGroup))
+    },
+    updateOp(item) {
+      this.internalGroup.op = item
+      this.emitChange()
+    },
     addFilter() {
-      this.group.children.push({
+      this.internalGroup.children.push({
         type: "condition",
         key: "",
         value: "",
         not: false,
       })
+      this.emitChange()
     },
     addSubgroup() {
-      this.group.children.push({
+      this.internalGroup.children.push({
         type: "group",
         op: "AND",
         children: [{ type: "condition", key: "", value: "", not: false }],
       })
+      this.emitChange()
     },
     removeChild(idx) {
-      this.group.children.splice(idx, 1)
+      if (!Array.isArray(this.internalGroup.children)) return
+      this.internalGroup.children.splice(idx, 1)
+      this.emitChange()
+    },
+  },
+  watch: {
+    value: {
+      handler(newVal) {
+        this.internalGroup = this.copyGroup(
+          newVal || { type: "group", op: "AND", children: [] }
+        )
+      },
+      deep: true,
     },
   },
 }
