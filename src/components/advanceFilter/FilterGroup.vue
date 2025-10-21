@@ -61,6 +61,9 @@
               @change="emitChange"
             />
           </v-col>
+          <v-col cols="auto" class="px-3">
+            <v-switch v-model="child.not" label="NOT" @change="emitChange" />
+          </v-col>
           <v-col>
             <v-text-field
               v-model="child.value"
@@ -68,8 +71,14 @@
               @input="emitChange"
             />
           </v-col>
-          <v-col cols="auto" class="px-3">
-            <v-switch v-model="child.not" label="NOT" @change="emitChange" />
+          <v-col cols="auto">
+            <v-select
+              :items="['string', 'number']"
+              v-model="child.valueType"
+              label="Type"
+              @change="emitChange"
+              style="max-width: 100px"
+            />
           </v-col>
           <v-col cols="auto">
             <v-btn icon @click="removeChild(idx)">
@@ -84,6 +93,7 @@
           v-model="internalGroup.children[idx]"
           :fields-all="fieldsAll"
           :is-root="false"
+          @input="emitChange"
           @remove="removeChild(idx)"
         />
       </div>
@@ -133,6 +143,7 @@ export default {
         key: "",
         value: "",
         not: false,
+        valueType: "string",
       })
       this.emitChange()
     },
@@ -140,7 +151,15 @@ export default {
       this.internalGroup.children.push({
         type: "group",
         op: "AND",
-        children: [{ type: "condition", key: "", value: "", not: false }],
+        children: [
+          {
+            type: "condition",
+            key: "",
+            value: "",
+            not: false,
+            valueType: "string",
+          },
+        ],
       })
       this.emitChange()
     },

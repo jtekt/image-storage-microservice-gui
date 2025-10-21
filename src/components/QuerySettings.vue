@@ -109,7 +109,7 @@ export default {
       if (!node) return null
 
       if (node.type === "condition") {
-        const { key, value, not } = node
+        const { key, value, not, valueType } = node
         if (!key || value === "") return null
         const backendKey = this.toBackendKey(key)
 
@@ -120,14 +120,17 @@ export default {
             : { [backendKey]: regexObj }
         }
 
-        const parsedValue = this.parseValue(value)
+        const parsedValue = valueType === "number" ? Number(value) : value
+
         return not
           ? { [backendKey]: { $ne: parsedValue } }
           : { [backendKey]: parsedValue }
       }
 
       if (node.type === "group") {
-        const parts = node.children.map(this.nodeToClause).filter(Boolean)
+        const parts = node.children
+          .map((n) => this.nodeToClause(n))
+          .filter(Boolean)
         if (!parts.length) return null
         if (parts.length === 1) return parts[0]
         return node.op === "OR" ? { $or: parts } : { $and: parts }
@@ -179,6 +182,7 @@ export default {
             key,
             value: String(filters[key] ?? ""),
             not: false,
+            valueType: "string",
           })),
         }
       } else {
@@ -224,7 +228,16 @@ export default {
       } else {
         value = val
       }
-      return { type: "condition", key, value: String(value ?? ""), not }
+
+      const valueType = typeof value === "number" ? "number" : "string"
+
+      return {
+        type: "condition",
+        key,
+        value: String(value ?? ""),
+        not,
+        valueType,
+      }
     },
     rehydrateTreeFromQuery(obj) {
       const hydrate = (node) => {
@@ -264,6 +277,7 @@ export default {
         key: "",
         value: "",
         not: false,
+        valueType: "string",
       })
     },
   },
