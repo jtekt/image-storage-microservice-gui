@@ -26,6 +26,7 @@
                       v-model="root"
                       :fields-all="allFilters"
                       :is-root="true"
+                      @remove="root = null"
                     />
                   </v-col>
                 </v-row>
@@ -161,8 +162,7 @@ export default {
       const keys = Object.keys(filters)
       if (keys.length) {
         this.root = {
-          type: "group",
-          op: "AND",
+          ...this.makeGroup(),
           children: keys.map((key) => ({
             type: "condition",
             key,
@@ -175,7 +175,6 @@ export default {
         this.root = null
       }
     },
-
     applyFilters() {
       const { to, from, limit, skip, order, sort } = this.$route.query
       let query = { to, from, limit, skip, order, sort }
@@ -228,14 +227,13 @@ export default {
     rehydrateTreeFromQuery(obj) {
       const hydrate = (node) => {
         if (!node || typeof node !== "object") {
-          return { type: "group", op: "AND", children: [] }
+          return this.makeGroup()
         }
         if (node.$and || node.$or) {
           const op = node.$or ? "OR" : "AND"
           const arr = node.$or || node.$and
           return {
-            type: "group",
-            op,
+            ...this.makeGroup(op),
             children: arr.map((part) => {
               if (part.$and || part.$or) return hydrate(part)
               const key = Object.keys(part)[0]
@@ -245,10 +243,9 @@ export default {
         } else {
           // single condition object { k: v }
           const key = Object.keys(node)[0]
-          if (!key) return { type: "group", op: "AND", children: [] }
+          if (!key) return this.makeGroup()
           return {
-            type: "group",
-            op: "AND",
+            ...this.makeGroup(),
             children: [this.makeCondition(key, node[key])],
           }
         }
@@ -256,7 +253,7 @@ export default {
       return hydrate(obj)
     },
     addFirstFilter() {
-      if (!this.root) this.root = this.makeGroup("AND")
+      if (!this.root) this.root = this.makeGroup()
       if (!Array.isArray(this.root.children)) this.root.children = []
       this.root.children.push({
         type: "condition",

@@ -23,24 +23,8 @@
           </v-list-item>
         </v-list>
       </v-menu>
-
-      <div class="rail-button" v-if="isRoot">
-        <v-btn small color="primary" @click="addSubgroup">
-          <v-icon left>mdi-plus</v-icon> Group
-        </v-btn>
-        <v-btn small color="primary" @click="addFilter" class="ml-3">
-          <v-icon left>mdi-plus</v-icon> Filter
-        </v-btn>
-      </div>
-
-      <v-btn
-        v-if="!isRoot"
-        class="rail-button-top"
-        x-small
-        @click="$emit('remove')"
-      >
-        <v-icon left>mdi-delete</v-icon>
-        Delete
+      <v-btn class="rail-button-top" x-small @click="$emit('remove')" icon>
+        <v-icon>mdi-delete</v-icon>
       </v-btn>
     </div>
 
@@ -82,7 +66,7 @@
           </v-col>
           <v-col cols="auto">
             <v-btn icon @click="removeChild(idx)">
-              <v-icon>mdi-close</v-icon>
+              <v-icon>mdi-delete</v-icon>
             </v-btn>
           </v-col>
         </v-row>
@@ -98,7 +82,12 @@
         />
       </div>
 
-      <v-row class="mt-1" v-if="!isRoot">
+      <v-row class="mt-1">
+        <v-col cols="auto" v-if="isRoot">
+          <v-btn small color="primary" @click="addSubgroup">
+            <v-icon left>mdi-plus</v-icon> Group
+          </v-btn>
+        </v-col>
         <v-col cols="auto">
           <v-btn small color="primary" @click="addFilter">
             <v-icon left>mdi-plus</v-icon> Filter
@@ -119,19 +108,26 @@ export default {
   },
   data() {
     return {
-      internalGroup: this.copyGroup(
-        this.value || { type: "group", op: "AND", children: [] }
-      ),
+      internalGroup: this.copyGroup(this.value || this.makeGroup()),
     }
   },
   methods: {
     copyGroup(obj) {
-      return JSON.parse(
-        JSON.stringify(obj ?? { type: "group", op: "AND", children: [] })
-      )
+      return JSON.parse(JSON.stringify(obj ?? this.makeGroup()))
     },
     emitChange() {
       this.$emit("input", this.copyGroup(this.internalGroup))
+    },
+    tryPrune() {
+      if (
+        !this.isRoot &&
+        (!this.internalGroup.children ||
+          this.internalGroup.children.length === 0)
+      ) {
+        this.$emit("remove")
+        return
+      }
+      this.emitChange()
     },
     updateOp(item) {
       this.internalGroup.op = item
@@ -149,8 +145,7 @@ export default {
     },
     addSubgroup() {
       this.internalGroup.children.push({
-        type: "group",
-        op: "AND",
+        ...this.makeGroup(),
         children: [
           {
             type: "condition",
@@ -166,15 +161,16 @@ export default {
     removeChild(idx) {
       if (!Array.isArray(this.internalGroup.children)) return
       this.internalGroup.children.splice(idx, 1)
-      this.emitChange()
+      this.tryPrune()
+    },
+    makeGroup(op = "AND") {
+      return { type: "group", op, children: [] }
     },
   },
   watch: {
     value: {
       handler(newVal) {
-        this.internalGroup = this.copyGroup(
-          newVal || { type: "group", op: "AND", children: [] }
-        )
+        this.internalGroup = this.copyGroup(newVal || this.makeGroup())
       },
       deep: true,
     },
