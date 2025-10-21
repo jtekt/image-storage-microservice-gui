@@ -112,10 +112,10 @@ export default {
     image_src() {
       const token = getAuthenticationToken(this.$cookies)
 
-      if (!token) {
-        alert("No authentication token found")
-        return
-      }
+      // if (!token) {
+      //   alert("No authentication token found")
+      //   return
+      // }
 
       return `${VUE_APP_IMAGE_STORAGE_API_URL}/images/${this.image_id}/image?jwt=${token}`
     },
