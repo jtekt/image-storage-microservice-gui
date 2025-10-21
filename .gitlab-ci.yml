@@ -30,20 +30,19 @@ build:
     - docker tag ${CONTAINER_IMAGE} ${CONTAINER_IMAGE_TAGGED}
     - docker push ${CONTAINER_IMAGE}
     - docker push ${CONTAINER_IMAGE_TAGGED}
-
-build-aarch64:
-  stage: build
-  only:
-    - tags
-  tags:
-    - aarch64
-  before_script:
-    # Registry login
-    - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ECR_PUBLIC_URL}
-    # Create repository in ECR if it does not exist yet
-    - >
-      aws ecr-public create-repository --region us-east-1 --repository-name ${APPLICATION_NAME}
-      || echo "Repository might have already existed"
-  script:
-    - docker build -f Dockerfile-aarch64 -t ${CONTAINER_IMAGE_AARCH64} .
-    - docker push ${CONTAINER_IMAGE_AARCH64}
+# build-aarch64:
+#   stage: build
+#   only:
+#     - tags
+#   tags:
+#     - aarch64
+#   before_script:
+#     # Registry login
+#     - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ECR_PUBLIC_URL}
+#     # Create repository in ECR if it does not exist yet
+#     - >
+#       aws ecr-public create-repository --region us-east-1 --repository-name ${APPLICATION_NAME}
+#       || echo "Repository might have already existed"
+#   script:
+#     - docker build -f Dockerfile-aarch64 -t ${CONTAINER_IMAGE_AARCH64} .
+#     - docker push ${CONTAINER_IMAGE_AARCH64}
