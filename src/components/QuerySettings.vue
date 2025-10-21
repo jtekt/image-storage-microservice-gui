@@ -91,20 +91,6 @@ export default {
     toBackendKey(key) {
       return this.isTopLevelField(key) ? key : `data.${key}`
     },
-    isPureNumericString(str) {
-      if (typeof str !== "string") return false
-      const s = str.trim()
-      if (!s) return false
-      if (s.length > 1 && s[0] === "0" && !s.startsWith("0.")) return false
-      return /^[+-]?((\d+(\.\d*)?)|(\.\d+))([eE][+-]?\d+)?$/.test(s)
-    },
-    parseValue(value) {
-      if (this.isPureNumericString(value)) {
-        const n = Number(value)
-        return Number.isNaN(n) ? value : n
-      }
-      return value
-    },
     nodeToClause(node) {
       if (!node) return null
 
