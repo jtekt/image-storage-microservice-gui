@@ -158,7 +158,8 @@ export default {
       // eslint-disable-next-line no-unused-vars
       const { to, from, sort, order, page, limit, skip, regex, filter, ...filters } = this.$route.query
 
-      this.regex = regex === "true" || regex === true
+      this.regex = regex === "true" || regex === true ? "true" : undefined
+
       if (filter) {
         try {
           const obj = JSON.parse(filter)
