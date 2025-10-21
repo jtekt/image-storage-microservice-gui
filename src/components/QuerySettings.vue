@@ -76,6 +76,7 @@ export default {
   data() {
     return {
       root: null,
+      regex: false,
     }
   },
   mounted() {
@@ -147,8 +148,7 @@ export default {
       // prettier-ignore
       // eslint-disable-next-line no-unused-vars
       const { to, from, sort, order, page, limit, skip, regex, filter, ...filters } = this.$route.query
-
-      this.regex = regex === "true" || regex === true ? "true" : undefined
+      this.regex = regex === "true"
 
       if (filter) {
         try {
@@ -177,11 +177,13 @@ export default {
     },
     applyFilters() {
       const { to, from, limit, skip, order, sort } = this.$route.query
-      let query = { to, from, limit, skip, order, sort }
+      const query = { to, from, limit, skip, order, sort }
 
       const filterObj = this.buildFilterObject()
       if (filterObj) query.filter = JSON.stringify(filterObj)
       else delete query.filter
+      if (this.regex) query.regex = "true"
+      else delete query.regex
 
       // prune empties
       Object.keys(query).forEach((k) => {
@@ -290,14 +292,6 @@ export default {
       },
       set(newVal) {
         this.setQueryParam("from", newVal)
-      },
-    },
-    regex: {
-      get() {
-        return this.$route.query.regex
-      },
-      set(newVal) {
-        this.setQueryParam("regex", newVal === "true" ? "true" : undefined)
       },
     },
   },
