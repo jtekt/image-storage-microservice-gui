@@ -268,7 +268,7 @@ export default {
   },
   computed: {
     allFilters() {
-      return ["file", ...this.fields]
+      return ["file", "_id", ...this.fields]
     },
     hasFilters() {
       return !!(
