@@ -119,7 +119,7 @@ export default {
                 })
         },
         reset_field() {
-            this.data_string = '{}'
+      this.data_string = ""
             this.dialog = false
         },
     },
