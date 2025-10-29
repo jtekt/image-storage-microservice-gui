@@ -62,6 +62,9 @@ export default {
         },
     },
     watch: {
+    value(newVal) {
+      this.data_string = newVal ?? ''
+    },
         data_string(newVal) {
             if (newVal.trim() === '' && this.selected_type === 'JSON')
                 this.data_string = '{}'
@@ -114,13 +117,36 @@ export default {
     methods: {
         convert_to_json() {
             if (!this.is_valid_yaml) return
-            const jsonObject = yaml.load(this.data_string)
-            this.data_string = JSON.stringify(jsonObject, null, 2)
+      let obj
+      try {
+        obj = yaml.load(this.data_string)
+      } catch {
+        return
+      }
+      if (obj === undefined || obj === null) {
+        this.data_string = '{}'
+      } else {
+        this.data_string = JSON.stringify(obj, null, 2)
+      }
         },
         convert_to_yaml() {
             if (!this.is_valid_json) return
-            const jsonObject2 = JSON.parse(this.data_string)
-            this.data_string = yaml.dump(jsonObject2)
+      let obj
+      try {
+        obj = JSON.parse(this.data_string)
+      } catch {
+        return
+      }
+      if (
+        obj &&
+        typeof obj === 'object' &&
+        !Array.isArray(obj) &&
+        Object.keys(obj).length === 0
+      ) {
+        this.data_string = ''
+      } else {
+        this.data_string = yaml.dump(obj)
+      }
         },
     },
 }
