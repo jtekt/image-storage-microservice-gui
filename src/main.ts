@@ -27,9 +27,15 @@ import { createApp } from 'vue'
 import 'unfonts.css'
 import VueAxios from "vue-axios";
 
+const isPlaceholder = (value?: string) =>
+    !value || value.includes("PLACEHOLDER");
+
 const app = createApp(App)
 
-if (VITE_APP_OIDC_AUTHORITY && VITE_APP_OIDC_CLIENT_ID) {
+if (
+    !isPlaceholder(VITE_APP_OIDC_AUTHORITY) &&
+    !isPlaceholder(VITE_APP_OIDC_CLIENT_ID)
+) {
     app.use(auth, {
         authority: VITE_APP_OIDC_AUTHORITY,
         client_id: VITE_APP_OIDC_CLIENT_ID,
