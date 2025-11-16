@@ -44,17 +44,6 @@
               <v-col cols="auto">
                 <v-switch label="Partial match" v-model="regex" hide-details />
               </v-col>
-              <v-col cols="auto">
-                <v-text-field
-                  v-model="limit"
-                  type="number"
-                  label="Limit"
-                  density="compact"
-                  hide-details
-                  variant="outlined"
-                  style="max-width: 90px; margin-left: 8px"
-                />
-              </v-col>
 
               <v-spacer />
 
@@ -100,9 +89,6 @@ const hasFilters = computed(() => {
 
 const to = ref<string>(normalizeQueryValue(route.query.to as string) ?? "");
 const from = ref<string>(normalizeQueryValue(route.query.from as string) ?? "");
-const limit = ref<string>(
-  normalizeQueryValue(route.query.limit as string) ?? ""
-);
 
 onMounted(() => {
   loadFiltersFromQuery();
@@ -301,9 +287,6 @@ function applyFilters() {
 
   if (from.value) query.from = from.value;
   else delete query.from;
-
-  if (limit.value) query.limit = limit.value;
-  else delete query.limit;
 
   const filterObj = buildFilterObject();
   if (filterObj) query.filter = JSON.stringify(filterObj);
