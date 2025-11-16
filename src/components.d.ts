@@ -19,7 +19,6 @@ declare module 'vue' {
     FilterGroup: typeof import('./components/advancedSearch/FilterGroup.vue')['default']
     Folder: typeof import('./components/Folder.vue')['default']
     FolderImagePreview: typeof import('./components/FolderImagePreview.vue')['default']
-    HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     ImageDataEditor: typeof import('./components/ImageDataEditor.vue')['default']
     ImageDataField: typeof import('./components/ImageDataField.vue')['default']
     ImportDialog: typeof import('./components/ImportDialog.vue')['default']
