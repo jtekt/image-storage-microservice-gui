@@ -129,9 +129,11 @@ function nodeToClause(node: FilterNode | null): any | null {
   }
 
   if (node.type === "group") {
-    const parts = node.children.map((n) => nodeToClause(n)).filter(Boolean);
+    const parts = node.children
+      .map((n: FilterNode) => nodeToClause(n))
+      .filter(Boolean);
     if (!parts.length) return null;
-    if (parts.length === 1) return parts[0];
+
     return node.op === "OR" ? { $or: parts } : { $and: parts };
   }
 

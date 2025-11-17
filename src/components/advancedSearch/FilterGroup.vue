@@ -133,7 +133,7 @@ function copyGroup(obj?: Group): Group {
 const internalGroup = ref(copyGroup(model.value || makeGroup()));
 
 function emitChange() {
-  model.value = copyGroup(internalGroup.value);
+  model.value = internalGroup.value;
 }
 
 function tryPrune() {
@@ -187,7 +187,9 @@ function removeChild(idx: number) {
 watch(
   () => model.value,
   (newVal) => {
-    Object.assign(internalGroup, copyGroup(newVal || makeGroup()));
+    if (newVal && newVal !== internalGroup.value) {
+      internalGroup.value = copyGroup(newVal);
+    }
   },
   { deep: true }
 );
