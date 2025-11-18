@@ -51,6 +51,7 @@ import { ref, onMounted, computed } from "vue";
 import axios from "axios";
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
+import { isPlaceholder } from "@/utils";
 const { VITE_FOLDER_STRUCTURE } = import.meta.env;
 
 const { t } = useI18n();
@@ -59,9 +60,12 @@ const route = useRoute();
 const loading = ref(false);
 const folders = ref<string[]>([]);
 
-const currentFolder = ref((VITE_FOLDER_STRUCTURE || "").split(",")[0] || "");
+const currentFolder = ref();
 
 onMounted(() => {
+  if (!isPlaceholder(VITE_FOLDER_STRUCTURE)) {
+    currentFolder.value = (VITE_FOLDER_STRUCTURE || "").split(",")[0] || "";
+  }
   getFolders();
 });
 const getFolders = async () => {
