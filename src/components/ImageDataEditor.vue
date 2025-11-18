@@ -1,154 +1,135 @@
 <template>
-    <v-card elevation="0" outlined v-if="json">
-        <v-toolbar flat>
-            <v-row align="center">
-                <v-col>
-                    <v-toolbar-title class="font-weight-medium">
-                        {{ title }}</v-toolbar-title
-                    >
-                </v-col>
-                <v-spacer />
-                <v-col cols="auto">
-                    <div v-if="edit_mode">
-                        <v-tooltip bottom>
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-btn
-                                    icon
-                                    v-bind="attrs"
-                                    v-on="on"
-                                    color="error"
-                                    @click.stop="cancel_edit()"
-                                >
-                                    <v-icon> mdi-close-box </v-icon>
-                                </v-btn>
-                            </template>
-                            <div class="text-center">Cancel Changes</div>
-                        </v-tooltip>
-                        <v-tooltip bottom>
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-btn
-                                    icon
-                                    v-bind="attrs"
-                                    v-on="on"
-                                    color="success"
-                                    :disabled="
-                                        !inputValid || input_type === undefined
-                                    "
-                                    @click.stop="save_data()"
-                                >
-                                    <v-icon> mdi-content-save </v-icon>
-                                </v-btn>
-                            </template>
-                            <div class="text-center">Save Changes</div>
-                        </v-tooltip>
-                    </div>
-                    <v-tooltip bottom v-else>
-                        <template v-slot:activator="{ on, attrs }">
-                            <v-btn
-                                icon
-                                v-bind="attrs"
-                                v-on="on"
-                                color="secondary"
-                                @click.stop="start_edit()"
-                            >
-                                <v-icon> mdi-lead-pencil </v-icon>
-                            </v-btn>
-                        </template>
-                        <div class="text-center">Edit image properties</div>
-                    </v-tooltip>
-                </v-col>
-            </v-row>
-        </v-toolbar>
-        <v-card-text>
-            <ImageDataField
-                v-if="edit_mode"
-                v-model="data_string"
-                @valid-input="inputValid = $event"
-                @input-type="input_type = $event"
+  <v-card v-if="json" elevation="0" variant="outlined">
+    <v-toolbar flat>
+      <v-toolbar-title class="font-weight-medium">
+        {{ title }}
+      </v-toolbar-title>
+      <template v-slot:append>
+        <div v-if="editMode">
+          <v-tooltip location="bottom">
+            <template #activator="{ props: tooltipProps }">
+              <v-btn
+                icon
+                color="error"
+                v-bind="tooltipProps"
+                @click.stop="cancelEdit"
+              >
+                <v-icon icon="mdi-close-box" />
+              </v-btn>
+            </template>
+            <div class="text-center">Cancel Changes</div>
+          </v-tooltip>
+
+          <v-tooltip location="bottom">
+            <template #activator="{ props: tooltipProps }">
+              <v-btn
+                icon
+                color="success"
+                v-bind="tooltipProps"
+                :disabled="!inputValid || !parsedData"
+                @click.stop="saveData"
+              >
+                <v-icon icon="mdi-content-save" />
+              </v-btn>
+            </template>
+            <div class="text-center">Save Changes</div>
+          </v-tooltip>
+        </div>
+
+        <v-tooltip v-else location="bottom">
+          <template #activator="{ props: tooltipProps }">
+            <v-btn
+              icon="mdi-lead-pencil"
+              color="secondary"
+              v-bind="tooltipProps"
+              @click.stop="startEdit"
             />
-            <v-list v-else>
-                <v-list-item v-for="(value, key) in json" :key="key">
-                    <v-list-item-content>
-                        <v-list-item-subtitle class="font-weight-medium">{{
-                            key
-                        }}</v-list-item-subtitle>
-                        <v-list-item-title>
-                            <pre>{{ format_metadata(value) }}</pre>
-                        </v-list-item-title>
-                    </v-list-item-content>
-                </v-list-item>
-            </v-list>
-        </v-card-text>
-    </v-card>
+          </template>
+          <div class="text-center">Edit image properties</div>
+        </v-tooltip>
+      </template>
+    </v-toolbar>
+
+    <v-card-text>
+      <ImageDataField
+        v-if="editMode"
+        v-model="dataString"
+        v-model:inputType="inputType"
+        v-model:valid="inputValid"
+        v-model:parsed="parsedData"
+        :textarea-rows="textareaRows"
+      />
+
+      <v-list v-else>
+        <v-list-item v-for="(value, key) in json" :key="key">
+          <v-list-item-title class="font-weight-medium">
+            {{ key }}
+          </v-list-item-title>
+          <v-list-item-subtitle>
+            <pre>{{ formatMetadata(value) }}</pre>
+          </v-list-item-subtitle>
+        </v-list-item>
+      </v-list>
+    </v-card-text>
+  </v-card>
 </template>
 
-<script>
-import yaml from 'js-yaml'
-import ImageDataField from './ImageDataField.vue'
+<script setup lang="ts">
+import { ref, computed } from "vue";
 
-export default {
-    name: 'ImageDataEditor',
-    components: {
-        ImageDataField,
-    },
-    data() {
-        return {
-            edit_mode: false,
-            data_string: '',
-            input_type: 'JSON',
-            inputValid: true,
-        }
-    },
-    props: {
-        title: {
-            type: String,
-            default: '',
-        },
-        json: {
-            type: Object,
-            default: null,
-        },
-        textarea_row: {
-            type: Number,
-            default: 10,
-        },
-    },
-    methods: {
-        format_metadata(data) {
-            try {
-                return JSON.stringify(data, null, 2)
-            } catch (error) {
-                return data
-            }
-        },
-        save_data() {
-            if (!this.inputValid) return
-            if (!confirm('Save changes?')) return
-            this.$emit('save-data', this.json_value)
-            this.reset_changes()
-        },
-        start_edit() {
-            this.edit_mode = true
-            if (this.json) this.data_string = this.format_metadata(this.json)
-        },
-        cancel_edit() {
-            if (!confirm('Abandon changes?')) return
-            this.reset_changes()
-        },
-        reset_changes() {
-            this.edit_mode = false
-            this.data_string = ''
-        },
-    },
-    computed: {
-        json_value() {
-            if (this.input_type === 'JSON') {
-                return JSON.parse(this.data_string)
-            } else if (this.input_type === 'YAML') {
-                return yaml.load(this.data_string)
-            }
-            return null
-        },
-    },
+const props = defineProps<{
+  title?: string;
+  json?: Record<string, any> | null;
+  textarea_row?: number;
+}>();
+
+const emit = defineEmits<{
+  (e: "save-data", data: any): void;
+}>();
+
+// state
+const editMode = ref(false);
+const dataString = ref<string>("");
+const inputType = ref<"JSON" | "YAML">("JSON");
+const inputValid = ref<boolean>(true);
+const parsedData = ref<any | null>(null);
+
+const textareaRows = computed(() => props.textarea_row ?? 10);
+
+function formatMetadata(data: any) {
+  try {
+    return JSON.stringify(data, null, 2);
+  } catch (error) {
+    return String(data);
+  }
+}
+
+function startEdit() {
+  editMode.value = true;
+  if (props.json) {
+    dataString.value = formatMetadata(props.json);
+    inputType.value = "JSON";
+  }
+}
+
+function cancelEdit() {
+  if (!confirm("Abandon changes?")) return;
+  resetChanges();
+}
+
+function resetChanges() {
+  editMode.value = false;
+  dataString.value = "";
+  parsedData.value = null;
+  inputValid.value = true;
+  inputType.value = "JSON";
+}
+
+function saveData() {
+  if (!inputValid.value || !parsedData.value) return;
+  if (!confirm("Save changes?")) return;
+
+  emit("save-data", parsedData.value);
+  resetChanges();
 }
 </script>

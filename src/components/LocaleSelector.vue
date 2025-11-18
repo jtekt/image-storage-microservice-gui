@@ -1,36 +1,36 @@
 <template>
   <v-select
-    prepend-icon="mdi-translate"
+    prepend-inner-icon="mdi-translate"
+    :hint="selectedLocale"
     :items="locales"
-    v-model="$i18n.locale"
-    @change="save_locale()"/>
+    item-title="text"
+    item-value="value"
+    v-model="selectedLocale"
+  />
 </template>
 
-<script>
-export default {
-  name: 'LocaleSelector',
-  data(){
-      return {
-        locales: [
-            {text: 'English', value: 'en'},
-            {text: '日本語', value: 'ja'},
-        ],
-      }
-  },
-  mounted(){
-      this.restore_locale()
-  },
-  methods: {
-      save_locale(){
-        localStorage.locale = this.$i18n.locale
-      },
-      restore_locale(){
-        if(localStorage.locale)
-        this.$i18n.locale = localStorage.locale
-      }
-  }
-  
-}
+<script setup lang="ts">
+import { ref, watch, onMounted } from "vue";
+import { useLocale } from "vuetify";
+
+onMounted(() => {
+  const savedLocale = localStorage.getItem("locale");
+  if (!savedLocale) return;
+  current.value = savedLocale;
+  selectedLocale.value = savedLocale;
+});
+
+const { current } = useLocale();
+
+const selectedLocale = ref(current.value);
+
+const locales = ref([
+  { text: "English", value: "en" },
+  { text: "日本語", value: "ja" },
+]);
+
+watch(selectedLocale, () => {
+  current.value = selectedLocale.value;
+  localStorage.setItem("locale", selectedLocale.value);
+});
 </script>
-
-

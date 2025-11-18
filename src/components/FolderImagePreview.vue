@@ -1,35 +1,25 @@
 <template>
-  <router-link :to="{ name: 'image', params: { _id: image._id } }" class="pt-2">
-    <v-avatar rounded="0">
-      <v-img :src="imageSrc" class="image" />
+  <router-link :to="`/images/${image._id}`" class="pt-2 d-flex align-center">
+    <v-avatar rounded="0" size="64">
+      <v-img :src="imageSrc" cover class="image" />
     </v-avatar>
 
     <span class="ml-2">{{ image.file }}</span>
   </router-link>
 </template>
 
-<script>
-import { getAuthenticationToken } from "../utils/auth.js"
-const { VUE_APP_IMAGE_STORAGE_API_URL } = process.env
+<script setup lang="ts">
+import { computed } from "vue";
 
-export default {
-  name: "FolderImagePreview",
-  props: {
-    image: Object,
-  },
-  computed: {
-    imageSrc() {
-      const token = getAuthenticationToken(this.$cookies)
+const props = defineProps<{
+  image: any;
+}>();
 
-      // if (!token) {
-      //   alert("No authentication token found")
-      //   return
-      // }
+const API_URL = import.meta.env.VITE_IMAGE_STORAGE_API_URL;
 
-      return `${VUE_APP_IMAGE_STORAGE_API_URL}/images/${this.image._id}/image?jwt=${token}`
-    },
-  },
-}
+const imageSrc = computed(() => {
+  return `${API_URL}/images/${props.image._id}/image`;
+});
 </script>
 
 <style scoped>

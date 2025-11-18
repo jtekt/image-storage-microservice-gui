@@ -1,128 +1,93 @@
 <template>
-    <v-dialog v-model="dialog" width="40rem">
-        <template v-slot:activator="{ on, attrs }">
-            <v-btn block text v-bind="attrs" v-on="on">
-                <v-icon left>mdi-upload</v-icon>
-                <span>Import</span>
-            </v-btn>
+  <v-dialog v-model="dialog" width="40rem">
+    <template v-slot:activator="{ props }">
+      <v-btn block variant="text" v-bind="props" prepend-icon="mdi-upload">
+        <span>Import</span>
+      </v-btn>
+    </template>
 
-            <!-- Snackbar does not render well because inside a menu -->
-            <!-- <v-snackbar :color="snackbar.color" v-model="snackbar.show">
-            {{ snackbar.text }}
-          
-            <template v-slot:action="{ attrs }">
-              <v-btn dark text v-bind="attrs" @click="snackbar.show = false">
-                Close
-              </v-btn>
-            </template>
-          </v-snackbar> -->
-        </template>
+    <v-card>
+      <v-card-title>Import</v-card-title>
 
-        <v-card>
-            <v-card-title>Import</v-card-title>
+      <v-form @submit.prevent="importArchive()">
+        <v-card-text>
+          <v-file-input
+            accept=".zip"
+            label="Archive (.zip)"
+            v-model="archive"
+          />
+        </v-card-text>
+        <v-card-text>
+          <v-progress-linear height="25" :value="progress" rounded>
+            {{ progress }}%
+          </v-progress-linear>
+        </v-card-text>
 
-            <v-form @submit.prevent="import_archive()">
-                <v-card-text>
-                    <v-file-input
-                        accept=".zip"
-                        label="Archive (.zip)"
-                        v-model="archive"
-                    />
-                </v-card-text>
-                <v-card-text>
-                    <v-progress-linear
-                        height="25"
-                        :value="this.uploadProgress"
-                        rounded
-                    >
-                        {{ this.uploadProgress }}%
-                    </v-progress-linear>
-                </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
 
-                <v-card-actions>
-                    <v-spacer></v-spacer>
+          <v-btn
+            variant="text"
+            @click="dialog = false"
+            prepend-icon="mdi-close"
+          >
+            <span>close</span>
+          </v-btn>
 
-                    <v-btn text @click="dialog = false">
-                        <v-icon left>mdi-close</v-icon>
-                        <span>close</span>
-                    </v-btn>
-
-                    <v-btn
-                        text
-                        type="submit"
-                        :loading="uploading"
-                        :disabled="!archive"
-                    >
-                        <v-icon left>mdi-upload</v-icon>
-                        <span>Import</span>
-                    </v-btn>
-                </v-card-actions>
-            </v-form>
-        </v-card>
-    </v-dialog>
+          <v-btn
+            variant="text"
+            type="submit"
+            :loading="uploading"
+            :disabled="!archive"
+            prepend-icon="mdi-upload"
+          >
+            <span>Import</span>
+          </v-btn>
+        </v-card-actions>
+      </v-form>
+    </v-card>
+  </v-dialog>
 </template>
+<script setup lang="ts">
+const axios: any = inject("axios");
+const emit = defineEmits(["import"]);
 
-<script>
-export default {
-    name: 'ImportDialog',
-    data() {
-        return {
-            dialog: false,
-            uploading: false,
-            uploadProgress: 0,
-            archive: null,
+const dialog = ref(false);
+const uploading = ref(false);
+const progress = ref(0);
+const archive = ref();
 
-            // TODO: find way to get snackbar to work
-            snackbar: {
-                show: false,
-                text: '',
-                color: 'sucess',
-            },
-        }
+const importArchive = async () => {
+  uploading.value = true;
+  progress.value = 0;
+
+  const body = new FormData();
+  body.append("archive", archive.value);
+
+  const options = {
+    onUploadProgress: (progressEvent: any) => {
+      progress.value = Math.round(
+        (progressEvent.loaded * 100) / progressEvent.total
+      );
     },
-    methods: {
-        import_archive() {
-            this.uploading = true
-            this.uploadProgress = 0
+    headers: { "Content-Type": "multipart/form-data" },
+  };
 
-            const body = new FormData()
+  await axios
+    .post("/import", body, options)
+    .then(() => {
+      archive.value = null;
+      dialog.value = false;
+      emit("import", true);
+    })
+    .catch((error: any) => {
+      emit("import", false);
 
-            body.append('archive', this.archive)
-            const options = {
-                onUploadProgress: (progressEvent) => {
-                    this.uploadProgress = Math.round(
-                        (progressEvent.loaded * 100) / progressEvent.total
-                    )
-                },
-                headers: { 'Content-Type': 'multipart/form-data' },
-            }
-
-            this.axios
-                .post('/import', body, options)
-                .then(() => {
-                    this.$emit('import')
-                    this.archive = null
-                    this.dialog = false
-                    // TODO: try to have something better than alert
-                    // this.snackbar.show = true
-                    // this.snackbar.color = 'success'
-                    // this.snackbar.text = 'Imported successful'
-                    alert('Import successful')
-                })
-                .catch((error) => {
-                    if (error.response) console.log(error.response.data)
-                    else console.log(error)
-                    // TODO: try to have something better than alert
-                    // this.snackbar.show = true
-                    // this.snackbar.color = 'error'
-                    // this.snackbar.text = 'Import failed'
-                    alert('Import failed')
-                })
-                .finally(() => {
-                    this.uploading = false
-                    this.uploadProgress = 0
-                })
-        },
-    },
-}
+      console.error(error);
+    })
+    .finally(() => {
+      uploading.value = false;
+      progress.value = 0;
+    });
+};
 </script>

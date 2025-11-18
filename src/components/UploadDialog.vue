@@ -1,87 +1,70 @@
 <template>
-  <v-dialog
-    v-model="dialog"
-    width="30rem">
-    <template v-slot:activator="{ on, attrs }">
-      <v-btn
-        block
-        text
-        v-bind="attrs"
-        v-on="on">
-        <v-icon left>mdi-image-plus</v-icon>
+  <v-dialog v-model="dialog" width="30rem">
+    <template v-slot:activator="{ props }">
+      <v-btn block text v-bind="props" prepend-icon="mdi-image-plus">
         <span>Upload</span>
       </v-btn>
     </template>
 
     <v-card>
-
       <v-card-title>Upload</v-card-title>
 
       <v-form @submit.prevent="upload()">
-      <v-card-text>
-  
-              <v-file-input
-                v-model="image"
-                label="Image"
-                accept="image/*"/>
-
+        <v-card-text>
+          <v-file-input v-model="image" label="Image" accept="image/*" />
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-        
-          <v-btn text @click="dialog = false">
-            <v-icon left>mdi-close</v-icon>
+
+          <v-btn
+            variant="text"
+            @click="dialog = false"
+            prepend-icon="mdi-close"
+          >
             <span>close</span>
           </v-btn>
-        
-          <v-btn :loading="uploading" text :disabled="!image" type="submit">
-            <v-icon left>mdi-image-plus</v-icon>
+
+          <v-btn
+            :loading="uploading"
+            variant="text"
+            :disabled="!image"
+            type="submit"
+            prepend-icon="mdi-image-plus"
+          >
             <span>Upload</span>
           </v-btn>
-        
-        
-        
         </v-card-actions>
       </v-form>
-      
-
-
     </v-card>
-    
   </v-dialog>
 </template>
+<script setup lang="ts">
+const router = useRouter();
+const dialog = ref(false);
+const image = ref();
+const uploading = ref(false);
 
-<script>
-  export default {
-    name: 'UploadDialog',
-    data(){
-      return {
-        dialog: false,
-        image: null,
-        uploading: false
-      }
-    },
-    methods: {
-      upload(){
-        if(!this.image) return
-        this.uploading = true
-        const formData = new FormData()
-        formData.append('image', this.image)
+const axios: any = inject("axios");
 
-        this.axios.post('/images', formData)
-        .then( ({data: {_id}}) => {
-          this.$router.push({name: 'image', params: {_id}})
-        })
-        .catch(error => {
-          alert('Error while importing')
-          console.error(error)
-        })
-        .finally(() => {
-          this.uploading = false
-        })
+const upload = async () => {
+  if (!image.value) return;
+  uploading.value = true;
+  const url = `/images`;
+  const body = new FormData();
+  body.append("image", image.value);
 
-      }
-    }
-
-  }
+  await axios
+    .post(url, body)
+    .then((res: any) => {
+      const { _id } = res.data;
+      router.push(`/images/${_id}`);
+    })
+    .catch((error: any) => {
+      alert("Upload failed");
+      console.error(error);
+    })
+    .finally(() => {
+      uploading.value = false;
+    });
+};
 </script>

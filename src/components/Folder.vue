@@ -1,12 +1,12 @@
 <template>
   <div>
-    <v-btn @click="openFolder()" text :loading="loading">
-      <v-icon left v-if="open">mdi-folder-open</v-icon>
-      <v-icon left v-else>mdi-folder</v-icon>
+    <v-btn variant="text" :loading="loading" @click="openFolder">
+      <v-icon class="mr-2" :icon="open ? 'mdi-folder-open' : 'mdi-folder'" />
       <span>{{ name }}</span>
     </v-btn>
+
     <div class="ml-6" v-if="folders.length">
-      <div v-for="folder in folders" :Key="folder">
+      <div v-for="folder in folders" :key="folder">
         <Folder
           :name="folder"
           :depth="depth + 1"
@@ -14,111 +14,136 @@
         />
       </div>
     </div>
+
     <div class="ml-6" v-if="images.length">
-      <div v-for="image in images" :Key="image._id">
+      <div v-for="image in images" :key="image._id">
         <FolderImagePreview :image="image" />
       </div>
-      <div v-if="this.imageTotal > this.limit" class="pt-2">
-        {{ this.imageTotal - this.limit }} more...
-        <router-link :to="{ name: 'images', query: parents }">
-          See all
-        </router-link>
+
+      <div v-if="imageTotal > limit" class="pt-2">
+        {{ imageTotal - limit }} more...
+        <router-link :to="imageUrl(parents)"> See all </router-link>
       </div>
     </div>
   </div>
 </template>
 
-<script>
-import FolderImagePreview from "./FolderImagePreview.vue"
-const { VUE_APP_FOLDER_STRUCTURE } = process.env
-export default {
-  name: "Folder",
-  components: {
-    FolderImagePreview,
-  },
-  props: {
-    depth: Number,
-    name: String,
-    parents: undefined,
-  },
-  data() {
-    return {
-      loading: false,
-      currentFolder: VUE_APP_FOLDER_STRUCTURE.split(",")[this.depth],
+<script setup lang="ts">
+import { ref, computed, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import axios from "axios";
 
-      folders: [],
-      images: [],
-      imageTotal: 0,
-      limit: 10,
+const { VITE_FOLDER_STRUCTURE } = import.meta.env;
+
+const route = useRoute();
+const router = useRouter();
+const props = defineProps<{
+  depth: number;
+  name: string;
+  parents: Record<string, any>;
+}>();
+
+const folderStructure = (VITE_FOLDER_STRUCTURE || "").split(",");
+
+const loading = ref(false);
+const folders = ref<string[]>([]);
+const images = ref<any[]>([]);
+const imageTotal = ref(0);
+const limit = ref(10);
+
+const currentFolder = computed(() => folderStructure[props.depth]);
+
+const open = computed(
+  () => folders.value.length > 0 || images.value.length > 0
+);
+
+onMounted(() => {
+  const parentFolderKey = folderStructure[props.depth - 1];
+  if (parentFolderKey && route.query[parentFolderKey] === props.name) {
+    openFolder();
+  }
+});
+
+const setQueryParam = (key: string | undefined, value: any) => {
+  if (!key) return;
+
+  const current = route.query[key];
+  if (current === value) return;
+
+  const query: Record<string, any> = { ...route.query };
+  if (value !== undefined && value !== null && value !== "") {
+    query[key] = value;
+  } else {
+    delete query[key];
+  }
+
+  router.replace({ query });
+};
+
+const openFolder = async () => {
+  Object.keys(props.parents).forEach((key) => {
+    setQueryParam(key, props.parents[key]);
+  });
+
+  if (currentFolder.value) {
+    const url = `/fields/${currentFolder.value}`;
+    const params = {
+      ...props.parents,
+    };
+
+    loading.value = true;
+    try {
+      const { data } = await axios.get(url, { params });
+      folders.value = data.slice(0, 10);
+      images.value = [];
+      imageTotal.value = 0;
+    } catch (error) {
+      alert(error);
+    } finally {
+      loading.value = false;
     }
-  },
-  mounted() {
-    const parentFolder = VUE_APP_FOLDER_STRUCTURE.split(",")[this.depth - 1]
-    if (this.$route.query[parentFolder] === this.name) this.openFolder()
-  },
-  methods: {
-    handleFolderClicked() {
-      if (this.open) this.closeFolder()
-      else this.openFolder()
-    },
-    async openFolder() {
-      // If not last folder, then get folders
+  } else {
+    const url = `/images`;
+    const params = {
+      ...props.parents,
+      limit: limit.value,
+    };
 
-      Object.keys(this.parents).forEach((key) => {
-        this.setQueryParam(key, this.parents[key])
-      })
+    loading.value = true;
+    try {
+      const { data } = await axios.get(url, { params });
+      images.value = data.items;
+      imageTotal.value = data.total;
+      folders.value = [];
+    } catch (error) {
+      alert(error);
+    } finally {
+      loading.value = false;
+    }
+  }
+};
 
-      if (this.currentFolder) {
-        const url = `/fields/${this.currentFolder}`
-        const params = {
-          ...this.parents,
-        }
-        this.loading = true
-        try {
-          const { data } = await this.axios.get(url, { params })
-          this.folders = data.slice(0, 10)
-        } catch (error) {
-          alert(error)
-        } finally {
-          this.loading = false
-        }
-      } else {
-        // TODO: deal with query params
-        const url = `/images`
-        const params = {
-          ...this.parents,
-          limit: this.limit,
-        }
-        this.loading = true
-        try {
-          const { data } = await this.axios.get(url, { params })
-          this.images = data.items
-          this.imageTotal = data.total
-        } catch (error) {
-          alert(error)
-        } finally {
-          this.loading = false
-        }
-      }
-    },
-    closeFolder() {
-      this.folders = []
-      this.images = []
-      this.setQueryParam(this.currentFolder, undefined)
-    },
-    setQueryParam(key, value) {
-      if (this.$route.query[key] === value) return
-      const query = { ...this.$route.query }
-      if (value) query[key] = value
-      else delete query[key]
-      /* router.replace acts like router.push, the only difference is that it navigates without pushing a new history entry, as its name suggests - it replaces the current entry. */
-      this.$router.replace({ query })
-    },
-  },
-  computed: {
-    open() {
-      return this.folders.length || this.images.length
-    },
-  },
-}
+const closeFolder = () => {
+  folders.value = [];
+  images.value = [];
+  imageTotal.value = 0;
+  setQueryParam(currentFolder.value, undefined);
+};
+
+// if you ever want toggle behavior:
+// const handleFolderClicked = () => {
+//   if (open.value) closeFolder()
+//   else openFolder()
+// }
+
+const imageUrl = (query: Record<string, any>) => {
+  const params = new URLSearchParams(
+    Object.entries(query).map(([key, value]) => [key, String(value)]) as [
+      string,
+      string
+    ][]
+  );
+
+  return `/?${params.toString()}`;
+};
 </script>

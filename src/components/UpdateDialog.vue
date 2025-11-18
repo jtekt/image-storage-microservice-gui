@@ -1,127 +1,132 @@
 <template>
-    <v-dialog v-model="dialog" width="40rem">
-        <template v-slot:activator="{ on, attrs }">
-            <v-btn block text v-bind="attrs" v-on="on">
-                <v-icon left>mdi-lead-pencil</v-icon>
-                <span>{{ dialog_label }}</span>
-            </v-btn>
-        </template>
+  <v-dialog v-model="dialog" width="40rem">
+    <template #activator="{ props }">
+      <v-btn block variant="text" v-bind="props" prepend-icon="mdi-lead-pencil">
+        <span>{{ dialogLabel }}</span>
+      </v-btn>
+    </template>
 
-        <v-card>
-            <v-card-title>{{ dialog_label }}</v-card-title>
-            <v-card-text>
-                <v-card elevation="0">
-                    <v-card-title class="font-weight-medium">
-                        Fields</v-card-title
-                    >
-                    <v-card-text>
-                        <ImageDataField
-                            v-model="data_string"
-                            :textarea_row="1"
-                            @valid-input="validInput = $event"
-                            @input-type="input_type = $event"
-                        />
-                    </v-card-text>
-                </v-card>
-            </v-card-text>
+    <v-card>
+      <v-card-title>{{ dialogLabel }}</v-card-title>
 
-            <v-card-actions>
-                <v-spacer></v-spacer>
-
-                <v-btn text @click.stop="reset_field()">
-                    <v-icon left>mdi-close</v-icon>
-                    <span>close</span>
-                </v-btn>
-
-                <v-btn
-                    text
-                    :loading="updating"
-                    :disabled="!validInput || input_type === undefined"
-                    @click.stop="updateFields()"
-                >
-                    <v-icon left>mdi-lead-pencil</v-icon>
-                    <span>Update</span>
-                </v-btn>
-            </v-card-actions>
+      <v-card-text>
+        <v-card elevation="0">
+          <v-card-title class="font-weight-medium">Fields</v-card-title>
+          <v-card-text>
+            <v-row>
+              <v-col>
+                <ImageDataField
+                  v-model="dataString"
+                  v-model:inputType="inputType"
+                  v-model:valid="validInput"
+                  v-model:parsed="parsedData"
+                  :textarea-rows="4"
+                />
+              </v-col>
+            </v-row>
+          </v-card-text>
         </v-card>
-    </v-dialog>
+      </v-card-text>
+
+      <v-card-actions>
+        <v-spacer />
+
+        <v-btn
+          variant="text"
+          @click.stop="reset_field"
+          prepend-icon="mdi-close"
+        >
+          <span>close</span>
+        </v-btn>
+
+        <v-btn
+          variant="text"
+          :loading="updating"
+          :disabled="!validInput || inputType === undefined"
+          @click.stop="updateFields"
+          prepend-icon="mdi-lead-pencil"
+        >
+          <span>Update</span>
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
-<script>
-import yaml from 'js-yaml'
-import ImageDataField from './ImageDataField.vue'
-export default {
-    name: 'UpdateDialog',
-    components: {
-        ImageDataField,
-    },
-    props: {
-        imageCount: Number,
-        selected: [],
-    },
-    data() {
-        return {
-            dialog: false,
-            updating: false,
-            data_string: '{}',
-            input_type: 'JSON',
-            validInput: true,
-        }
-    },
-    computed: {
-        query() {
-            return this.$route.query
-        },
-        dialog_label() {
-            return this.selected.length === 0
-                ? `Update ${this.numberWithCommas(this.imageCount)} images`
-                : `Update ${this.numberWithCommas(
-                      this.selected.length
-                  )} selected image(s)`
-        },
-        json_value() {
-            if (this.input_type === 'JSON') {
-                return JSON.parse(this.data_string)
-            } else if (this.input_type === 'YAML') {
-                return yaml.load(this.data_string)
-            }
-            return null
-        },
-    },
-    methods: {
-        numberWithCommas(x) {
-            return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',')
-        },
-        updateFields() {
-            if (!this.validInput) return
-            if (!confirm('Save changes?')) return
-            const data = this.json_value
+<script setup lang="ts">
+import { ref, computed, inject } from "vue";
+import { useRoute } from "vue-router";
+import { numberWithCommas } from "@/utils";
 
-            let params = this.query
-            if (this.selected.length > 0)
-                params = { ...params, ids: this.selected }
+const props = defineProps<{
+  imageCount?: number;
+  selected?: (string | number)[];
+}>();
 
-            this.updating = true
-            this.axios
-                .patch('/images', data, { params })
-                .then(() => {
-                    alert('Update successful')
-                    this.reset_field()
-                    this.$emit('updated')
-                })
-                .catch((error) => {
-                    if (error.response) console.log(error.response.data)
-                    else console.log(error)
-                    alert('Update failed')
-                })
-                .finally(() => {
-                    this.updating = false
-                })
-        },
-        reset_field() {
-      this.data_string = ""
-            this.dialog = false
-        },
-    },
+const emit = defineEmits<{
+  (e: "updated"): void;
+}>();
+
+const axios: any = inject("axios");
+
+const dialog = ref(false);
+const updating = ref(false);
+const dataString = ref<string>("");
+
+// format & validation coming from child
+const inputType = ref<"JSON" | "YAML">("JSON");
+const validInput = ref<boolean>(true);
+const parsedData = ref<any | null>(null);
+
+const route = useRoute();
+
+const dialogLabel = computed(() => {
+  const selected = props.selected ?? [];
+  const count = selected.length === 0 ? props.imageCount ?? 0 : selected.length;
+  const formatted = numberWithCommas(count);
+
+  return selected.length === 0
+    ? `Update ${formatted} images`
+    : `Update ${formatted} selected image(s)`;
+});
+
+async function updateFields() {
+  if (!validInput.value) return;
+  if (!confirm("Save changes?")) return;
+
+  if (!parsedData.value) {
+    alert("Unable to parse data — please check the input.");
+    return;
+  }
+
+  let params: Record<string, unknown> = {
+    ...(route.query as Record<string, unknown>),
+  };
+
+  const sel = props.selected ?? [];
+  if (sel.length > 0) {
+    params = { ...params, ids: sel };
+  }
+
+  updating.value = true;
+
+  try {
+    await axios.patch("/images", parsedData.value, { params });
+    alert("Update successful");
+    reset_field();
+    emit("updated");
+  } catch (error: any) {
+    if (error && error.response) console.log(error.response.data);
+    else console.log(error);
+    alert("Update failed");
+  } finally {
+    updating.value = false;
+  }
+}
+
+function reset_field() {
+  dataString.value = "";
+  parsedData.value = null;
+  dialog.value = false;
 }
 </script>
