@@ -88,7 +88,7 @@ import { computed, inject, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useLocale } from "vuetify";
 
-const { VITE_APP_IMAGE_STORAGE_API_URL } = import.meta.env;
+const { VITE_IMAGE_STORAGE_API_URL } = import.meta.env;
 const axios: any = inject("axios");
 const { t } = useLocale();
 const route = useRoute();
@@ -275,7 +275,7 @@ const rowClicked = (_: any, { item }: any) => {
 const resetSelection = () => (selected.value = []);
 
 const image_src = (data: any) => {
-  return `${VITE_APP_IMAGE_STORAGE_API_URL}/images/${data._id}/image`;
+  return `${VITE_IMAGE_STORAGE_API_URL}/images/${data._id}/image`;
 };
 
 const formatDate = (time: any) => {

@@ -27,9 +27,9 @@
 import { ref } from "vue";
 const axios: any = inject("axios");
 
-const { VITE_APP_CATEGORIZER } = import.meta.env;
+const { VITE_CATEGORIZER } = import.meta.env;
 
-const fieldName = ref(VITE_APP_CATEGORIZER);
+const fieldName = ref(VITE_CATEGORIZER);
 const fieldValues = ref<string[]>();
 
 const opened = ref<string[]>([fieldName.value]);

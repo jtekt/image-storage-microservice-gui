@@ -33,7 +33,7 @@ import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import axios from "axios";
 
-const { VITE_APP_FOLDER_STRUCTURE } = import.meta.env;
+const { VITE_FOLDER_STRUCTURE } = import.meta.env;
 
 const route = useRoute();
 const router = useRouter();
@@ -43,7 +43,7 @@ const props = defineProps<{
   parents: Record<string, any>;
 }>();
 
-const folderStructure = (VITE_APP_FOLDER_STRUCTURE || "").split(",");
+const folderStructure = (VITE_FOLDER_STRUCTURE || "").split(",");
 
 const loading = ref(false);
 const folders = ref<string[]>([]);
