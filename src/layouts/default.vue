@@ -16,10 +16,10 @@
           exact
         />
 
-        <NavCategories v-if="VITE_APP_CATEGORIZER" />
+        <NavCategories v-if="VITE_CATEGORIZER" />
 
         <v-list-item
-          v-if="VITE_APP_FOLDER_STRUCTURE"
+          v-if="VITE_FOLDER_STRUCTURE"
           to="/folders"
           prepend-icon="mdi-file-tree"
           :title="t('Folder')"
@@ -49,7 +49,7 @@
 import { useAuth } from "@moreillon/vue-oidc";
 import { useLocale } from "vuetify";
 
-const { VITE_APP_CATEGORIZER, VITE_APP_FOLDER_STRUCTURE } = import.meta.env;
+const { VITE_CATEGORIZER, VITE_FOLDER_STRUCTURE } = import.meta.env;
 const { logout, user } = useAuth();
 
 const { t } = useLocale();

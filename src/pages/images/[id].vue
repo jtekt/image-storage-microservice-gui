@@ -79,7 +79,7 @@ import { useRoute, useRouter } from "vue-router";
 import ImageDataEditor from "@/components/ImageDataEditor.vue";
 import { templateRef } from "vuetify/lib/util/helpers.mjs";
 
-const { VITE_APP_IMAGE_STORAGE_API_URL } = import.meta.env;
+const { VITE_IMAGE_STORAGE_API_URL } = import.meta.env;
 
 const axios: any = inject("axios");
 
@@ -93,7 +93,7 @@ const item = ref<any | null>(null);
 
 const imageId = computed(() => (route.params as Record<string, string>).id);
 const imageSrc = computed(() => {
-  return `${VITE_APP_IMAGE_STORAGE_API_URL}/images/${imageId.value}/image`;
+  return `${VITE_IMAGE_STORAGE_API_URL}/images/${imageId.value}/image`;
 });
 
 const timeFormatted = computed(() => {

@@ -38,7 +38,7 @@ const services = ref([
   },
   {
     name: "Image storage Back-end",
-    url: import.meta.env.VITE_APP_IMAGE_STORAGE_API_URL,
+    url: import.meta.env.VITE_IMAGE_STORAGE_API_URL,
   },
 ]);
 </script>
