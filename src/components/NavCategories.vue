@@ -24,17 +24,19 @@
   </v-list>
 </template>
 <script setup lang="ts">
+import { isPlaceholder } from "@/utils";
 import { ref } from "vue";
 const axios: any = inject("axios");
 
 const { VITE_CATEGORIZER } = import.meta.env;
 
-const fieldName = ref(VITE_CATEGORIZER);
+const fieldName = ref();
 const fieldValues = ref<string[]>();
 
 const opened = ref<string[]>([fieldName.value]);
 
 onMounted(() => {
+  if (!isPlaceholder(VITE_CATEGORIZER)) fieldName.value = VITE_CATEGORIZER;
   getValueFields();
 });
 

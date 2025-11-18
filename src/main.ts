@@ -26,9 +26,8 @@ import { createApp } from 'vue'
 // Styles
 import 'unfonts.css'
 import VueAxios from "vue-axios";
+import { isPlaceholder } from "./utils";
 
-const isPlaceholder = (value?: string) =>
-    !value || value.includes("PLACEHOLDER");
 
 const app = createApp(App)
 
