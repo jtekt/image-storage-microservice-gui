@@ -40,7 +40,7 @@
       </v-menu>
     </v-toolbar>
     <v-container fluid>
-      <QueryParameters :fields="fields" :loading="loading" />
+      <QueryParameters v-model="query" :fields="fields" :loading="loading" />
     </v-container>
 
     <v-card-text>
@@ -84,6 +84,8 @@
 </template>
 
 <script lang="ts" setup>
+import { computed, inject, onMounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { useLocale } from "vuetify";
 
 const { VITE_APP_IMAGE_STORAGE_API_URL } = import.meta.env;
@@ -119,8 +121,29 @@ const loading = ref(false);
 const fieldsLoading = ref(false);
 const total = ref(0);
 const items = ref();
-const selected = ref([]);
-const fields = ref([]);
+const selected = ref<any[]>([]);
+const fields = ref<string[]>([]);
+
+const query = computed<Record<string, any>>({
+  get() {
+    return route.query as Record<string, any>;
+  },
+  set(val) {
+    const newQuery: Record<string, any> = {};
+
+    // prune empty values, like setQueryParams does
+    Object.entries(val || {}).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        newQuery[key] = value;
+      }
+    });
+
+    const currentQuery = route.query as Record<string, any>;
+    if (JSON.stringify(currentQuery) === JSON.stringify(newQuery)) return;
+
+    router.replace({ query: newQuery });
+  },
+});
 
 const headers = computed(() => {
   const safeFields = Array.isArray(fields.value) ? fields.value : [];
@@ -285,7 +308,6 @@ watch(
   { immediate: true }
 );
 </script>
-
 <style>
 td,
 th {

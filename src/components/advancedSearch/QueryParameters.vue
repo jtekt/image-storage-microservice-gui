@@ -64,12 +64,10 @@
 <script setup lang="ts">
 import type { Condition, Group } from "@/utils/interface";
 import { ref, computed, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
 
 type FilterNode = Group | Condition;
 
-const route = useRoute();
-const router = useRouter();
+const queryModel = defineModel<Record<string, any>>({ default: {} });
 
 const root = ref<Group | null>(null);
 const regex = ref(false);
@@ -87,8 +85,10 @@ const hasFilters = computed(() => {
   );
 });
 
-const to = ref<string>(normalizeQueryValue(route.query.to as string) ?? "");
-const from = ref<string>(normalizeQueryValue(route.query.from as string) ?? "");
+const to = ref<string>(normalizeQueryValue(queryModel.value?.to as any) ?? "");
+const from = ref<string>(
+  normalizeQueryValue(queryModel.value?.from as any) ?? ""
+);
 
 onMounted(() => {
   loadFiltersFromQuery();
@@ -225,7 +225,7 @@ function rehydrateTreeFromQuery(obj: any): Group {
 }
 
 function loadFiltersFromQuery() {
-  const q = route.query as Record<string, any>;
+  const q = (queryModel.value || {}) as Record<string, any>;
   const regexQ = normalizeQueryValue(q.regex);
   const filterQ = normalizeQueryValue(q.filter);
 
@@ -237,7 +237,7 @@ function loadFiltersFromQuery() {
       root.value = rehydrateTreeFromQuery(obj);
       return;
     } catch (e) {
-      console.log("Malformed filter in URL; falling back to key=value", e);
+      console.log("Malformed filter in model; falling back to key=value", e);
     }
   }
 
@@ -274,14 +274,17 @@ function loadFiltersFromQuery() {
     root.value = null;
   }
 }
+
 function applyFilters() {
+  const current = queryModel.value || {};
+
   const query: Record<string, any> = {
     to: to.value,
     from: from.value,
-    limit: route.query.limit,
-    skip: route.query.skip,
-    sort: route.query.sort,
-    order: route.query.order,
+    limit: current.limit,
+    skip: current.skip,
+    sort: current.sort,
+    order: current.order,
   };
 
   if (to.value) query.to = to.value;
@@ -303,8 +306,8 @@ function applyFilters() {
     if (val === undefined || val === null || val === "") delete query[k];
   });
 
-  if (!shallowCompare(query, route.query as Record<string, any>)) {
-    router.replace({ query }).catch(() => {});
+  if (!shallowCompare(query, current as Record<string, any>)) {
+    queryModel.value = query;
   }
 }
 
