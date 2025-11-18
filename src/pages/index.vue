@@ -204,8 +204,7 @@ onMounted(() => {
       limit: limit ?? "10",
       skip: skip ?? "0",
     });
-  }
-  getItemsAndFields();
+  } else getItemsAndFields();
 });
 
 const getItemsAndFields = () => {
