@@ -184,13 +184,17 @@ const options = computed({
   set(newVal) {
     const { itemsPerPage, page, sortBy } = newVal;
     const currentSort = sortBy?.[0];
-
-    setQueryParams({
+    const params: Record<string, any> = {
       limit: String(itemsPerPage),
       skip: String((page - 1) * itemsPerPage),
-      sort: currentSort?.key ?? "time",
-      order: currentSort?.order === "desc" ? "-1" : "1",
-    });
+    };
+
+    if (currentSort?.key) {
+      params.sort = currentSort.key;
+      params.order = currentSort.order === "desc" ? "-1" : "1";
+    }
+
+    setQueryParams(params);
   },
 });
 
