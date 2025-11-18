@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: ${APPLICATION_NAME}
-          image: ${CONTAINER_IMAGE}
+          image: ${CONTAINER_IMAGE_TAGGED}
           env:
             - name: VUE_APP_IMAGE_STORAGE_API_URL
               value: /api
