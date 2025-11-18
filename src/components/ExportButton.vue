@@ -47,7 +47,7 @@ const exportCollection = () => {
     .join("&");
 
   const url = `${
-    import.meta.env.VITE_APP_IMAGE_STORAGE_API_URL
+    import.meta.env.VITE_IMAGE_STORAGE_API_URL
   }/export?${urlSearch}`;
 
   window.open(url, "_blank");

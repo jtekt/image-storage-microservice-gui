@@ -15,7 +15,7 @@ const props = defineProps<{
   image: any;
 }>();
 
-const API_URL = import.meta.env.VITE_APP_IMAGE_STORAGE_API_URL;
+const API_URL = import.meta.env.VITE_IMAGE_STORAGE_API_URL;
 
 const imageSrc = computed(() => {
   return `${API_URL}/images/${props.image._id}/image`;
