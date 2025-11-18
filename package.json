@@ -1,6 +1,6 @@
 {
   "name": "image_storage_service_mongoose_front",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "private": true,
   "author": "Maxime Moreillon",
   "scripts": {
