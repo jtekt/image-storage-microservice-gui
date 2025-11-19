@@ -46,11 +46,9 @@
 </template>
 
 <script lang="ts" setup>
-import { useAuth } from "@moreillon/vue-oidc";
 import { useLocale } from "vuetify";
 
 const { VITE_CATEGORIZER, VITE_FOLDER_STRUCTURE } = import.meta.env;
-const { logout, user } = useAuth();
 const categorizer = ref(VITE_CATEGORIZER);
 const folderStructure = ref(VITE_FOLDER_STRUCTURE);
 const { t } = useLocale();
