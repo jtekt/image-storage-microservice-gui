@@ -8,5 +8,9 @@
   "Add filter": "フィルター追加",
   "Apply query settings": "検索",
   "Apply filters": "フィルターを設定する",
-  "Folder": "フォルダー"
+  "Folder": "フォルダー",
+  "Customize columns": "列のカスタマイズ",
+  "Reset": "リセット",
+  "Close": "閉じる",
+  "Visible": "表示"
 }

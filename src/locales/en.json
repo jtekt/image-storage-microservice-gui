@@ -8,5 +8,9 @@
   "Add filter": "Add filter",
   "Apply query settings": "Apply query settings",
   "Apply filters": "Apply filters",
-  "Folder": "Folders"
+  "Folder": "Folders",
+  "Customize columns": "Customize columns",
+  "Reset": "Reset",
+  "Close": "Close",
+  "Visible": "Visible"
 }

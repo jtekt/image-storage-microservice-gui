@@ -1,77 +1,97 @@
 <template>
-  <v-card :loading="loading || fieldsLoading">
-    <v-toolbar flat>
-      <v-toolbar-title>{{ t("Images") }}</v-toolbar-title>
-      <v-spacer />
-      <v-menu offset-y>
-        <template v-slot:activator="{ props }">
-          <v-btn icon="mdi-dots-vertical" v-bind="props" />
-        </template>
+  <v-toolbar flat>
+    <v-toolbar-title>{{ t("Images") }}</v-toolbar-title>
+    <v-spacer />
 
-        <v-list>
-          <v-list-item>
-            <UploadDialog />
-          </v-list-item>
+    <CustomHeader
+      v-model:headers="dynamicHeaders"
+      storage-key="imagesTableHeaders"
+    />
 
-          <v-list-item>
-            <ExportButton :count="total" :selected="selected" />
-          </v-list-item>
+    <v-menu offset-y>
+      <template v-slot:activator="{ props }">
+        <v-btn icon="mdi-dots-vertical" v-bind="props" />
+      </template>
 
-          <v-list-item>
-            <ImportDialog @import="importResult" />
-          </v-list-item>
+      <v-list>
+        <v-list-item>
+          <UploadDialog />
+        </v-list-item>
 
-          <v-list-item>
-            <UpdateDialog
-              @updated="getItemsAndFields()"
-              :imageCount="total"
-              :selected="selected"
-            />
-          </v-list-item>
+        <v-list-item>
+          <ExportButton :query="query" :count="total" :selected="selected" />
+        </v-list-item>
 
-          <v-list-item>
-            <DeleteDialog
-              @deleted="getItemsAndFields()"
-              :count="total"
-              :selected="selected"
-            />
-          </v-list-item>
-        </v-list>
-      </v-menu>
-    </v-toolbar>
-    <v-container fluid>
-      <QueryParameters v-model="query" :fields="fields" :loading="loading" />
-    </v-container>
+        <v-list-item>
+          <ImportDialog @import="importResult" />
+        </v-list-item>
 
-    <v-card-text>
-      <v-data-table-server
-        v-model="selected"
-        v-model:options="options"
-        :loading="loading || fieldsLoading"
-        :headers="headers"
-        :items="items"
-        :items-length="total"
-        @click:row="rowClicked"
-        :footer-props="footerProps"
-        show-select
-        item-value="_id"
-        dense
-      >
-        <template v-slot:item.file="{ item }">
-          <v-img
-            max-height="46px"
-            max-width="46px"
-            contain
-            :src="image_src(item)"
+        <v-list-item>
+          <UpdateDialog
+            :query="query"
+            @updated="getItemsAndFields()"
+            :imageCount="total"
+            :selected="selected"
           />
-        </template>
+        </v-list-item>
 
-        <template v-slot:item.time="{ item }: any">
-          <span>{{ formatDate(item.time) }}</span>
-        </template>
-      </v-data-table-server>
-    </v-card-text>
-  </v-card>
+        <v-list-item>
+          <DeleteDialog
+            :query="query"
+            @deleted="getItemsAndFields()"
+            :count="total"
+            :selected="selected"
+          />
+        </v-list-item>
+      </v-list>
+    </v-menu>
+  </v-toolbar>
+  <v-container fluid>
+    <QueryParameters v-model="query" :fields="fields" :loading="loading" />
+    <v-data-table-server
+      v-model="selected"
+      v-model:options="options"
+      :loading="loading || fieldsLoading"
+      :headers="tableHeaders"
+      :items="items"
+      :items-length="total"
+      @click:row="rowClicked"
+      :footer-props="footerProps"
+      show-select
+      item-value="_id"
+      dense
+    >
+      <!-- HEADER TOOLTIP -->
+      <template
+        v-for="h in tableHeaders"
+        :key="h.key"
+        v-slot:[`header.${h.key}`]="{ column }"
+      >
+        <v-tooltip location="top">
+          <template #activator="{ props }">
+            <span v-bind="props" style="max-width: 160px">
+              {{ column.title }}
+            </span>
+          </template>
+
+          <span>{{ column.title }}</span>
+        </v-tooltip>
+      </template>
+
+      <template v-slot:item.file="{ item }">
+        <v-img
+          max-height="46px"
+          max-width="46px"
+          contain
+          :src="image_src(item)"
+        />
+      </template>
+
+      <template v-slot:item.time="{ item }: any">
+        <span>{{ formatDate(item.time) }}</span>
+      </template>
+    </v-data-table-server>
+  </v-container>
 
   <v-snackbar
     :timeout="2000"
@@ -84,7 +104,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, onMounted, ref, watch } from "vue";
+import { computed, inject, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useLocale } from "vuetify";
 
@@ -123,6 +143,27 @@ const total = ref(0);
 const items = ref();
 const selected = ref<any[]>([]);
 const fields = ref<string[]>([]);
+const dynamicHeaders = ref<
+  { value: string; text: string; width?: string; visible?: boolean }[]
+>([]);
+
+const tableHeaders = computed(() => {
+  const base = baseHeaders.map((h) => ({
+    title: h.title,
+    key: h.key,
+    width: h.width,
+  }));
+
+  const dynamic = (dynamicHeaders.value || [])
+    .filter((h) => h.visible !== false)
+    .map((h) => ({
+      title: h.text,
+      key: h.value,
+      width: h.width,
+    }));
+
+  return [...base, ...dynamic];
+});
 
 const query = computed<Record<string, any>>({
   get() {
@@ -143,17 +184,6 @@ const query = computed<Record<string, any>>({
 
     router.replace({ query: newQuery });
   },
-});
-
-const headers = computed(() => {
-  const safeFields = Array.isArray(fields.value) ? fields.value : [];
-  return [
-    ...baseHeaders,
-    ...safeFields.map((field: any) => ({
-      title: field,
-      key: `data.${field}`,
-    })),
-  ];
 });
 
 const options = computed({
@@ -196,19 +226,6 @@ const options = computed({
 
     setQueryParams(params);
   },
-});
-
-onMounted(() => {
-  const { sort, order, limit, skip } = route.query;
-
-  if (!sort || !order || !limit || !skip) {
-    setQueryParams({
-      sort: sort ?? "time",
-      order: order ?? "-1",
-      limit: limit ?? "10",
-      skip: skip ?? "0",
-    });
-  } else getItemsAndFields();
 });
 
 const getItemsAndFields = () => {
@@ -304,9 +321,44 @@ const importResult = (success: boolean) => {
 };
 
 watch(
+  fields,
+  (newFields) => {
+    if (!Array.isArray(newFields)) {
+      dynamicHeaders.value = [];
+      return;
+    }
+
+    const currentMap = new Map(dynamicHeaders.value.map((h) => [h.value, h]));
+    const next: { value: string; text: string; visible?: boolean }[] = [];
+
+    for (const field of newFields) {
+      const value = `data.${field}`;
+      const existing = currentMap.get(value);
+      if (existing) {
+        next.push(existing);
+      } else {
+        next.push({ value, text: field, visible: true });
+      }
+    }
+
+    dynamicHeaders.value = next;
+  },
+  { immediate: true }
+);
+
+watch(
   () => route.query,
   () => {
-    getItemsAndFields();
+    const { sort, order, limit, skip } = route.query;
+
+    if (!sort || !order || !limit || !skip) {
+      setQueryParams({
+        sort: sort ?? "time",
+        order: order ?? "-1",
+        limit: limit ?? "10",
+        skip: skip ?? "0",
+      });
+    } else getItemsAndFields();
   },
   { immediate: true }
 );
@@ -317,7 +369,6 @@ th {
   white-space: nowrap;
   max-width: 15ch;
   overflow: hidden;
-
   text-overflow: ellipsis;
 }
 </style>

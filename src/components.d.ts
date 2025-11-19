@@ -13,6 +13,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AppFooter: typeof import('./components/app/AppFooter.vue')['default']
     AppHeader: typeof import('./components/app/AppHeader.vue')['default']
+    CustomHeader: typeof import('./components/CustomHeader.vue')['default']
     DatePicker: typeof import('./components/advancedSearch/DatePicker.vue')['default']
     DeleteDialog: typeof import('./components/DeleteDialog.vue')['default']
     ExportButton: typeof import('./components/ExportButton.vue')['default']
