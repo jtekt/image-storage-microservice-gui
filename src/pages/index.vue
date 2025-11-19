@@ -2,6 +2,12 @@
   <v-toolbar flat>
     <v-toolbar-title>{{ t("Images") }}</v-toolbar-title>
     <v-spacer />
+
+    <CustomHeader
+      v-model:headers="dynamicHeaders"
+      storage-key="imagesTableHeaders"
+    />
+
     <v-menu offset-y>
       <template v-slot:activator="{ props }">
         <v-btn icon="mdi-dots-vertical" v-bind="props" />
@@ -46,7 +52,7 @@
       v-model="selected"
       v-model:options="options"
       :loading="loading || fieldsLoading"
-      :headers="headers"
+      :headers="tableHeaders"
       :items="items"
       :items-length="total"
       @click:row="rowClicked"
@@ -55,6 +61,23 @@
       item-value="_id"
       dense
     >
+      <!-- HEADER TOOLTIP -->
+      <template
+        v-for="h in tableHeaders"
+        :key="h.key"
+        v-slot:[`header.${h.key}`]="{ column }"
+      >
+        <v-tooltip>
+          <template #activator="{ props }">
+            <span v-bind="props" style="max-width: 160px">
+              {{ column.title }}
+            </span>
+          </template>
+
+          <span>{{ column.title }}</span>
+        </v-tooltip>
+      </template>
+
       <template v-slot:item.file="{ item }">
         <v-img
           max-height="46px"
@@ -81,7 +104,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, onMounted, ref, watch } from "vue";
+import { computed, inject, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useLocale } from "vuetify";
 
@@ -120,6 +143,27 @@ const total = ref(0);
 const items = ref();
 const selected = ref<any[]>([]);
 const fields = ref<string[]>([]);
+const dynamicHeaders = ref<
+  { value: string; text: string; width?: string; visible?: boolean }[]
+>([]);
+
+const tableHeaders = computed(() => {
+  const base = baseHeaders.map((h) => ({
+    title: h.title,
+    key: h.key,
+    width: h.width,
+  }));
+
+  const dynamic = (dynamicHeaders.value || [])
+    .filter((h) => h.visible !== false)
+    .map((h) => ({
+      title: h.text,
+      key: h.value,
+      width: h.width,
+    }));
+
+  return [...base, ...dynamic];
+});
 
 const query = computed<Record<string, any>>({
   get() {
@@ -140,17 +184,6 @@ const query = computed<Record<string, any>>({
 
     router.replace({ query: newQuery });
   },
-});
-
-const headers = computed(() => {
-  const safeFields = Array.isArray(fields.value) ? fields.value : [];
-  return [
-    ...baseHeaders,
-    ...safeFields.map((field: any) => ({
-      title: field,
-      key: `data.${field}`,
-    })),
-  ];
 });
 
 const options = computed({
@@ -288,6 +321,32 @@ const importResult = (success: boolean) => {
 };
 
 watch(
+  fields,
+  (newFields) => {
+    if (!Array.isArray(newFields)) {
+      dynamicHeaders.value = [];
+      return;
+    }
+
+    const currentMap = new Map(dynamicHeaders.value.map((h) => [h.value, h]));
+    const next: { value: string; text: string; visible?: boolean }[] = [];
+
+    for (const field of newFields) {
+      const value = `data.${field}`;
+      const existing = currentMap.get(value);
+      if (existing) {
+        next.push(existing);
+      } else {
+        next.push({ value, text: field, visible: true });
+      }
+    }
+
+    dynamicHeaders.value = next;
+  },
+  { immediate: true }
+);
+
+watch(
   () => route.query,
   () => {
     const { sort, order, limit, skip } = route.query;
@@ -310,7 +369,6 @@ th {
   white-space: nowrap;
   max-width: 15ch;
   overflow: hidden;
-
   text-overflow: ellipsis;
 }
 </style>

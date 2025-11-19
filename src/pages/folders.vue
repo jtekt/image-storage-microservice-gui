@@ -91,11 +91,11 @@
 import { ref, computed, onMounted, watch } from "vue";
 import axios from "axios";
 import { useRoute, useRouter } from "vue-router";
-import { useI18n } from "vue-i18n";
+import { useLocale } from "vuetify";
 
 const { VITE_FOLDER_STRUCTURE } = import.meta.env;
 
-const { t } = useI18n();
+const { t } = useLocale();
 const route = useRoute();
 const router = useRouter();
 
