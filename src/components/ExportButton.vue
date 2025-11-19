@@ -11,13 +11,11 @@
 <script lang="ts" setup>
 import { numberWithCommas } from "@/utils";
 
-const route = useRoute();
 const props = defineProps<{
   count: number;
   selected: string[];
+  query: any;
 }>();
-
-const query = computed(() => route.query ?? {});
 
 const confirmExport = async () => {
   const confirm_message =
@@ -29,7 +27,7 @@ const confirmExport = async () => {
 };
 
 const exportCollection = () => {
-  const { limit, skip, sort, order, ...params } = query.value;
+  const { limit, skip, sort, order, ...params } = props.query;
   let queryParams = params;
   if (props.selected.length > 0) {
     queryParams = { ...queryParams, ids: props.selected };

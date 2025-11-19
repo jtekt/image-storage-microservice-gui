@@ -1,77 +1,74 @@
 <template>
-  <v-card :loading="loading || fieldsLoading">
-    <v-toolbar flat>
-      <v-toolbar-title>{{ t("Images") }}</v-toolbar-title>
-      <v-spacer />
-      <v-menu offset-y>
-        <template v-slot:activator="{ props }">
-          <v-btn icon="mdi-dots-vertical" v-bind="props" />
-        </template>
+  <v-toolbar flat>
+    <v-toolbar-title>{{ t("Images") }}</v-toolbar-title>
+    <v-spacer />
+    <v-menu offset-y>
+      <template v-slot:activator="{ props }">
+        <v-btn icon="mdi-dots-vertical" v-bind="props" />
+      </template>
 
-        <v-list>
-          <v-list-item>
-            <UploadDialog />
-          </v-list-item>
+      <v-list>
+        <v-list-item>
+          <UploadDialog />
+        </v-list-item>
 
-          <v-list-item>
-            <ExportButton :count="total" :selected="selected" />
-          </v-list-item>
+        <v-list-item>
+          <ExportButton :query="query" :count="total" :selected="selected" />
+        </v-list-item>
 
-          <v-list-item>
-            <ImportDialog @import="importResult" />
-          </v-list-item>
+        <v-list-item>
+          <ImportDialog @import="importResult" />
+        </v-list-item>
 
-          <v-list-item>
-            <UpdateDialog
-              @updated="getItemsAndFields()"
-              :imageCount="total"
-              :selected="selected"
-            />
-          </v-list-item>
-
-          <v-list-item>
-            <DeleteDialog
-              @deleted="getItemsAndFields()"
-              :count="total"
-              :selected="selected"
-            />
-          </v-list-item>
-        </v-list>
-      </v-menu>
-    </v-toolbar>
-    <v-container fluid>
-      <QueryParameters v-model="query" :fields="fields" :loading="loading" />
-    </v-container>
-
-    <v-card-text>
-      <v-data-table-server
-        v-model="selected"
-        v-model:options="options"
-        :loading="loading || fieldsLoading"
-        :headers="headers"
-        :items="items"
-        :items-length="total"
-        @click:row="rowClicked"
-        :footer-props="footerProps"
-        show-select
-        item-value="_id"
-        dense
-      >
-        <template v-slot:item.file="{ item }">
-          <v-img
-            max-height="46px"
-            max-width="46px"
-            contain
-            :src="image_src(item)"
+        <v-list-item>
+          <UpdateDialog
+            :query="query"
+            @updated="getItemsAndFields()"
+            :imageCount="total"
+            :selected="selected"
           />
-        </template>
+        </v-list-item>
 
-        <template v-slot:item.time="{ item }: any">
-          <span>{{ formatDate(item.time) }}</span>
-        </template>
-      </v-data-table-server>
-    </v-card-text>
-  </v-card>
+        <v-list-item>
+          <DeleteDialog
+            :query="query"
+            @deleted="getItemsAndFields()"
+            :count="total"
+            :selected="selected"
+          />
+        </v-list-item>
+      </v-list>
+    </v-menu>
+  </v-toolbar>
+  <v-container fluid>
+    <QueryParameters v-model="query" :fields="fields" :loading="loading" />
+    <v-data-table-server
+      v-model="selected"
+      v-model:options="options"
+      :loading="loading || fieldsLoading"
+      :headers="headers"
+      :items="items"
+      :items-length="total"
+      @click:row="rowClicked"
+      :footer-props="footerProps"
+      show-select
+      item-value="_id"
+      dense
+    >
+      <template v-slot:item.file="{ item }">
+        <v-img
+          max-height="46px"
+          max-width="46px"
+          contain
+          :src="image_src(item)"
+        />
+      </template>
+
+      <template v-slot:item.time="{ item }: any">
+        <span>{{ formatDate(item.time) }}</span>
+      </template>
+    </v-data-table-server>
+  </v-container>
 
   <v-snackbar
     :timeout="2000"
@@ -198,19 +195,6 @@ const options = computed({
   },
 });
 
-onMounted(() => {
-  const { sort, order, limit, skip } = route.query;
-
-  if (!sort || !order || !limit || !skip) {
-    setQueryParams({
-      sort: sort ?? "time",
-      order: order ?? "-1",
-      limit: limit ?? "10",
-      skip: skip ?? "0",
-    });
-  } else getItemsAndFields();
-});
-
 const getItemsAndFields = () => {
   getItems();
   getFields();
@@ -306,7 +290,16 @@ const importResult = (success: boolean) => {
 watch(
   () => route.query,
   () => {
-    getItemsAndFields();
+    const { sort, order, limit, skip } = route.query;
+
+    if (!sort || !order || !limit || !skip) {
+      setQueryParams({
+        sort: sort ?? "time",
+        order: order ?? "-1",
+        limit: limit ?? "10",
+        skip: skip ?? "0",
+      });
+    } else getItemsAndFields();
   },
   { immediate: true }
 );

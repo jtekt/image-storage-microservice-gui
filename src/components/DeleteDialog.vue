@@ -46,17 +46,16 @@
 import { numberWithCommas } from "@/utils";
 
 const axios: any = inject("axios");
-const route = useRoute();
 const emit = defineEmits(["deleted"]);
 const props = defineProps<{
   count: number;
   selected: string[];
+  query: any;
 }>();
 
 const dialog = ref(false);
 const deleting = ref(false);
 
-const query = computed(() => route.query ?? {});
 const confirmMessage = computed(() => {
   let count = props.selected.length === 0 ? props.count : props.selected.length;
   return `Delete ${numberWithCommas(count)} images?`;
@@ -69,7 +68,7 @@ const buttonLabel = computed(() => {
 
 const deleteImages = async () => {
   deleting.value = true;
-  const { limit, skip, sort, order, ...params } = query.value;
+  const { limit, skip, sort, order, ...params } = props.query;
   let queryParams = params;
   if (props.selected.length > 0)
     queryParams = { ...queryParams, ids: props.selected };
