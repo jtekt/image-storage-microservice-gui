@@ -33,10 +33,6 @@
         />
       </v-list>
     </template>
-
-    <template #trailing v-if="user">
-      <v-btn icon="mdi-logout" @click="logout" />
-    </template>
   </AppHeader>
   <v-main>
     <router-view />
