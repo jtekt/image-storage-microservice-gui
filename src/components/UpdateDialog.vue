@@ -55,12 +55,12 @@
 
 <script setup lang="ts">
 import { ref, computed, inject } from "vue";
-import { useRoute } from "vue-router";
 import { numberWithCommas } from "@/utils";
 
 const props = defineProps<{
   imageCount?: number;
-  selected?: (string | number)[];
+  selected: string[];
+  query: any;
 }>();
 
 const emit = defineEmits<{
@@ -77,8 +77,6 @@ const dataString = ref<string>("");
 const inputType = ref<"JSON" | "YAML">("JSON");
 const validInput = ref<boolean>(true);
 const parsedData = ref<any | null>(null);
-
-const route = useRoute();
 
 const dialogLabel = computed(() => {
   const selected = props.selected ?? [];
@@ -99,29 +97,28 @@ async function updateFields() {
     return;
   }
 
-  let params: Record<string, unknown> = {
-    ...(route.query as Record<string, unknown>),
-  };
-
-  const sel = props.selected ?? [];
-  if (sel.length > 0) {
-    params = { ...params, ids: sel };
-  }
+  const { limit, skip, sort, order, ...params } = props.query;
+  let queryParams = params;
+  if (props.selected.length > 0)
+    queryParams = { ...queryParams, ids: props.selected };
 
   updating.value = true;
 
-  try {
-    await axios.patch("/images", parsedData.value, { params });
-    alert("Update successful");
-    reset_field();
-    emit("updated");
-  } catch (error: any) {
-    if (error && error.response) console.log(error.response.data);
-    else console.log(error);
-    alert("Update failed");
-  } finally {
-    updating.value = false;
-  }
+  axios
+    .patch("/images", parsedData.value, { params: queryParams })
+    .then(() => {
+      alert("Update successful");
+      reset_field();
+      emit("updated");
+    })
+    .catch((error: any) => {
+      if (error && error.response) console.log(error.response.data);
+      else console.log(error);
+      alert("Update failed");
+    })
+    .finally(() => {
+      updating.value = false;
+    });
 }
 
 function reset_field() {
