@@ -67,7 +67,7 @@
         :key="h.key"
         v-slot:[`header.${h.key}`]="{ column }"
       >
-        <v-tooltip>
+        <v-tooltip location="top">
           <template #activator="{ props }">
             <span v-bind="props" style="max-width: 160px">
               {{ column.title }}
