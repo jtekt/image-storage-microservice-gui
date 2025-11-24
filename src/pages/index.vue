@@ -3,17 +3,18 @@
     <v-toolbar-title>{{ t("Images") }}</v-toolbar-title>
     <v-spacer />
 
-    <CustomHeader
-      v-model:headers="dynamicHeaders"
-      storage-key="imagesTableHeaders"
-    />
-
     <v-menu offset-y>
       <template v-slot:activator="{ props }">
         <v-btn icon="mdi-dots-vertical" v-bind="props" />
       </template>
 
       <v-list>
+        <v-list-item>
+          <CustomHeader
+            v-model:headers="dynamicHeaders"
+            storage-key="imagesTableHeaders"
+          />
+        </v-list-item>
         <v-list-item>
           <UploadDialog />
         </v-list-item>
@@ -47,7 +48,7 @@
     </v-menu>
   </v-toolbar>
   <v-container fluid>
-    <QueryParameters v-model="query" :fields="fields" :loading="loading" />
+    <QueryFilter v-model="query" :fields="fields" :loading="loading" />
     <v-data-table-server
       v-model="selected"
       v-model:options="options"

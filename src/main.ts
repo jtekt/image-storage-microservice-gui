@@ -9,6 +9,8 @@ import axios from "axios";
 import { registerPlugins } from '@/plugins'
 import i18n from "@/locales";
 import VueCookies from "vue-cookies";
+import QueryFilterPlugin from "@jtekt-private/vue-query-filters";
+import "@jtekt-private/vue-query-filters/style.css";
 
 axios.defaults.baseURL = import.meta.env.VITE_IMAGE_STORAGE_API_URL;
 axios.defaults.headers.common["Access-Control-Allow-Origin"] = "*";
@@ -29,5 +31,6 @@ registerPlugins(app);
 app.use(VueAxios, axios);
 app.use(VueCookies);
 app.use(i18n);
+app.use(QueryFilterPlugin)
 app.provide("axios", app.config.globalProperties.axios);
 app.mount('#app')
