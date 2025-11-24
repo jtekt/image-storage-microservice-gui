@@ -8,12 +8,13 @@
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",
+    "build:dev": "vite build --mode development",
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --fix"
   },
   "dependencies": {
     "@fontsource/roboto": "5.2.7",
-    "@jtekt-private/vue-query-filters": "^0.1.4",
+    "@jtekt/vue-query-filters": "^0.1.6",
     "@mdi/font": "7.4.47",
     "axios": "^1.13.1",
     "pinia": "^3.0.3",
