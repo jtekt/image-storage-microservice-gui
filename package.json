@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@fontsource/roboto": "5.2.7",
-    "@jtekt/vue-query-filters": "^0.1.6",
+    "@jtekt/iss-query-filters": "^0.1.10",
     "@mdi/font": "7.4.47",
     "axios": "^1.13.1",
     "pinia": "^3.0.3",
@@ -22,6 +22,7 @@
     "vue-axios": "^3.5.2",
     "vue-cookies": "^1.8.6",
     "vue-i18n": "^11.1.12",
+    "vue-resizable-table-column": "^0.0.12",
     "vue-router": "^4.5.1",
     "vuetify": "^3.10.1",
     "yaml": "^2.8.1"

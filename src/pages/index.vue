@@ -50,6 +50,7 @@
   <v-container fluid>
     <QueryFilter v-model="query" :fields="fields" :loading="loading" />
     <v-data-table-server
+      v-resizable
       v-model="selected"
       v-model:options="options"
       :loading="loading || fieldsLoading"
@@ -125,7 +126,7 @@ const baseHeaders = [
   {
     title: "Image",
     key: "file",
-    width: "5em",
+    width: "7em",
   },
   {
     title: "Time",
@@ -368,7 +369,8 @@ watch(
 td,
 th {
   white-space: nowrap;
-  max-width: 15ch;
+  max-width: 30ch;
+  width: 7em;
   overflow: hidden;
   text-overflow: ellipsis;
 }
