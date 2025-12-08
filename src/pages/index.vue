@@ -10,10 +10,7 @@
 
       <v-list>
         <v-list-item>
-          <CustomHeader
-            v-model:headers="dynamicHeaders"
-            storage-key="imagesTableHeaders"
-          />
+          <CustomHeader v-model:headers="dynamicHeaders" />
         </v-list-item>
         <v-list-item>
           <UploadDialog />
@@ -106,10 +103,12 @@
 </template>
 
 <script lang="ts" setup>
+import { useCustomHeader } from "@/composables/useCustomHeader";
 import { computed, inject, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useLocale } from "vuetify";
 
+const { restoreHeaders } = useCustomHeader();
 const { VITE_IMAGE_STORAGE_API_URL } = import.meta.env;
 const axios: any = inject("axios");
 const { t } = useLocale();
@@ -343,7 +342,7 @@ watch(
       }
     }
 
-    dynamicHeaders.value = next;
+    dynamicHeaders.value = restoreHeaders(next);
   },
   { immediate: true }
 );
