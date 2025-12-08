@@ -45,8 +45,10 @@
 </template>
 
 <script setup lang="ts">
+import { useCustomHeader } from "@/composables/useCustomHeader";
 import { useLocale } from "vuetify";
 
+const { restoreHeaders } = useCustomHeader();
 const { t } = useLocale();
 const headers = defineModel<any[]>("headers", { required: true });
 
@@ -57,31 +59,12 @@ const originalHeaders = ref<any[]>(headers.value);
 
 const clone = (val: any) => JSON.parse(JSON.stringify(val));
 
-const ensureVisibleField = (arr: any[]) =>
-  (arr || []).map((h) => ({ ...h, visible: h.visible ?? true }));
-
-const restoreHeaders = () => {
-  const stored = localStorage.getItem(storageKey);
-  if (stored) {
-    try {
-      const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        headers.value = ensureVisibleField(parsed);
-        return;
-      }
-    } catch (e) {
-      console.error("Failed to parse stored headers", e);
-    }
-  }
-  headers.value = ensureVisibleField(headers.value || []);
-};
-
 onMounted(() => {
   if (headers.value?.length && !originalHeaders.value.length) {
     originalHeaders.value = clone(headers.value);
   }
 
-  restoreHeaders();
+  headers.value = restoreHeaders(headers.value);
 });
 
 watch(

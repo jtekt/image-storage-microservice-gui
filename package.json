@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@fontsource/roboto": "5.2.7",
-    "@jtekt/iss-query-filters": "^0.1.10",
+    "@jtekt/iss-query-filters": "^0.2.0",
     "@mdi/font": "7.4.47",
     "axios": "^1.13.1",
     "pinia": "^3.0.3",
