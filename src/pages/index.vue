@@ -335,14 +335,11 @@ watch(
     for (const field of newFields) {
       const value = `data.${field}`;
       const existing = currentMap.get(value);
-      if (existing) {
-        next.push(existing);
-      } else {
-        next.push({ value, text: field, visible: true });
-      }
+      next.push(existing ?? { value, text: field, visible: true });
     }
 
-    dynamicHeaders.value = restoreHeaders(next);
+    // ✅ merge stored prefs onto new set of fields
+    dynamicHeaders.value = restoreHeaders(next, "customTableHeaders");
   },
   { immediate: true }
 );
