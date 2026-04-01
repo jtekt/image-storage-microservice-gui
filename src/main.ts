@@ -9,7 +9,7 @@ import axios from "axios";
 import { registerPlugins } from '@/plugins'
 import i18n from "@/locales";
 import VueCookies from "vue-cookies";
-import QueryFilterPlugin from "@jtekt/iss-query-filters";
+import { QueryFilterPlugin } from "@jtekt/iss-query-filters";
 import "@jtekt/iss-query-filters/style.css";
 import { vResizable } from "vue-resizable-table-column";
 
