@@ -11,16 +11,38 @@
 
       <v-form @submit.prevent="importArchive()">
         <v-card-text>
-          <v-file-input
-            accept=".zip"
-            label="Archive (.zip)"
-            v-model="archive"
-          />
-        </v-card-text>
-        <v-card-text>
-          <v-progress-linear height="25" :value="progress" rounded>
-            {{ progress }}%
-          </v-progress-linear>
+          <template v-if="!uploading">
+            <v-row>
+              <v-col>
+                <h3>File</h3>
+                <v-file-input
+                  accept=".zip"
+                  label="Archive (.zip)"
+                  v-model="archive"
+                />
+              </v-col>
+            </v-row>
+
+            <v-row>
+              <v-col>
+                <h3>Data</h3>
+                <ImageDataField
+                  v-model="dataString"
+                  v-model:inputType="inputType"
+                  v-model:valid="validInput"
+                  v-model:parsed="parsedData"
+                  :textarea-rows="2"
+                />
+              </v-col>
+            </v-row>
+          </template>
+          <v-row v-if="uploading">
+            <v-col>
+              <v-progress-linear height="25" :value="progress" rounded>
+                {{ progress }}%
+              </v-progress-linear>
+            </v-col>
+          </v-row>
         </v-card-text>
 
         <v-card-actions>
@@ -38,7 +60,7 @@
             variant="text"
             type="submit"
             :loading="uploading"
-            :disabled="!archive"
+            :disabled="!archive && !validInput"
             prepend-icon="mdi-upload"
           >
             <span>Import</span>
@@ -57,17 +79,24 @@ const uploading = ref(false);
 const progress = ref(0);
 const archive = ref();
 
+const dataString = ref<string>("");
+const inputType = ref<"JSON" | "YAML">("JSON");
+const validInput = ref<boolean>(true);
+const parsedData = ref<any | null>(null);
+
 const importArchive = async () => {
+  if (!validInput.value) return;
   uploading.value = true;
   progress.value = 0;
 
   const body = new FormData();
   body.append("archive", archive.value);
+  body.append("data", JSON.stringify(parsedData.value));
 
   const options = {
     onUploadProgress: (progressEvent: any) => {
       progress.value = Math.round(
-        (progressEvent.loaded * 100) / progressEvent.total
+        (progressEvent.loaded * 100) / progressEvent.total,
       );
     },
     headers: { "Content-Type": "multipart/form-data" },
