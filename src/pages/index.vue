@@ -55,7 +55,7 @@
       :items="items"
       :items-length="total"
       @click:row="rowClicked"
-      :footer-props="footerProps"
+      :items-per-page-options="itemsPerPageOptions"
       show-select
       item-value="_id"
       dense
@@ -134,9 +134,7 @@ const baseHeaders = [
   },
 ];
 
-const footerProps = {
-  "items-per-page-options": [10, 50, 100, 500],
-};
+const itemsPerPageOptions = [10, 50, 100, 500];
 
 const loading = ref(false);
 const fieldsLoading = ref(false);
@@ -341,7 +339,7 @@ watch(
     // ✅ merge stored prefs onto new set of fields
     dynamicHeaders.value = restoreHeaders(next, "customTableHeaders");
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -358,7 +356,7 @@ watch(
       });
     } else getItemsAndFields();
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 <style>
