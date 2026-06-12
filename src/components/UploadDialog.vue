@@ -11,7 +11,24 @@
 
       <v-form @submit.prevent="upload()">
         <v-card-text>
-          <v-file-input v-model="image" label="Image" accept="image/*" />
+          <v-row>
+            <v-col>
+              <h3>Image</h3>
+              <v-file-input v-model="image" label="Image" accept="image/*" />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <h3>Metadata</h3>
+              <ImageDataField
+                v-model="dataString"
+                v-model:inputType="inputType"
+                v-model:valid="validInput"
+                v-model:parsed="parsedData"
+                :textarea-rows="2"
+              />
+            </v-col>
+          </v-row>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -27,7 +44,7 @@
           <v-btn
             :loading="uploading"
             variant="text"
-            :disabled="!image"
+            :disabled="!image || !validInput"
             type="submit"
             prepend-icon="mdi-image-plus"
           >
@@ -44,14 +61,21 @@ const dialog = ref(false);
 const image = ref();
 const uploading = ref(false);
 
+const dataString = ref<string>("");
+const inputType = ref<"JSON" | "YAML">("JSON");
+const validInput = ref<boolean>(true);
+const parsedData = ref<any | null>(null);
+
 const axios: any = inject("axios");
 
 const upload = async () => {
   if (!image.value) return;
+  if (!validInput.value) return;
   uploading.value = true;
   const url = `/images`;
   const body = new FormData();
   body.append("image", image.value);
+  body.append("data", JSON.stringify(parsedData.value));
 
   await axios
     .post(url, body)

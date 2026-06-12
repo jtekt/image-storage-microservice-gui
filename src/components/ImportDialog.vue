@@ -14,7 +14,7 @@
           <template v-if="!uploading">
             <v-row>
               <v-col>
-                <h3>File</h3>
+                <h3>Image</h3>
                 <v-file-input
                   accept=".zip"
                   label="Archive (.zip)"
@@ -25,7 +25,7 @@
 
             <v-row>
               <v-col>
-                <h3>Data</h3>
+                <h3>Metadata</h3>
                 <ImageDataField
                   v-model="dataString"
                   v-model:inputType="inputType"
@@ -60,7 +60,7 @@
             variant="text"
             type="submit"
             :loading="uploading"
-            :disabled="!archive && !validInput"
+            :disabled="!archive || !validInput"
             prepend-icon="mdi-upload"
           >
             <span>Import</span>
@@ -85,6 +85,7 @@ const validInput = ref<boolean>(true);
 const parsedData = ref<any | null>(null);
 
 const importArchive = async () => {
+  if (!archive.value) return;
   if (!validInput.value) return;
   uploading.value = true;
   progress.value = 0;
