@@ -6,26 +6,28 @@
       </v-btn>
     </template>
 
-    <v-card>
-      <v-card-title>{{ dialogLabel }}</v-card-title>
+    <v-card title="Update">
+      <template #prepend>
+        <v-icon>mdi-pencil</v-icon>
+      </template>
 
       <v-card-text>
-        <v-card elevation="0">
-          <v-card-title class="font-weight-medium">Fields</v-card-title>
-          <v-card-text>
-            <v-row>
-              <v-col>
-                <ImageDataField
-                  v-model="dataString"
-                  v-model:inputType="inputType"
-                  v-model:valid="validInput"
-                  v-model:parsed="parsedData"
-                  :textarea-rows="4"
-                />
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
+        <v-row>
+          <v-col>
+            {{ dialogLabel }}
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <ImageDataField
+              v-model="dataString"
+              v-model:inputType="inputType"
+              v-model:valid="validInput"
+              v-model:parsed="parsedData"
+              :textarea-rows="4"
+            />
+          </v-col>
+        </v-row>
       </v-card-text>
 
       <v-card-actions>
@@ -80,7 +82,8 @@ const parsedData = ref<any | null>(null);
 
 const dialogLabel = computed(() => {
   const selected = props.selected ?? [];
-  const count = selected.length === 0 ? props.imageCount ?? 0 : selected.length;
+  const count =
+    selected.length === 0 ? (props.imageCount ?? 0) : selected.length;
   const formatted = numberWithCommas(count);
 
   return selected.length === 0
