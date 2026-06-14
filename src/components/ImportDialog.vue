@@ -6,33 +6,40 @@
       </v-btn>
     </template>
 
-    <v-card>
-      <v-card-title>Import</v-card-title>
+    <v-card title="import">
+      <template #prepend>
+        <v-icon>mdi-image-plus</v-icon>
+      </template>
 
       <v-form @submit.prevent="importArchive()">
         <v-card-text>
           <template v-if="!uploading">
             <v-row>
               <v-col>
-                <h3>Image</h3>
                 <v-file-input
                   accept=".zip"
                   label="Archive (.zip)"
                   v-model="archive"
+                  hide-details
                 />
               </v-col>
             </v-row>
 
             <v-row>
               <v-col>
-                <h3>Metadata</h3>
-                <ImageDataField
-                  v-model="dataString"
-                  v-model:inputType="inputType"
-                  v-model:valid="validInput"
-                  v-model:parsed="parsedData"
-                  :textarea-rows="2"
-                />
+                <v-expansion-panels :elevation="0" class="border rounded">
+                  <v-expansion-panel title="Metadata">
+                    <v-expansion-panel-text>
+                      <ImageDataField
+                        v-model="dataString"
+                        v-model:inputType="inputType"
+                        v-model:valid="validInput"
+                        v-model:parsed="parsedData"
+                        :textarea-rows="2"
+                      />
+                    </v-expansion-panel-text>
+                  </v-expansion-panel>
+                </v-expansion-panels>
               </v-col>
             </v-row>
           </template>

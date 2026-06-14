@@ -13,8 +13,10 @@
       </v-btn>
     </template>
 
-    <v-card>
-      <v-card-title>Delete images</v-card-title>
+    <v-card title="Delete images">
+      <template #prepend>
+        <v-icon>mdi-delete</v-icon>
+      </template>
 
       <v-card-text>
         <v-row justify="center">
