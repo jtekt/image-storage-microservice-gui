@@ -24,6 +24,7 @@ declare module 'vue' {
     NavCategories: typeof import('./components/NavCategories.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ThemeToggle: typeof import('./components/ThemeToggle.vue')['default']
     UpdateDialog: typeof import('./components/UpdateDialog.vue')['default']
     UploadDialog: typeof import('./components/UploadDialog.vue')['default']
   }
