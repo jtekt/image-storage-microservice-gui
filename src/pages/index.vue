@@ -114,9 +114,10 @@ import { useCustomHeader } from "@/composables/useCustomHeader";
 import { computed, inject, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useLocale } from "vuetify";
+import runtimeEnv from "@/runtimeEnv";
 
 const { restoreHeaders } = useCustomHeader();
-const { VITE_IMAGE_STORAGE_API_URL } = import.meta.env;
+const { VITE_IMAGE_STORAGE_API_URL } = runtimeEnv;
 const axios: any = inject("axios");
 const { t } = useLocale();
 const route = useRoute();

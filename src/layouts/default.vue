@@ -39,7 +39,9 @@
 
 <script lang="ts" setup>
 import { useLocale } from "vuetify";
-const { VITE_CATEGORIZER, VITE_FOLDER_STRUCTURE } = import.meta.env;
+import runtimeEnv from "@/runtimeEnv";
+
+const { VITE_CATEGORIZER, VITE_FOLDER_STRUCTURE } = runtimeEnv;
 const categorizer = ref(VITE_CATEGORIZER);
 const folderStructure = ref(VITE_FOLDER_STRUCTURE);
 const { t } = useLocale();
