@@ -10,6 +10,7 @@
 </template>
 <script lang="ts" setup>
 import { numberWithCommas } from "@/utils";
+import runtimeEnv from "@/runtimeEnv";
 
 const props = defineProps<{
   count: number;
@@ -44,9 +45,7 @@ const exportCollection = () => {
     })
     .join("&");
 
-  const url = `${
-    import.meta.env.VITE_IMAGE_STORAGE_API_URL
-  }/export?${urlSearch}`;
+  const url = `${runtimeEnv.VITE_IMAGE_STORAGE_API_URL}/export?${urlSearch}`;
 
   window.open(url, "_blank");
 };
