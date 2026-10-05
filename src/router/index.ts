@@ -8,9 +8,10 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { setupLayouts } from "virtual:generated-layouts";
 import { routes } from "vue-router/auto-routes";
+import runtimeEnv from "@/runtimeEnv";
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.VITE_BASE_URL),
+  history: createWebHistory(runtimeEnv.VITE_BASE_URL),
   routes: setupLayouts(routes),
 });
 

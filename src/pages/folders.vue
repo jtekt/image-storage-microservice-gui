@@ -93,8 +93,9 @@ import { ref, computed, onMounted, watch } from "vue";
 import axios from "axios";
 import { useRoute, useRouter } from "vue-router";
 import { useLocale } from "vuetify";
+import runtimeEnv from "@/runtimeEnv";
 
-const { VITE_FOLDER_STRUCTURE } = import.meta.env;
+const { VITE_FOLDER_STRUCTURE } = runtimeEnv;
 
 const { t } = useLocale();
 const route = useRoute();

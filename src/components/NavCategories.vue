@@ -26,8 +26,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
 const axios: any = inject("axios");
+import runtimeEnv from "@/runtimeEnv";
 
-const { VITE_CATEGORIZER } = import.meta.env;
+const { VITE_CATEGORIZER } = runtimeEnv;
 
 const fieldName = ref();
 const fieldValues = ref<string[]>();

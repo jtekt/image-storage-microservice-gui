@@ -12,8 +12,9 @@ import VueCookies from "vue-cookies";
 import { QueryFilterPlugin } from "@jtekt/iss-query-filters";
 import "@jtekt/iss-query-filters/style.css";
 import { vResizable } from "vue-resizable-table-column";
+import runtimeEnv from "@/runtimeEnv";
 
-axios.defaults.baseURL = import.meta.env.VITE_IMAGE_STORAGE_API_URL;
+axios.defaults.baseURL = runtimeEnv.VITE_IMAGE_STORAGE_API_URL;
 axios.defaults.headers.common["Access-Control-Allow-Origin"] = "*";
 
 // Components

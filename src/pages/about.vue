@@ -19,12 +19,13 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import runtimeEnv from "@/runtimeEnv";
 
 interface Service {
   name: string;
   url: string;
 }
-const { VITE_APP_VERSION, VITE_IMAGE_STORAGE_API_URL } = import.meta.env;
+const { VITE_APP_VERSION, VITE_IMAGE_STORAGE_API_URL } = runtimeEnv;
 const headers = [
   { title: "Service", key: "name" },
   { title: "URL", key: "url" },
