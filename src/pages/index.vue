@@ -1,96 +1,103 @@
 <template>
-  <v-toolbar flat>
-    <v-toolbar-title>{{ t("Images") }}</v-toolbar-title>
-    <v-spacer />
+  <v-card>
+    <v-toolbar color="transparent" flat>
+      <v-toolbar-title>{{ t("Images") }}</v-toolbar-title>
+      <v-spacer />
 
-    <v-menu offset-y>
-      <template v-slot:activator="{ props }">
-        <v-btn icon="mdi-dots-vertical" v-bind="props" />
-      </template>
+      <v-menu offset-y>
+        <template v-slot:activator="{ props }">
+          <v-btn icon="mdi-dots-vertical" v-bind="props" />
+        </template>
 
-      <v-list>
-        <v-list-item>
-          <CustomHeader v-model:headers="dynamicHeaders" />
-        </v-list-item>
-        <v-list-item>
-          <UploadDialog />
-        </v-list-item>
+        <v-list>
+          <v-list-item>
+            <CustomHeader v-model:headers="dynamicHeaders" />
+          </v-list-item>
+          <v-list-item>
+            <UploadDialog />
+          </v-list-item>
 
-        <v-list-item>
-          <ExportButton :query="query" :count="total" :selected="selected" />
-        </v-list-item>
+          <v-list-item>
+            <ExportButton :query="query" :count="total" :selected="selected" />
+          </v-list-item>
 
-        <v-list-item>
-          <ImportDialog @import="importResult" />
-        </v-list-item>
+          <v-list-item>
+            <ImportDialog @import="importResult" />
+          </v-list-item>
 
-        <v-list-item>
-          <UpdateDialog
-            :query="query"
-            @updated="getItemsAndFields()"
-            :imageCount="total"
-            :selected="selected"
-          />
-        </v-list-item>
+          <v-list-item>
+            <UpdateDialog
+              :query="query"
+              @updated="getItemsAndFields()"
+              :imageCount="total"
+              :selected="selected"
+            />
+          </v-list-item>
 
-        <v-list-item>
-          <DeleteDialog
-            :query="query"
-            @deleted="getItemsAndFields()"
-            :count="total"
-            :selected="selected"
-          />
-        </v-list-item>
-      </v-list>
-    </v-menu>
-  </v-toolbar>
-  <v-container fluid>
-    <QueryFilter v-model="query" :fields="fields" :loading="loading" />
-    <v-data-table-server
-      v-resizable
-      v-model="selected"
-      v-model:options="options"
-      :loading="loading || fieldsLoading"
-      :headers="tableHeaders"
-      :items="items"
-      :items-length="total"
-      @click:row="rowClicked"
-      :items-per-page-options="itemsPerPageOptions"
-      show-select
-      item-value="_id"
-      dense
-    >
-      <!-- HEADER TOOLTIP -->
-      <template
-        v-for="h in tableHeaders"
-        :key="h.key"
-        v-slot:[`header.${h.key}`]="{ column }"
+          <v-list-item>
+            <DeleteDialog
+              :query="query"
+              @deleted="getItemsAndFields()"
+              :count="total"
+              :selected="selected"
+            />
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </v-toolbar>
+    <v-card-text>
+      <QueryFilter
+        v-model="query"
+        :fields="fields"
+        :loading="loading"
+        class="mb-4"
+      />
+      <v-data-table-server
+        v-resizable
+        v-model="selected"
+        v-model:options="options"
+        :loading="loading || fieldsLoading"
+        :headers="tableHeaders"
+        :items="items"
+        :items-length="total"
+        @click:row="rowClicked"
+        :items-per-page-options="itemsPerPageOptions"
+        show-select
+        item-value="_id"
+        dense
       >
-        <v-tooltip location="top">
-          <template #activator="{ props }">
-            <span v-bind="props" style="max-width: 160px">
-              {{ column.title }}
-            </span>
-          </template>
+        <!-- HEADER TOOLTIP -->
+        <template
+          v-for="h in tableHeaders"
+          :key="h.key"
+          v-slot:[`header.${h.key}`]="{ column }"
+        >
+          <v-tooltip location="top">
+            <template #activator="{ props }">
+              <span v-bind="props" style="max-width: 160px">
+                {{ column.title }}
+              </span>
+            </template>
 
-          <span>{{ column.title }}</span>
-        </v-tooltip>
-      </template>
+            <span>{{ column.title }}</span>
+          </v-tooltip>
+        </template>
 
-      <template v-slot:item.file="{ item }">
-        <v-img
-          max-height="46px"
-          max-width="46px"
-          contain
-          :src="image_src(item)"
-        />
-      </template>
+        <template v-slot:item.file="{ item }">
+          <v-img
+            max-height="46px"
+            max-width="46px"
+            contain
+            :src="image_src(item)"
+          />
+        </template>
 
-      <template v-slot:item.time="{ item }: any">
-        <span>{{ formatDate(item.time) }}</span>
-      </template>
-    </v-data-table-server>
-  </v-container>
+        <template v-slot:item.time="{ item }: any">
+          <span>{{ formatDate(item.time) }}</span>
+        </template>
+      </v-data-table-server>
+    </v-card-text>
+  </v-card>
 
   <v-snackbar
     :timeout="2000"
