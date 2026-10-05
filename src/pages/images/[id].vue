@@ -77,7 +77,6 @@
 import { ref, computed, inject, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ImageDataEditor from "@/components/ImageDataEditor.vue";
-import { templateRef } from "vuetify/lib/util/helpers.mjs";
 
 const { VITE_IMAGE_STORAGE_API_URL } = import.meta.env;
 
