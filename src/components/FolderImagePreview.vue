@@ -10,12 +10,13 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import runtimeEnv from "@/runtimeEnv";
 
 const props = defineProps<{
   image: any;
 }>();
 
-const API_URL = import.meta.env.VITE_IMAGE_STORAGE_API_URL;
+const API_URL = runtimeEnv.VITE_IMAGE_STORAGE_API_URL;
 
 const imageSrc = computed(() => {
   return `${API_URL}/images/${props.image._id}/image`;

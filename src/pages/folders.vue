@@ -1,90 +1,91 @@
 <template>
-  <v-toolbar flat>
-    <v-toolbar-title>{{ t("Folder") }}</v-toolbar-title>
+  <v-card>
+    <v-toolbar color="transparent" flat>
+      <v-toolbar-title>{{ t("Folder") }}</v-toolbar-title>
 
-    <v-spacer />
+      <v-spacer />
 
-    <v-menu location="bottom" :offset="8">
-      <template #activator="{ props }">
-        <v-btn icon v-bind="props">
-          <v-icon icon="mdi-dots-vertical" />
-        </v-btn>
+      <v-menu location="bottom" :offset="8">
+        <template #activator="{ props }">
+          <v-btn icon v-bind="props">
+            <v-icon icon="mdi-dots-vertical" />
+          </v-btn>
+        </template>
+
+        <v-list>
+          <v-list-item>
+            <UploadDialog />
+          </v-list-item>
+
+          <v-list-item>
+            <ExportButton :query="query" :count="0" :selected="[]" />
+          </v-list-item>
+
+          <v-list-item>
+            <ImportDialog @import="handleImport" />
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </v-toolbar>
+    <v-card-text>
+      <div v-if="loading" class="text-center">
+        <v-progress-circular indeterminate />
+      </div>
+
+      <template v-else>
+        <v-treeview
+          indent-lines="default"
+          v-model:activated="active"
+          v-model:opened="open"
+          :items="items"
+          :load-children="loadChildren"
+          item-title="name"
+          item-value="id"
+          item-children="children"
+          activatable
+          open-on-click
+          hoverable
+          density="comfortable"
+          rounded
+        >
+          <!-- left icon (like docs sample) -->
+          <template #prepend="{ item }">
+            <v-icon
+              v-if="item.type === 'folder'"
+              icon="mdi-folder"
+              class="mr-1"
+            />
+            <v-icon
+              v-else-if="item.type === 'more'"
+              icon="mdi-dots-horizontal"
+              class="mr-1"
+            />
+          </template>
+
+          <!-- label content -->
+          <template v-slot:title="{ item }">
+            <!-- Folder node -->
+            <span v-if="item.type === 'folder'">
+              {{ item.name }}
+            </span>
+
+            <!-- Each image as a leaf node -->
+            <div v-else-if="item.type === 'image'">
+              <FolderImagePreview :image="item.image" />
+            </div>
+
+            <!-- "X more..." node with link -->
+            <div v-else-if="item.type === 'more'">
+              <span>{{ item.name }}</span>
+              <router-link class="ml-2" :to="imageUrl(item.parents)">
+                See all
+              </router-link>
+            </div>
+          </template>
+        </v-treeview>
       </template>
-
-      <v-list>
-        <v-list-item>
-          <UploadDialog />
-        </v-list-item>
-
-        <v-list-item>
-          <ExportButton :query="query" :count="0" :selected="[]" />
-        </v-list-item>
-
-        <v-list-item>
-          <ImportDialog @import="handleImport" />
-        </v-list-item>
-      </v-list>
-    </v-menu>
-  </v-toolbar>
-
-  <v-container>
-    <div v-if="loading" class="text-center">
-      <v-progress-circular indeterminate />
-    </div>
-
-    <template v-else>
-      <v-treeview
-        indent-lines="default"
-        v-model:activated="active"
-        v-model:opened="open"
-        :items="items"
-        :load-children="loadChildren"
-        item-title="name"
-        item-value="id"
-        item-children="children"
-        activatable
-        open-on-click
-        hoverable
-        density="comfortable"
-        rounded
-      >
-        <!-- left icon (like docs sample) -->
-        <template #prepend="{ item }">
-          <v-icon
-            v-if="item.type === 'folder'"
-            icon="mdi-folder"
-            class="mr-1"
-          />
-          <v-icon
-            v-else-if="item.type === 'more'"
-            icon="mdi-dots-horizontal"
-            class="mr-1"
-          />
-        </template>
-
-        <!-- label content -->
-        <template v-slot:title="{ item }">
-          <!-- Folder node -->
-          <span v-if="item.type === 'folder'">
-            {{ item.name }}
-          </span>
-
-          <!-- Each image as a leaf node -->
-          <div v-else-if="item.type === 'image'">
-            <FolderImagePreview :image="item.image" />
-          </div>
-
-          <!-- "X more..." node with link -->
-          <div v-else-if="item.type === 'more'">
-            <span>{{ item.name }}</span>
-            <router-link class="ml-2" :to="imageUrl(item.parents)">
-              See all
-            </router-link>
-          </div>
-        </template>
-      </v-treeview>
-    </template>
-  </v-container>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script setup lang="ts">
@@ -92,8 +93,9 @@ import { ref, computed, onMounted, watch } from "vue";
 import axios from "axios";
 import { useRoute, useRouter } from "vue-router";
 import { useLocale } from "vuetify";
+import runtimeEnv from "@/runtimeEnv";
 
-const { VITE_FOLDER_STRUCTURE } = import.meta.env;
+const { VITE_FOLDER_STRUCTURE } = runtimeEnv;
 
 const { t } = useLocale();
 const route = useRoute();
@@ -137,8 +139,8 @@ const imageUrl = (q: Record<string, any>) => {
   const params = new URLSearchParams(
     Object.entries(q).map(([key, value]) => [key, String(value)]) as [
       string,
-      string
-    ][]
+      string,
+    ][],
   );
   return `/?${params.toString()}`;
 };

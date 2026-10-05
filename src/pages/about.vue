@@ -1,44 +1,44 @@
 <template>
   <v-card>
-    <v-toolbar flat>
-      <v-btn icon exact to="/">
-        <v-icon>mdi-arrow-left</v-icon>
-      </v-btn>
-      <v-toolbar-title>Image storage service GUI</v-toolbar-title>
+    <v-toolbar color="transparent" flat>
+      <v-toolbar-title
+        >Image storage service GUI - {{ VITE_APP_VERSION }}</v-toolbar-title
+      >
     </v-toolbar>
 
     <v-card-text>
-      <p>v {{ version }}</p>
       <v-data-table
         hide-default-footer
-        :itemsPerPage="-1"
+        :items-per-page="-1"
         :headers="headers"
         :items="services"
       />
     </v-card-text>
   </v-card>
 </template>
-<script lang="ts" setup>
-import { version } from "@/../package.json";
+
+<script setup lang="ts">
+import { ref } from "vue";
+import runtimeEnv from "@/runtimeEnv";
+
+interface Service {
+  name: string;
+  url: string;
+}
+const { VITE_APP_VERSION, VITE_IMAGE_STORAGE_API_URL } = runtimeEnv;
 const headers = [
-  {
-    title: "Service",
-    key: "name",
-  },
-  {
-    title: "URL",
-    key: "url",
-  },
+  { title: "Service", key: "name" },
+  { title: "URL", key: "url" },
 ];
 
-const services = ref([
+const services = ref<Service[]>([
   {
-    name: "Image storage GUI",
+    name: "No-code AI Training GUI",
     url: window.location.origin,
   },
   {
     name: "Image storage Back-end",
-    url: import.meta.env.VITE_IMAGE_STORAGE_API_URL,
+    url: VITE_IMAGE_STORAGE_API_URL,
   },
 ]);
 </script>

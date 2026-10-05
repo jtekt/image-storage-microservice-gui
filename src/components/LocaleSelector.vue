@@ -6,12 +6,14 @@
     item-title="text"
     item-value="value"
     v-model="selectedLocale"
+    hide-details
+    density="compact"
   />
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from "vue";
 import { useLocale } from "vuetify";
+import { ref, watch, onMounted } from "vue";
 
 onMounted(() => {
   const savedLocale = localStorage.getItem("locale");
