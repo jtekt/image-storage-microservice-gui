@@ -45,8 +45,8 @@
           </template>
           <v-row v-if="uploading">
             <v-col>
-              <v-progress-linear height="25" :value="progress" rounded>
-                {{ progress }}%
+              <v-progress-linear height="25" v-model="progress" rounded>
+                <small class="text-white">{{ progress.toFixed() }}%</small>
               </v-progress-linear>
             </v-col>
           </v-row>
