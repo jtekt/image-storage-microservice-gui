@@ -57,7 +57,8 @@
 
 <script setup lang="ts">
 import { ref, computed, inject } from "vue";
-import { numberWithCommas } from "@/utils";
+import { apiErrorMessage, numberWithCommas } from "@/utils";
+import { useLocale } from "vuetify";
 
 const props = defineProps<{
   imageCount?: number;
@@ -69,6 +70,7 @@ const emit = defineEmits<{
   (e: "updated"): void;
 }>();
 
+const { t } = useLocale();
 const axios: any = inject("axios");
 
 const dialog = ref(false);
@@ -117,7 +119,7 @@ async function updateFields() {
     .catch((error: any) => {
       if (error && error.response) console.log(error.response.data);
       else console.log(error);
-      alert("Update failed");
+      alert(apiErrorMessage(error, `Update failed: ${error}`, t));
     })
     .finally(() => {
       updating.value = false;

@@ -66,6 +66,10 @@
   </v-dialog>
 </template>
 <script setup lang="ts">
+import { apiErrorMessage } from "@/utils";
+import { useLocale } from "vuetify";
+
+const { t } = useLocale();
 const router = useRouter();
 const dialog = ref(false);
 const image = ref();
@@ -94,7 +98,7 @@ const upload = async () => {
       router.push(`/images/${_id}`);
     })
     .catch((error: any) => {
-      alert("Upload failed");
+      alert(apiErrorMessage(error, `Upload failed: ${error}`, t));
       console.error(error);
     })
     .finally(() => {

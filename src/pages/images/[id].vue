@@ -78,11 +78,14 @@ import { ref, computed, inject, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ImageDataEditor from "@/components/ImageDataEditor.vue";
 import runtimeEnv from "@/runtimeEnv";
+import { apiErrorMessage } from "@/utils";
+import { useLocale } from "vuetify";
 
 const { VITE_IMAGE_STORAGE_API_URL } = runtimeEnv;
 
 const axios: any = inject("axios");
 
+const { t } = useLocale();
 const route = useRoute();
 const router = useRouter();
 
@@ -113,7 +116,7 @@ async function getItem() {
     const { data } = await axios.get(`/images/${imageId.value}`);
     item.value = data;
   } catch (err) {
-    alert("Failed to fetch image");
+    alert(apiErrorMessage(err, `Failed to fetch image: ${err}`, t));
     console.error(err);
   } finally {
     loading.value = false;
@@ -128,7 +131,7 @@ async function deleteItem() {
     await axios.delete(`/images/${imageId.value}`);
     router.push("/");
   } catch (err) {
-    alert("Failed to delete image");
+    alert(apiErrorMessage(err, `Failed to delete image: ${err}`, t));
     console.error(err);
   } finally {
     deleting.value = false;
@@ -141,7 +144,7 @@ async function saveData(updatedJson: any) {
     alert("Updated successfully!");
     getItem();
   } catch (err) {
-    alert("Failed to update data");
+    alert(apiErrorMessage(err, `Failed to update data: ${err}`, t));
     console.error(err);
   }
 }
