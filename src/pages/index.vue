@@ -115,6 +115,7 @@ import { computed, inject, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useLocale } from "vuetify";
 import runtimeEnv from "@/runtimeEnv";
+import { apiErrorMessage } from "@/utils";
 
 const { restoreHeaders } = useCustomHeader();
 const { VITE_IMAGE_STORAGE_API_URL } = runtimeEnv;
@@ -250,7 +251,7 @@ const getFields = async () => {
       fields.value = res.data;
     })
     .catch((err: any) => {
-      alert("Failed to query fields");
+      alert(apiErrorMessage(err, `Failed to query fields: ${err}`, t));
       console.error(err);
     })
     .finally(() => {
@@ -269,7 +270,7 @@ const getItems = async () => {
       total.value = res.data.total;
     })
     .catch((err: any) => {
-      alert("Failed to query data");
+      alert(apiErrorMessage(err, `Failed to query data: ${err}`, t));
       console.error(err);
     })
     .finally(() => {
