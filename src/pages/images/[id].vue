@@ -62,7 +62,7 @@
       <v-row>
         <v-col>
           <ImageDataEditor
-            :json="item.data"
+            :json="item.data ?? {}"
             :textarea_row="10"
             title="Editable Fields"
             @save-data="saveData"
